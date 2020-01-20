@@ -1,0 +1,25 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Idle Battle Test Version</title>
+</head>
+<body style="background-color:black">
+    <center><b>
+    <button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="saveGame()">Save</button>
+    <button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="loadGame()">Load</button>
+    <br>
+    <font size = "50" style="color:rgb(126, 182, 247); font-family:Arial, Helvetica, sans-serif; font-weight: bolder; text-shadow: 10px lightgrey"><p id="battlePowerTrained">0.00 Battle Power</p></font>
+    <font style="color:rgb(126, 182, 247); font-family:Arial, Helvetica, sans-serif; font-weight: bold; text-shadow: 10px lightgrey"> <br><p id="availableStudyPoints">Study Points: 1/1</p>
+    <p hidden id="battlePowerPerSecond">0.10 Battle Power per second</p>
+    <br><button id="powerTrainButton" hidden style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="powerTrain()">Power Train</button><br>
+    <p hidden id="powerTrainActive">POWER TRAIN ACTIVE</p><br>
+    <button style="font-size: 25px; color:black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="idleStudy()">Idle Mode</button>
+    <button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="activeStudy()">Active Mode</button><br>
+    <br><button style="font-size: 25px; color:black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="buyTrainingPerClick()" id="perClickUpgrade">Increase Training Level (Currently 1) Cost: 1 Battle Power</button><br>
+    <br><button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="lowerUpdateSpeed()" id="perSpeedUpdate">Increase Update Speed (Currently 1000) Cost: 50 Battle Power</button><br>
+    </font></b></center>
+    <script src="main.js" charset="UTF-8" type="text/javascript"></script>
+</body>
+</html>
