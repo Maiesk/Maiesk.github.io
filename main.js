@@ -20,6 +20,9 @@ var gameData = {
 }
 
 function train() {
+    
+    var demo = new CountUp("battlePowerTrained", gameData.training, gameData.training + gameData.trainingPerClick, 2, (gameData.updateSpeed / 1000), options);
+    demo.start();
     gameData.training += gameData.trainingPerClick
     if (gameData.training >= gameData.trainingPerClickCost && gameData.autoUpgrade == true){
         buyTrainingPerClick()
@@ -28,7 +31,7 @@ function train() {
         lowerUpdateSpeed()
     }
     var trainingShown = Number(gameData.training).toFixed(2)
-    document.getElementById("battlePowerTrained").innerHTML = numberWithCommas(trainingShown) + " Battle Power"
+    //document.getElementById("battlePowerTrained").innerHTML = numberWithCommas(trainingShown) + " Battle Power"
 }
 
 var powerTrainCooldown = false;
@@ -74,7 +77,9 @@ function powerTrain(){
 function buyTrainingPerClick(){
     if (gameData.training >= gameData.trainingPerClickCost){
         gameData.training -= gameData.trainingPerClickCost
-        gameData.upgradesBought += 1
+        if (powerTrainCooldown == true){
+            gameData.upgradesBought += 1
+        }
         gameData.trainingPerClick *= 1.1
         gameData.trainingPerClickCost = (gameData.trainingPerClickCost * 2)
         var trainingShown = Number(gameData.training).toFixed(2)
@@ -199,7 +204,7 @@ function buyAutoUpgrade() {
 function loadGame() {
     var savegame = JSON.parse(localStorage.getItem("IdleBattleSave"))
     if (savegame !== null) {
-        gameData = savegame
+        gameData = savegame0          
         var trainingPerSecondShown = Number(gameData.trainingPerClick * 1000 / gameData.updateSpeed).toFixed(2)
         if (gameData.idle == true){
             resetUpdateSpeed()
@@ -230,3 +235,11 @@ function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+var options = {
+    useEasing : false, 
+    useGrouping : true, 
+    separator : ',', 
+    decimal : '.', 
+    prefix: '',
+    suffix: ' Battle Power'
+    };
