@@ -53,19 +53,22 @@
         <div id="Page1">
             <center><b>  
                 <font style="color:rgb(126, 182, 247); font-family:Arial, Helvetica, sans-serif; font-weight: bold"><p id="availableStudyPoints">Study Points: 1/1</p>      
-                <p hidden id="battlePowerPerSecond">0.10 Battle Power per second</p>
+                <p hidden id="battlePowerPerSecond">1.00 Battle Power per second</p>
                 <button id="powerTrainButton" hidden style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="powerTrain()">Power Train</button><br>                    <p hidden id="powerTrainActive">POWER TRAIN ACTIVE - Upgrades are locked</p><br>
                 <button style="font-size: 25px; color:black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="idleStudy()">Idle Mode</button>
                 <button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="activeStudy()">Active Mode</button><br>
-                <br><button style="font-size: 25px; color:black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="buyTrainingPerClick()" id="perClickUpgrade">Increase Training Level (0.1 per tick) Cost: 1 Battle Power</button><br>
-                <br><button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="lowerUpdateSpeed()" id="perSpeedUpdate">Increase Update Speed (1 tick per second) Cost: 50 Battle Power</button><br>
-                <br><button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="buyAP()" id="buyAPButton">Buy 1 AP (Attribute Point) Cost: 100,000 Battle Power</button><br>                    
-            </font></b></center>
-    </div>
+                <br><button style="font-size: 25px; color:black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="buyTrainingPerClick()" id="perClickUpgrade">Increase Training Level (1 per tick) Cost: 2 Battle Power</button><br>
+                <br><button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="lowerUpdateSpeed()" id="perSpeedUpdate">Increase Update Speed (1 tick per second) Cost: 100 Battle Power</button><br>
+                <br><button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="buyAP()" id="buyAPButton">Buy 1 AP (Attribute Point) Cost: 10,000 Battle Power</button><br>                    
+                </font>
+            </b></center>
+        </div>
             
-    <div id="Page2" style="display:none">
-        <p><font style="color:rgb(126, 182, 247)">BOOM BOOM CHECK CHECK THE ROOM</font></p>                  
-    </div>
+        <div id="Page2" style="display:none">
+            <center><b>
+                <button style="font-size: 25px; color:black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="buyAutoUpgrade()">Buy Auto Upgrade: 1 AP</button>
+            </b></center>                 
+        </div>
 
 
     <script src="main.js" charset="UTF-8" type="text/javascript"></script>

@@ -1,56 +1,88 @@
 var gameData = {
     training: 0,
-    trainingPerClick: 0.1,
-    trainingPerClickCost: 1,
+    trainingPerClick: 1,
+    trainingPerClickCost: 2,
     updateSpeed: 1000,
-    updateSpeedCost: 50,
+    updateSpeedCost: 100,
     availableAP: 0,
     totalAP: 0,
-    buyAPCost: 100000,
+    buyAPCost: 10000,
     studyPoints: 1,
     maxStudyPoints: 1,
+    powerTrainPower: 1.5,
+    powerTrainSpeed: 2,
+    upgradesBought: 0,
+    autoUpgrade: false,
     idle: false,
-    active: false
+    active: false,
+    powerTrainTrainingMultiplier: 0,
+    powerTrainUpdateMultiplier: 1
 }
 
 function train() {
     gameData.training += gameData.trainingPerClick
+    if (gameData.training >= gameData.trainingPerClickCost && gameData.autoUpgrade == true){
+        buyTrainingPerClick()
+    }
+    else if (gameData.training >= gameData.updateSpeedCost && gameData.autoUpgrade == true){
+        lowerUpdateSpeed()
+    }
     var trainingShown = Number(gameData.training).toFixed(2)
     document.getElementById("battlePowerTrained").innerHTML = numberWithCommas(trainingShown) + " Battle Power"
 }
 
 var powerTrainCooldown = false;
-function powerTrain() {
+function powerTrain(){
     if (powerTrainCooldown == false && gameData.active == true){
         var originalTrainingPerClick = gameData.trainingPerClick
         var originalUpdateSpeed = gameData.updateSpeed
-        gameData.trainingPerClick *= 1.5
-        gameData.updateSpeed /= 2
+        gameData.trainingPerClick *= gameData.powerTrainPower
+        gameData.updateSpeed /= gameData.powerTrainSpeed
         powerTrainCooldown = true
         mainGameLoop = window.setInterval(function () {
             train();
         }, gameData.updateSpeed);
+        var updateSpeedShown = Number(1000 / gameData.updateSpeed).toFixed(2)
+        var trainingLevelShown = Number(gameData.trainingPerClick).toFixed(2)
+        document.getElementById("perClickUpgrade").innerHTML = "Increase Training Level (" + numberWithCommas(trainingLevelShown) + " per tick) Cost: " + numberWithCommas(gameData.trainingPerClickCost) + " Battle Power"            
+        document.getElementById("perSpeedUpdate").innerHTML = "Increase Update Speed (" + numberWithCommas(updateSpeedShown) + " ticks per second) Cost: " + numberWithCommas(gameData.updateSpeedCost) + " Battle Power"
         document.getElementById("powerTrainActive").hidden = false
         setTimeout(function(){ 
-            gameData.trainingPerClick = originalTrainingPerClick
-            gameData.updateSpeed = originalUpdateSpeed
+            if (gameData.upgradesBought > 0){
+                gameData.trainingPerClick = originalTrainingPerClick * (1.1)**gameData.upgradesBought
+            }
+            else {
+                gameData.trainingPerClick = originalTrainingPerClick
+            }
+            gameData.updateSpeed = originalUpdateSpeed * gameData.powerTrainUpdateMultiplier
             clearInterval(mainGameLoop)
             powerTrainCooldown = false
             document.getElementById("powerTrainActive").hidden = true
+            gameData.powerTrainTrainingMultiplier = 0
+            gameData.powerTrainUpdateMultiplier = 1
+            gameData.upgradesBought = 0
+            var trainingPerSecondShown = Number(gameData.trainingPerClick * 1000 / gameData.updateSpeed).toFixed(2)
+            var updateSpeedShown = Number(1000 / gameData.updateSpeed).toFixed(2)
+            var trainingLevelShown = Number(gameData.trainingPerClick).toFixed(2)
+            document.getElementById("battlePowerPerSecond").innerHTML = numberWithCommas(trainingPerSecondShown) + " Battle Power per second"
+            document.getElementById("perClickUpgrade").innerHTML = "Increase Training Level (" + numberWithCommas(trainingLevelShown) + " per tick) Cost: " + numberWithCommas(gameData.trainingPerClickCost) + " Battle Power"
+            document.getElementById("perSpeedUpdate").innerHTML = "Increase Update Speed (" + numberWithCommas(updateSpeedShown) + " ticks per second) Cost: " + numberWithCommas(gameData.updateSpeedCost) + " Battle Power"
         }, 5000)  
     }
 }
 
-function buyTrainingPerClick() {
-    if (gameData.training >= gameData.trainingPerClickCost && powerTrainCooldown == false) {
+function buyTrainingPerClick(){
+    if (gameData.training >= gameData.trainingPerClickCost){
         gameData.training -= gameData.trainingPerClickCost
-        gameData.trainingPerClick += 0.5 + Math.round(gameData.trainingPerClick / 2)
-        gameData.trainingPerClickCost += Math.round(gameData.trainingPerClickCost * 1.1)
+        gameData.upgradesBought += 1
+        gameData.trainingPerClick *= 1.1
+        gameData.trainingPerClickCost = (gameData.trainingPerClickCost * 2)
         var trainingShown = Number(gameData.training).toFixed(2)
         var trainingPerSecondShown = Number(gameData.trainingPerClick * 1000 / gameData.updateSpeed).toFixed(2)
+        var trainingLevelShown = Number(gameData.trainingPerClick).toFixed(2)
         document.getElementById("battlePowerTrained").innerHTML = numberWithCommas(trainingShown) + " Battle Power"
         document.getElementById("battlePowerPerSecond").innerHTML = numberWithCommas(trainingPerSecondShown) + " Battle Power per second"
-        document.getElementById("perClickUpgrade").innerHTML = "Increase Training Level (" + numberWithCommas(gameData.trainingPerClick) + " per tick) Cost: " + numberWithCommas(gameData.trainingPerClickCost) + " Battle Power"
+        document.getElementById("perClickUpgrade").innerHTML = "Increase Training Level (" + numberWithCommas(trainingLevelShown) + " per tick) Cost: " + numberWithCommas(gameData.trainingPerClickCost) + " Battle Power"
     }
 }
 
@@ -105,7 +137,8 @@ function activeStudy() {
 }
    
 function lowerUpdateSpeed() {
-    if (gameData.training >= gameData.updateSpeedCost && powerTrainCooldown == false) {
+    if (gameData.training >= gameData.updateSpeedCost) {
+        gameData.powerTrainUpdateMultiplier /= 1.2
         gameData.training -= gameData.updateSpeedCost
         gameData.updateSpeed /= 1.2
         gameData.updateSpeedCost *= 10
@@ -126,11 +159,11 @@ function buyAP() {
         gameData.training -= gameData.buyAPCost
         gameData.availableAP += 1
         gameData.totalAP += 1
-        gameData.buyAPCost *= 5
+        gameData.buyAPCost *= 2
         gameData.updateSpeed = 1000
-        gameData.updateSpeedCost = 50
-        gameData.trainingPerClick = 0.1
-        gameData.trainingPerClickCost = 1
+        gameData.updateSpeedCost = 100
+        gameData.trainingPerClick = 1
+        gameData.trainingPerClickCost = 2
         gameData.training = 0
         if(gameData.idle == true){
             resetUpdateSpeed()  
@@ -139,13 +172,14 @@ function buyAP() {
         var trainingPerSecondShown = Number(gameData.trainingPerClick * 1000 / gameData.updateSpeed).toFixed(2)
         var costOfAPShown = Number(gameData.buyAPCost).toFixed(2)
         var updateSpeedShown = Number(1000 / gameData.updateSpeed).toFixed(2)
+        var trainingLevelShown = Number(gameData.trainingPerClick).toFixed(2)
         document.getElementById("battlePowerTrained").innerHTML = numberWithCommas(trainingShown) + " Battle Power"
         document.getElementById("battlePowerPerSecond").innerHTML = numberWithCommas(trainingPerSecondShown) + " Battle Power per second"
-        document.getElementById("textAPTotal").innerHTML = "Total AP: " + numberWithCommas(gameData.totalAP)
-        document.getElementById("textAPAvailable").innerHTML = "Available AP: " + numberWithCommas(gameData.availableAP)
+        document.getElementById("textAPTotal").innerHTML = "AP Total: " + numberWithCommas(gameData.totalAP)
+        document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(gameData.availableAP)
         document.getElementById("buyAPButton").innerHTML = "Buy 1 AP (Attribute Point) Cost: " + numberWithCommas(costOfAPShown) + " Battle Power" 
         document.getElementById("perSpeedUpdate").innerHTML = "Increase Update Speed (" + numberWithCommas(updateSpeedShown) + " ticks per second) Cost: " + numberWithCommas(gameData.updateSpeedCost) + " Battle Power"
-        document.getElementById("perClickUpgrade").innerHTML = "Increase Training Level (" + numberWithCommas(gameData.trainingPerClick) + " per tick) Cost: " + numberWithCommas(gameData.trainingPerClickCost) + " Battle Power"
+        document.getElementById("perClickUpgrade").innerHTML = "Increase Training Level (" + numberWithCommas(trainingLevelShown) + " per tick) Cost: " + numberWithCommas(gameData.trainingPerClickCost) + " Battle Power"
     }
 }
 
@@ -154,6 +188,12 @@ function resetUpdateSpeed() {
     mainGameLoop = window.setInterval(function () {
         train();
     }, gameData.updateSpeed)
+}
+
+function buyAutoUpgrade() {
+    gameData.availableAP -= 1
+    gameData.autoUpgrade = true
+    document.getElementById("textAPAvailable").innerHTML = "Available AP: " + numberWithCommas(gameData.availableAP)
 }
 
 function loadGame() {
@@ -174,7 +214,8 @@ function loadGame() {
         }
         document.getElementById("battlePowerPerSecond").innerHTML = numberWithCommas(trainingPerSecondShown) + " Battle Power per second"
         document.getElementById("perClickUpgrade").innerHTML = "Increase Training Level (" + numberWithCommas(gameData.trainingPerClick) + " per tick) Cost: " + numberWithCommas(gameData.trainingPerClickCost) + " Battle Power",
-        document.getElementById("perSpeedUpdate").innerHTML = "Increase Update Speed (" + numberWithCommas(gameData.updateSpeed) + " ticks per second) Cost: " + numberWithCommas(gameData.updateSpeedCost) + " Battle Power"
+        updateSpeedShown = Number(1000 / gameData.updateSpeed).toFixed(2)
+        document.getElementById("perSpeedUpdate").innerHTML = "Increase Update Speed (" + numberWithCommas(updateSpeedShown) + " ticks per second) Cost: " + numberWithCommas(gameData.updateSpeedCost) + " Battle Power"
         var trainingShown = Number(gameData.training).toFixed(2)
         document.getElementById("battlePowerTrained").innerHTML = numberWithCommas(trainingShown) + " Battle Power"
         document.getElementById("availableStudyPoints").innerHTML = "Study Points: " + gameData.studyPoints + "/" + gameData.maxStudyPoints
@@ -189,9 +230,3 @@ function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-let demo = new CountUp('myTargetElement', 5978);
-if (!demo.error) {
-    demo.start();
-} else {
-    console.error(demo.error);
-}
