@@ -24,7 +24,7 @@ function powerTrain() {
     if (powerTrainCooldown == false && gameData.active == true){
         var originalTrainingPerClick = gameData.trainingPerClick
         var originalUpdateSpeed = gameData.updateSpeed
-        gameData.trainingPerClick *= 5
+        gameData.trainingPerClick *= 1.5
         gameData.updateSpeed /= 2
         powerTrainCooldown = true
         mainGameLoop = window.setInterval(function () {
@@ -44,7 +44,7 @@ function powerTrain() {
 function buyTrainingPerClick() {
     if (gameData.training >= gameData.trainingPerClickCost && powerTrainCooldown == false) {
         gameData.training -= gameData.trainingPerClickCost
-        gameData.trainingPerClick += 1 + Math.round(gameData.trainingPerClick / 2)
+        gameData.trainingPerClick += 0.5 + Math.round(gameData.trainingPerClick / 2)
         gameData.trainingPerClickCost += Math.round(gameData.trainingPerClickCost * 1.1)
         var trainingShown = Number(gameData.training).toFixed(2)
         var trainingPerSecondShown = Number(gameData.trainingPerClick * 1000 / gameData.updateSpeed).toFixed(2)
@@ -107,7 +107,7 @@ function activeStudy() {
 function lowerUpdateSpeed() {
     if (gameData.training >= gameData.updateSpeedCost && powerTrainCooldown == false) {
         gameData.training -= gameData.updateSpeedCost
-        gameData.updateSpeed /= 1.5
+        gameData.updateSpeed /= 1.2
         gameData.updateSpeedCost *= 10
         var trainingShown = Number(gameData.training).toFixed(2)
         var trainingPerSecondShown = Number(gameData.trainingPerClick * 1000 / gameData.updateSpeed).toFixed(2)
@@ -126,13 +126,15 @@ function buyAP() {
         gameData.training -= gameData.buyAPCost
         gameData.availableAP += 1
         gameData.totalAP += 1
-        gameData.buyAPCost *= 1.1
+        gameData.buyAPCost *= 5
         gameData.updateSpeed = 1000
         gameData.updateSpeedCost = 50
         gameData.trainingPerClick = 0.1
         gameData.trainingPerClickCost = 1
         gameData.training = 0
-        resetUpdateSpeed()
+        if(gameData.idle == true){
+            resetUpdateSpeed()  
+        }
         var trainingShown = Number(gameData.training).toFixed(2)
         var trainingPerSecondShown = Number(gameData.trainingPerClick * 1000 / gameData.updateSpeed).toFixed(2)
         var costOfAPShown = Number(gameData.buyAPCost).toFixed(2)
@@ -185,4 +187,11 @@ function saveGame() {
 
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+let demo = new CountUp('myTargetElement', 5978);
+if (!demo.error) {
+    demo.start();
+} else {
+    console.error(demo.error);
 }

@@ -1,4 +1,4 @@
-<html lang="en">
+<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,34 +10,61 @@
             document.getElementById(hidden).style.display='none';
             return false;
         }
+        
     </script>
+    <style>
+        #battlePowerTrained{
+            -webkit-text-stroke-width: 1px;
+            -webkit-text-stroke-color: white;
+        }
+        #textAPTotal{
+            -webkit-text-stroke-width: 0.5px;
+            -webkit-text-stroke-color: white;
+            font-size: 30px;
+        }
+        #textAPAvailable{
+            -webkit-text-stroke-width: 0.5px;
+            -webkit-text-stroke-color: white;
+            font-size: 30px;
+        }
+        #availableStudyPoints{
+            -webkit-text-stroke-width: 0.5px;
+            -webkit-text-stroke-color: white;
+            font-size: 30px;
+        }
+        #battlePowerPerSecond{
+            -webkit-text-stroke-width: 0.5px;
+            -webkit-text-stroke-color: white;
+            font-size: 30px;
+        }
+    </style>
 </head>
 <body style="background-color:black">
-
-    <div id="Page1">
-            <center><b>
-                    <button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="saveGame()">Save</button>
-                    <button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="loadGame()">Load</button>
-                    <font style="color:rgb(126, 182, 247); font-family:Arial, Helvetica, sans-serif; font-weight: bold; text-shadow: 10px lightgrey"><p id="textAPTotal">AP Total:</p></font>
-                    <font style="color:rgb(126, 182, 247); font-family:Arial, Helvetica, sans-serif; font-weight: bold; text-shadow: 10px lightgrey"><p id="textAPAvailable">AP Available:</p></font>
-                    <br>
-                    <font size = "50" style="color:rgb(126, 182, 247); font-family:Arial, Helvetica, sans-serif; font-weight: bolder; text-shadow: 10px lightgrey"><p id="battlePowerTrained">0.00 Battle Power</p></font>
-                    <font style="color:rgb(126, 182, 247); font-family:Arial, Helvetica, sans-serif; font-weight: bold; text-shadow: 10px lightgrey"> <br><p id="availableStudyPoints">Study Points: 1/1</p>
-                    <p hidden id="battlePowerPerSecond">0.10 Battle Power per second</p>
-                    <br><button id="powerTrainButton" hidden style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="powerTrain()">Power Train</button><br>
-                    <p hidden id="powerTrainActive">POWER TRAIN ACTIVE</p><br>
-                    <button style="font-size: 25px; color:black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="idleStudy()">Idle Mode</button>
-                    <button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="activeStudy()">Active Mode</button><br>
-                    <br><button style="font-size: 25px; color:black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="buyTrainingPerClick()" id="perClickUpgrade">Increase Training Level (1 per tick) Cost: 1 Battle Power</button><br>
-                    <br><button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="lowerUpdateSpeed()" id="perSpeedUpdate">Increase Update Speed (1 tick per second) Cost: 50 Battle Power</button><br>
-                    <br><button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="buyAP()" id="buyAPButton">Buy 1 AP (Attribute Point) Cost: 100,000 Battle Power</button><br>
-                    </font></b></center>
-        <a href="#" onclick="return show('Page2','Page1');">Show page 2</a>
+    <center>
+        <button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="saveGame()">Save</button>
+        <button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="loadGame()">Load</button><br>
+        <br>
+        <button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="return show('Page1','Page2')">GAME</button>
+        <button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="return show('Page2','Page1')">SHOP</button>
+        <font style="color:rgb(126, 182, 247); font-family:Arial, Helvetica, sans-serif; font-weight: bold; text-shadow: 10px lightgrey"><p id="textAPTotal">AP Total: 0</p></font>
+        <font style="color:rgb(126, 182, 247); font-family:Arial, Helvetica, sans-serif; font-weight: bold; text-shadow: 10px lightgrey"><p id="textAPAvailable">AP Available: 0</p></font>
+        <font style="font-size: 72px; color:rgb(126, 182, 247); font-family:Arial, Helvetica, sans-serif; font-weight: bolder; text-shadow: 10px lightgrey"><p id="battlePowerTrained">0.00 Battle Power</p></font>
+    </center>
+        <div id="Page1">
+            <center><b>  
+                <font style="color:rgb(126, 182, 247); font-family:Arial, Helvetica, sans-serif; font-weight: bold"><p id="availableStudyPoints">Study Points: 1/1</p>      
+                <p hidden id="battlePowerPerSecond">0.10 Battle Power per second</p>
+                <button id="powerTrainButton" hidden style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="powerTrain()">Power Train</button><br>                    <p hidden id="powerTrainActive">POWER TRAIN ACTIVE - Upgrades are locked</p><br>
+                <button style="font-size: 25px; color:black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="idleStudy()">Idle Mode</button>
+                <button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="activeStudy()">Active Mode</button><br>
+                <br><button style="font-size: 25px; color:black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="buyTrainingPerClick()" id="perClickUpgrade">Increase Training Level (0.1 per tick) Cost: 1 Battle Power</button><br>
+                <br><button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="lowerUpdateSpeed()" id="perSpeedUpdate">Increase Update Speed (1 tick per second) Cost: 50 Battle Power</button><br>
+                <br><button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="buyAP()" id="buyAPButton">Buy 1 AP (Attribute Point) Cost: 100,000 Battle Power</button><br>                    
+            </font></b></center>
     </div>
             
     <div id="Page2" style="display:none">
         <p><font style="color:rgb(126, 182, 247)">BOOM BOOM CHECK CHECK THE ROOM</font></p>                  
-        <a href="#" onclick="return show('Page1','Page2');">Show page 1</a>
     </div>
 
 
