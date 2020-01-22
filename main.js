@@ -1,12 +1,12 @@
 var gameData = {
     training: 0,
     trainingPerClick: 1,
-    trainingPerClickCost: 2,
-    updateSpeed: 1000,
-    updateSpeedCost: 100,
+    trainingPerClickCost: 20,
+    updateSpeed: 100,
+    updateSpeedCost: 1000,
     availableAP: 0,
     totalAP: 0,
-    buyAPCost: 10000,
+    buyAPCost: 100000,
     studyPoints: 1,
     maxStudyPoints: 1,
     powerTrainPower: 1.5,
@@ -20,9 +20,8 @@ var gameData = {
 }
 
 function train() {
-    
-    var demo = new CountUp("battlePowerTrained", gameData.training, gameData.training + gameData.trainingPerClick, 2, (gameData.updateSpeed / 1000), options);
-    demo.start();
+    var demo = new CountUp("battlePowerTrained", gameData.training, gameData.training + gameData.trainingPerClick, 0, (gameData.updateSpeed / 1000), options);
+    demo.start()
     gameData.training += gameData.trainingPerClick
     if (gameData.training >= gameData.trainingPerClickCost && gameData.autoUpgrade == true){
         buyTrainingPerClick()
@@ -143,9 +142,9 @@ function activeStudy() {
    
 function lowerUpdateSpeed() {
     if (gameData.training >= gameData.updateSpeedCost) {
-        gameData.powerTrainUpdateMultiplier /= 1.2
+        gameData.powerTrainUpdateMultiplier /= 1.05
         gameData.training -= gameData.updateSpeedCost
-        gameData.updateSpeed /= 1.2
+        gameData.updateSpeed /= 1.05
         gameData.updateSpeedCost *= 10
         var trainingShown = Number(gameData.training).toFixed(2)
         var trainingPerSecondShown = Number(gameData.trainingPerClick * 1000 / gameData.updateSpeed).toFixed(2)
@@ -165,7 +164,7 @@ function buyAP() {
         gameData.availableAP += 1
         gameData.totalAP += 1
         gameData.buyAPCost *= 2
-        gameData.updateSpeed = 1000
+        gameData.updateSpeed = 100
         gameData.updateSpeedCost = 100
         gameData.trainingPerClick = 1
         gameData.trainingPerClickCost = 2
@@ -242,4 +241,4 @@ var options = {
     decimal : '.', 
     prefix: '',
     suffix: ' Battle Power'
-    };
+};

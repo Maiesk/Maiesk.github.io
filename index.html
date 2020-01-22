@@ -50,19 +50,21 @@
         <button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="return show('Page2','Page1')">SHOP</button>
         <font style="color:rgb(126, 182, 247); font-family:Arial, Helvetica, sans-serif; font-weight: bold; text-shadow: 10px lightgrey"><p id="textAPTotal">AP Total: 0</p></font>
         <font style="color:rgb(126, 182, 247); font-family:Arial, Helvetica, sans-serif; font-weight: bold; text-shadow: 10px lightgrey"><p id="textAPAvailable">AP Available: 0</p></font>
-        <font style="font-size: 72px; color:rgb(126, 182, 247); font-family:Arial, Helvetica, sans-serif; font-weight: bolder; text-shadow: 10px lightgrey"><p id="battlePowerTrained">0.00 Battle Power</p></font>
+        <font style="font-size: 72px; color:rgb(126, 182, 247); font-family:Arial, Helvetica, sans-serif; font-weight: bolder; text-shadow: 10px lightgrey"><p id="battlePowerTrained">0 Battle Power</p></font>
     </center>
         <div id="Page1">
             <center><b>  
                 <font style="color:rgb(126, 182, 247); font-family:Arial, Helvetica, sans-serif; font-weight: bold"><p id="availableStudyPoints">Study Points: 1/1</p>      
                 <p hidden id="battlePowerPerSecond">1.00 Battle Power per second</p>
-                <button id="powerTrainButton" hidden style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="powerTrain()">Power Train</button><br>                    <p hidden id="powerTrainActive">POWER TRAIN ACTIVE - Upgrades are locked</p><br>
+                <button id="powerTrainButton" hidden style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="powerTrain()">Power Train</button><br>                    
+                <p hidden id="powerTrainActive">POWER TRAIN ACTIVE</p><br>
                 <button style="font-size: 25px; color:black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="idleStudy()">Idle Mode</button>
                 <button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="activeStudy()">Active Mode</button><br>
-                <br><button style="font-size: 25px; color:black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="buyTrainingPerClick()" id="perClickUpgrade">Increase Training Level (1 per tick) Cost: 2 Battle Power</button><br>
-                <br><button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="lowerUpdateSpeed()" id="perSpeedUpdate">Increase Update Speed (1 tick per second) Cost: 100 Battle Power</button><br>
-                <br><button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="buyAP()" id="buyAPButton">Buy 1 AP (Attribute Point) Cost: 10,000 Battle Power</button><br>                    
+                <br><button style="font-size: 25px; color:black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="buyTrainingPerClick()" id="perClickUpgrade">Increase Training Level (1 per tick) Cost: 20 Battle Power</button><br>
+                <br><button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="lowerUpdateSpeed()" id="perSpeedUpdate">Increase Update Speed (1 tick per second) Cost: 1000 Battle Power</button><br>
+                <br><button style="font-size: 25px; color: black; background-color:rgb(126, 182, 247); border-color: lightgrey; font-weight: bold" onclick="buyAP()" id="buyAPButton">Buy 1 AP (Attribute Point) Cost: 100,000 Battle Power</button><br>                    
                 </font>
+                <p hidden id="hiddenTestNim"></p>
             </b></center>
         </div>
             
