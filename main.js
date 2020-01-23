@@ -6,12 +6,14 @@ var gameData = {
     updateSpeedCost: 1000,
     availableAP: 0,
     totalAP: 0,
-    buyAPCost: 100000,
+    buyAPCost: 50000,
     studyPoints: 1,
     maxStudyPoints: 1,
     powerTrainPower: 1.5,
     powerTrainSpeed: 2,
     upgradesBought: 0,
+    powerTrainUpgradeMultiplier: 1,
+    idleUpgradeMultiplier: 1,
     autoUpgrade: false,
     idle: false,
     active: false,
@@ -51,7 +53,7 @@ function powerTrain(){
         document.getElementById("powerTrainActive").hidden = false
         setTimeout(function(){ 
             if (gameData.upgradesBought > 0){
-                gameData.trainingPerClick = originalTrainingPerClick * (1.1)**gameData.upgradesBought
+                gameData.trainingPerClick = originalTrainingPerClick * (1.2)**gameData.upgradesBought
             }
             else {
                 gameData.trainingPerClick = originalTrainingPerClick
@@ -79,7 +81,7 @@ function buyTrainingPerClick(){
         if (powerTrainCooldown == true){
             gameData.upgradesBought += 1
         }
-        gameData.trainingPerClick *= 1.1
+        gameData.trainingPerClick *= 1.2
         gameData.trainingPerClickCost = (gameData.trainingPerClickCost * 2)
         var trainingShown = Number(gameData.training).toFixed(2)
         var trainingPerSecondShown = Number(gameData.trainingPerClick * 1000 / gameData.updateSpeed).toFixed(2)
@@ -92,6 +94,7 @@ function buyTrainingPerClick(){
 
 function idleStudy() {
     if (gameData.studyPoints > 0){
+        gameData.trainingPerClick *= gameData.idleUpgradeMultiplier
         mainGameLoop = window.setInterval(function () {
            train();
         }, gameData.updateSpeed)
@@ -103,6 +106,7 @@ function idleStudy() {
     else if (gameData.idle == true) {
         clearInterval(mainGameLoop)
         gameData.studyPoints += 1
+        gameData.trainingPerClick /= gameData.idleUpgradeMultiplier
         document.getElementById("battlePowerPerSecond").hidden = true
         document.getElementById("availableStudyPoints").innerHTML = "Study Points: " + gameData.studyPoints + "/" + gameData.maxStudyPoints
         gameData.idle = false
@@ -110,6 +114,7 @@ function idleStudy() {
     else if (gameData.active == true && powerTrainCooldown == false) {
         gameData.active = false
         gameData.idle = true
+        gameData.trainingPerClick *= gameData.idleUpgradeMultiplier
         mainGameLoop = window.setInterval(function () {
             train();
         }, gameData.updateSpeed)
@@ -135,6 +140,7 @@ function activeStudy() {
         clearInterval(mainGameLoop)
         gameData.idle = false
         gameData.active = true
+        gameData.trainingPerClick /= gameData.idleUpgradeMultiplier
         document.getElementById("battlePowerPerSecond").hidden = true
         document.getElementById("powerTrainButton").hidden = false
     }
@@ -166,7 +172,12 @@ function buyAP() {
         gameData.buyAPCost *= 2
         gameData.updateSpeed = 100
         gameData.updateSpeedCost = 100
-        gameData.trainingPerClick = 1
+        if (gameData.idle == true && gameData.idleUpgradeMultiplier > 1){
+            gameData.trainingPerClick = gameData.idleUpgradeMultiplier
+        }
+        else {
+            gameData.trainingPerClick = 1
+        }
         gameData.trainingPerClickCost = 2
         gameData.training = 0
         if(gameData.idle == true){
@@ -174,7 +185,7 @@ function buyAP() {
         }
         var trainingShown = Number(gameData.training).toFixed(2)
         var trainingPerSecondShown = Number(gameData.trainingPerClick * 1000 / gameData.updateSpeed).toFixed(2)
-        var costOfAPShown = Number(gameData.buyAPCost).toFixed(2)
+        var costOfAPShown = Number(gameData.buyAPCost)
         var updateSpeedShown = Number(1000 / gameData.updateSpeed).toFixed(2)
         var trainingLevelShown = Number(gameData.trainingPerClick).toFixed(2)
         document.getElementById("battlePowerTrained").innerHTML = numberWithCommas(trainingShown) + " Battle Power"
@@ -197,6 +208,33 @@ function resetUpdateSpeed() {
 function buyAutoUpgrade() {
     gameData.availableAP -= 1
     gameData.autoUpgrade = true
+    document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(gameData.availableAP)
+    document.getElementById("buyAutoUpgradeButton").hidden
+}
+
+function buySuperIdle() {
+    gameData.availableAP -= 1
+    if (gameData.idle == true){
+        idleStudy()
+    }
+    if (gameData.idleUpgradeMultiplier == 1){
+        gameData.idleUpgradeMultiplier = 5
+    }
+    else {
+        gameData.idleUpgradeMultiplier += 5
+    }
+    idleStudy()
+    document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(gameData.availableAP)
+}
+
+function buySuperPowerTrain() {
+    gameData.availableAP -= 1
+    if (gameData.powerTrainUpgradeMultiplier == 1){
+        gameData.powerTrainUpgradeMultiplier = 5
+    }
+    else {
+        gameData.powerTrainUpgradeMultiplier += 5
+    }
     document.getElementById("textAPAvailable").innerHTML = "Available AP: " + numberWithCommas(gameData.availableAP)
 }
 
