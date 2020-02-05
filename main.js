@@ -19,7 +19,8 @@ var gameData = {
     idle: false,
     active: false,
     powerTrainTrainingMultiplier: 0,
-    powerTrainUpdateMultiplier: 1
+    powerTrainUpdateMultiplier: 1,
+    enemyList: []
 }
 
 function train(){
@@ -185,42 +186,51 @@ function resetUpdateSpeed(){
 }
 
 function buyAutoUpgrade(){
-    gameData.availableAP -= 1
-    gameData.autoUpgrade = true
-    document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(gameData.availableAP)
-    document.getElementById("buyAutoUpgradeButton").hidden
+    if (gameData.availableAP > 0){  
+        gameData.availableAP -= 1
+        gameData.autoUpgrade = true
+        document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(gameData.availableAP)
+        document.getElementById("buyAutoUpgradeButton").hidden
+    }
 }
 
 function buySuperIdle(){
-    gameData.availableAP -= 1
-    if (gameData.idle == true){
+    if (gameData.availableAP > 0){   
+        gameData.availableAP -= 1
+        if (gameData.idle == true){
+            idleStudy()
+        }
+        if (gameData.idleUpgradeMultiplier == 1){
+            gameData.idleUpgradeMultiplier = 5
+        }
+        else {
+            gameData.idleUpgradeMultiplier += 5
+        }
         idleStudy()
+        document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(gameData.availableAP)
     }
-    if (gameData.idleUpgradeMultiplier == 1){
-        gameData.idleUpgradeMultiplier = 5
-    }
-    else {
-        gameData.idleUpgradeMultiplier += 5
-    }
-    idleStudy()
-    document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(gameData.availableAP)
 }
 
 function buySuperPowerTrain(){
-    gameData.availableAP -= 1
-    if (gameData.powerTrainUpgradeMultiplier == 1){
-        gameData.powerTrainUpgradeMultiplier = 5
+    if (gameData.availableAP > 0){    
+        gameData.availableAP -= 1
+        if (gameData.powerTrainUpgradeMultiplier == 1){
+            gameData.powerTrainUpgradeMultiplier = 5
+        }
+        else {
+            gameData.powerTrainUpgradeMultiplier += 5
+        }
+        document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(gameData.availableAP)
     }
-    else {
-        gameData.powerTrainUpgradeMultiplier += 5
-    }
-    document.getElementById("textAPAvailable").innerHTML = "Available AP: " + numberWithCommas(gameData.availableAP)
 }
 
-//TODO: Find fix for loading when idle mode active causing number not to update; likely to do with animation
+//TODO Learn error message display AND/OR find solution to power train loading issue
 function loadGame(){
+    if (gameData.idle == true){
+        idleStudy()
+    }
     var savegame = JSON.parse(localStorage.getItem("IdleBattleSave"))
-    if (savegame !== null){
+    if (savegame !== null && powerTrainCooldown == false){
         gameData = savegame
         if (gameData.active == true){
             activeStudy()
@@ -235,6 +245,9 @@ function loadGame(){
             updateHTML()
             document.getElementById("currentTrainingPoints").hidden = false
         }, 1000)
+    }
+    else if (gameData.powerTrainCooldown == true){
+
     }
 }
 
@@ -283,3 +296,18 @@ var options = {
     prefix: '',
     suffix: ' Training Points'
 };
+
+function createEnemy(name, hitPoints, attackPoints, defensePoints, speedPoints, imagePath) {
+    var enemy = {
+        name : name,
+        hitPoints : hitPoints,
+        attackPoints : attackPoints,
+        defensePoints : defensePoints,
+        speedPoints : speedPoints,
+        inventory : [],
+        imagePath : imagePath
+    }
+    enemyList[enemyList.length] = enemy
+    return enemy;
+}
+
