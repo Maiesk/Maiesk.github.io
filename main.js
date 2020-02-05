@@ -190,7 +190,7 @@ function buyAutoUpgrade(){
         gameData.availableAP -= 1
         gameData.autoUpgrade = true
         document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(gameData.availableAP)
-        document.getElementById("buyAutoUpgradeButton").hidden
+        document.getElementById("buyAutoUpgradeButton").hidden = true
     }
 }
 
