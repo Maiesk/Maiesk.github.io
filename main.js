@@ -251,8 +251,11 @@ function loadGame(){
     }
 }
 
+//TODO Learn error message display AND/OR find solution to power train saving issue
 function saveGame(){
-    localStorage.setItem("IdleBattleSave", JSON.stringify(gameData))
+    if (powerTrainCooldown == false){
+        localStorage.setItem("IdleBattleSave", JSON.stringify(gameData))
+    }
 }
 
 function numberWithCommas(x){
