@@ -159,14 +159,14 @@ function buyAP(){
         gameData.totalAP += 1
         gameData.buyAPCost *= 2
         gameData.updateSpeed = 100
-        gameData.updateSpeedCost = 100
+        gameData.updateSpeedCost = 1000
         if (gameData.idle == true && gameData.idleUpgradeMultiplier > 1){
             gameData.trainingPerClick = gameData.idleUpgradeMultiplier
         }
         else {
             gameData.trainingPerClick = 1
         }
-        gameData.trainingPerClickCost = 2
+        gameData.trainingPerClickCost = 20
         gameData.training = 0
         if(gameData.idle == true){
             resetUpdateSpeed()  
