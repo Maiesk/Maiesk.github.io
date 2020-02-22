@@ -1,7 +1,7 @@
 var gameData = {
     training: 0,
     trainingPerClick: 1,
-    trainingPerClickCost: 20,
+    trainingPerClickCost: 50,
     updateSpeed: 100,
     updateSpeedCost: 1000,
     availableAP: 0,
@@ -16,6 +16,7 @@ var gameData = {
     powerTrainUpgradeMultiplier: 1,
     idleUpgradeMultiplier: 1,
     autoUpgrade: false,
+    autoPurchaseAP: false,
     idle: false,
     active: false,
     powerTrainTrainingMultiplier: 0,
@@ -27,6 +28,9 @@ function train(){
     var numberAnimation = new CountUp("currentTrainingPoints", gameData.training, gameData.training + gameData.trainingPerClick, 0, (gameData.updateSpeed / 1000), options);
     numberAnimation.start()
     gameData.training += gameData.trainingPerClick
+    if (gameData.training >= gameData.buyAPCost && gameData.autoPurchaseAP == true){
+        buyAP()
+    }
     if (gameData.training >= gameData.trainingPerClickCost && gameData.autoUpgrade == true){
         buyTrainingPerClick()
     }
@@ -52,7 +56,7 @@ function powerTrain(){
         document.getElementById("battlePowerPerSecond").hidden = false
         setTimeout(function(){ 
             if (gameData.upgradesBought > 0){
-                gameData.trainingPerClick = originalTrainingPerClick * (1.2)**gameData.upgradesBought
+                gameData.trainingPerClick = originalTrainingPerClick * (1.5)**gameData.upgradesBought
             }
             else {
                 gameData.trainingPerClick = originalTrainingPerClick
@@ -74,7 +78,7 @@ function buyTrainingPerClick(){
         if (powerTrainCooldown == true){
             gameData.upgradesBought += 1
         }
-        gameData.trainingPerClick *= 1.2
+        gameData.trainingPerClick *= 1.5
         gameData.trainingPerClickCost = (gameData.trainingPerClickCost * 2)
         updateHTML()
     }
@@ -141,9 +145,9 @@ function activeStudy(){
    
 function lowerUpdateSpeed(){
     if (gameData.training >= gameData.updateSpeedCost){
-        gameData.powerTrainUpdateMultiplier /= 1.05
+        gameData.powerTrainUpdateMultiplier /= 1.35
         gameData.training -= gameData.updateSpeedCost
-        gameData.updateSpeed /= 1.05
+        gameData.updateSpeed /= 1.35
         gameData.updateSpeedCost *= 10
         updateHTML()
         if (gameData.idle == true){
@@ -157,7 +161,7 @@ function buyAP(){
         gameData.training -= gameData.buyAPCost
         gameData.availableAP += 1
         gameData.totalAP += 1
-        gameData.buyAPCost *= 2
+        gameData.buyAPCost *= 1.2
         gameData.updateSpeed = 100
         gameData.updateSpeedCost = 1000
         if (gameData.idle == true && gameData.idleUpgradeMultiplier > 1){
@@ -175,6 +179,15 @@ function buyAP(){
     }
 }
 
+function buyAutoPurchaseAP(){
+    if (gameData.availableAP > 9 && gameData.autoPurchaseAP == false){
+        gameData.availableAP -= 10
+        gameData.autoPurchaseAP = true
+        document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(gameData.availableAP)
+        document.getElementById("buyAutoPurchaseAPButton").innerHTML = "Auto Purchase AP Purchased"
+    }
+}
+
 var mainGameLoop = null
 function resetUpdateSpeed(){
     if (mainGameLoop !== null){
@@ -186,11 +199,11 @@ function resetUpdateSpeed(){
 }
 
 function buyAutoUpgrade(){
-    if (gameData.availableAP > 0){  
-        gameData.availableAP -= 1
+    if (gameData.availableAP > 9 && gameData.autoUpgrade == false){  
+        gameData.availableAP -= 10
         gameData.autoUpgrade = true
         document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(gameData.availableAP)
-        document.getElementById("buyAutoUpgradeButton").hidden = true
+        document.getElementById("buyAutoUpgradeButton").innerHTML = "Auto Upgrade Purchased"
     }
 }
 
@@ -201,13 +214,14 @@ function buySuperIdle(){
             idleStudy()
         }
         if (gameData.idleUpgradeMultiplier == 1){
-            gameData.idleUpgradeMultiplier = 5
+            gameData.idleUpgradeMultiplier = 2
         }
         else {
-            gameData.idleUpgradeMultiplier += 5
+            gameData.idleUpgradeMultiplier += 2
         }
         idleStudy()
         document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(gameData.availableAP)
+        document.getElementById("superIdleCurrent").innerHTML = "Current Idle Multiplier: " + numberWithCommas(gameData.idleUpgradeMultiplier)
     }
 }
 
@@ -215,12 +229,17 @@ function buySuperPowerTrain(){
     if (gameData.availableAP > 0){    
         gameData.availableAP -= 1
         if (gameData.powerTrainUpgradeMultiplier == 1){
-            gameData.powerTrainUpgradeMultiplier = 5
+            gameData.powerTrainUpgradeMultiplier = 2
         }
         else {
-            gameData.powerTrainUpgradeMultiplier += 5
+            gameData.powerTrainUpgradeMultiplier += 2
+        }
+        if (gameData.active == true){
+            activeStudy()
+            activeStudy()
         }
         document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(gameData.availableAP)
+        document.getElementById("superPowerTrainCurrent").innerHTML = "Current Power Train Multiplier: " + numberWithCommas(gameData.powerTrainUpgradeMultiplier)
     }
 }
 
@@ -241,9 +260,18 @@ function loadGame(){
         document.getElementById("powerTrainButton").hidden = true
         document.getElementById("currentTrainingPoints").hidden = true
         document.getElementById("availableStudyPoints").innerHTML = "Loading..."
+        if (gameData.idleUpgradeMultiplier != 1){
+            document.getElementById("superIdleCurrent").innerHTML = "Current Idle Multiplier: " + numberWithCommas(gameData.idleUpgradeMultiplier)
+        }
+        if (gameData.powerTrainUpgradeMultiplier != 1){
+            document.getElementById("superPowerTrainCurrent").innerHTML = "Current Power Train Multiplier: " + numberWithCommas(gameData.powerTrainUpgradeMultiplier)
+        }
         setTimeout(function(){
             updateHTML()
             document.getElementById("currentTrainingPoints").hidden = false
+            if (gameData.autoUpgrade == true){
+                document.getElementById("buyAutoUpgradeButton").innerHTML = "Auto Upgrade Purchased"
+            }
         }, 1000)
     }
     else if (gameData.powerTrainCooldown == true){
@@ -265,7 +293,7 @@ function numberWithCommas(x){
 function updateHTML(){
     var trainingShown = Number(gameData.training).toFixed(0)
     var trainingPerSecondShown = Number(gameData.trainingPerClick * 1000 / gameData.updateSpeed).toFixed(2)
-    var costOfAPShown = Number(gameData.buyAPCost)
+    var costOfAPShown = Number(gameData.buyAPCost).toFixed(0)
     var updateSpeedShown = Number(1000 / gameData.updateSpeed).toFixed(2)
     var trainingLevelShown = Number(gameData.trainingPerClick).toFixed(2)
     if (gameData.active == true){
@@ -281,6 +309,12 @@ function updateHTML(){
     }
     else{        
         document.getElementById("battlePowerPerSecond").innerHTML = "0 Training Points per second"
+    }
+    if (gameData.autoPurchaseAP == false){
+        document.getElementById("buyAutoPurchaseAPButton").innerHTML = "Buy AutoPurchase for AP: 10 AP"
+    }
+    if (gameData.autoUpgrade == false){
+        document.getElementById("buyAutoUpgradeButton").innerHTML = "Buy Auto Upgrade: 10 AP"
     }
     document.getElementById("currentTrainingPoints").innerHTML = numberWithCommas(trainingShown) + " Training Points"
     document.getElementById("textAPTotal").innerHTML = "AP Total: " + numberWithCommas(gameData.totalAP)

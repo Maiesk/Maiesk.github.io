@@ -18,16 +18,6 @@
             -webkit-text-stroke-width: 1px;
             -webkit-text-stroke-color: white;
         }
-        #textAPTotal{
-            -webkit-text-stroke-width: 0.5px;
-            -webkit-text-stroke-color: white;
-            font-size: 30px;
-        }
-        #textAPAvailable{
-            -webkit-text-stroke-width: 0.5px;
-            -webkit-text-stroke-color: white;
-            font-size: 30px;
-        }
         #availableStudyPoints{
             -webkit-text-stroke-width: 0.5px;
             -webkit-text-stroke-color: white;
@@ -53,6 +43,11 @@
             font-weight: bold;
             width: 200px;
         }
+        .apPageText{
+            -webkit-text-stroke-width: 0.5px;
+            -webkit-text-stroke-color: white;
+            font-size: 30px;
+        }
     </style>
 </head>
 <body style="background-color:black">
@@ -73,7 +68,7 @@
                 <p hidden id="powerTrainActive">POWER TRAIN ACTIVE</p><br>
                 <button class="mainButtonLayout" onclick="idleStudy()">Idle Mode</button>
                 <button class="mainButtonLayout" onclick="activeStudy()">Active Mode</button><br>
-                <br><button class="mainButtonLayout" onclick="buyTrainingPerClick()" id="perClickUpgrade">Increase Training Level (1.00 per tick) Cost: 20 Training Points</button><br>
+                <br><button class="mainButtonLayout" onclick="buyTrainingPerClick()" id="perClickUpgrade">Increase Training Level (1.00 per tick) Cost: 50 Training Points</button><br>
                 <br><button class="mainButtonLayout" onclick="lowerUpdateSpeed()" id="perSpeedUpdate">Increase Update Speed (10.00 ticks per second) Cost: 1000 Training Points</button><br>
                 <br><button class="mainButtonLayout" onclick="buyAP()" id="buyAPButton">Buy 1 AP (Attribute Point) Cost: 50,000 Training Points</button><br>                    
                 </font>
@@ -83,12 +78,14 @@
             
         <div id="shopTab" style="display:none">
             <center><b>
-                <font style="color:rgb(126, 182, 247); font-family:Arial, Helvetica, sans-serif; font-weight: bold"><p id="textAPTotal">AP Total: 0</p>
-                <p id="textAPAvailable">AP Available: 0</p></font>
-                <button id="buyAutoUpgradeButton" class="mainButtonLayout" onclick="buyAutoUpgrade()">Buy Auto Upgrade: 1 AP</button><br><br>
-                <button class="mainButtonLayout" onclick="buySuperIdle()">Buy Super Idle (+5x Training Per Tick While Idle): 1 AP</button><br><br>  
-                <button class="mainButtonLayout" onclick="buySuperPowerTrain()">Buy Super Power Train (Power Train +5x Stronger) : 1 AP</button><br><br>
-                <button class="mainButtonLayout" onclick="">Buy Extra Study Point (Inactive): 100 AP</button><br><br>
+                <font style="color:rgb(126, 182, 247); font-family:Arial, Helvetica, sans-serif; font-weight: bold"><p class="apPageText" id="textAPTotal">AP Total: 0</p>
+                <p class="apPageText" id="textAPAvailable">AP Available: 0</p>
+                <button id="buyAutoUpgradeButton" class="mainButtonLayout" onclick="buyAutoUpgrade()">Buy Auto Upgrade: 10 AP</button><br><br>
+                <button id="buyAutoPurchaseAPButton" class="mainButtonLayout" onclick="buyAutoPurchaseAP()">Buy AutoPurchase for AP: 10 AP</button><br><br>
+                <button class="mainButtonLayout" onclick="buySuperIdle()">Buy Super Idle (+2x Training Per Tick While Idle): 1 AP</button><p id="superIdleCurrent" class="apPageText">Current Idle Multiplier: None</p>  
+                <button class="mainButtonLayout" onclick="buySuperPowerTrain()">Buy Super Power Train (Power Train +2x Stronger) : 1 AP</button><p id="superPowerTrainCurrent" class="apPageText">Current Power Train Multiplier: None</p><br>
+                <button hidden class="mainButtonLayout" onclick="">Buy Extra Study Point (Inactive): 100 AP</button><p hidden class="apPageText">Current: 0</p><br><br>
+                </font>
             </b></center>                 
         </div>
 
