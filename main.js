@@ -272,6 +272,9 @@ function loadGame(){
             if (gameData.autoUpgrade == true){
                 document.getElementById("buyAutoUpgradeButton").innerHTML = "Auto Upgrade Purchased"
             }
+            if (gameData.autoPurchaseAP == true){
+                document.getElementById("buyAutoPurchaseAPButton").innerHTML = "Auto Purchase AP Purchased"
+            }
         }, 1000)
     }
     else if (gameData.powerTrainCooldown == true){
