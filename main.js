@@ -204,6 +204,18 @@ function buyAutoUpgrade(){
         gameData.autoUpgrade = true
         document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(gameData.availableAP)
         document.getElementById("buyAutoUpgradeButton").innerHTML = "Auto Upgrade Purchased"
+        document.getElementById("toggleAutoUpgradeButton").hidden = false
+    }
+}
+
+function toggleAutoUpgrade(){
+    if (gameData.autoUpgrade == false){
+        gameData.autoUpgrade = true
+        document.getElementById("toggleAutoUpgradeButton").innerHTML = "Auto Upgrade: ON"
+    }
+    else if (gameData.autoUpgrade == true){
+        gameData.autoUpgrade = false
+        document.getElementById("toggleAutoUpgradeButton").innerHTML = "Auto Upgrade: OFF"
     }
 }
 
@@ -271,6 +283,7 @@ function loadGame(){
             document.getElementById("currentTrainingPoints").hidden = false
             if (gameData.autoUpgrade == true){
                 document.getElementById("buyAutoUpgradeButton").innerHTML = "Auto Upgrade Purchased"
+                document.getElementById("toggleAutoUpgradeButton").hidden = false
             }
             if (gameData.autoPurchaseAP == true){
                 document.getElementById("buyAutoPurchaseAPButton").innerHTML = "Auto Purchase AP Purchased"
