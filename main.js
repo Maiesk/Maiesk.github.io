@@ -438,7 +438,7 @@ function updateHTML(){
     var trainingShown = Number(gameData.training).toFixed(0)
     var trainingPerSecondShown = Number(gameData.trainingPerClick * 1000 / gameData.updateSpeed).toFixed(2)
     var costOfAPShown = Number(gameData.buyAPCost).toFixed(0)
-    var updateSpeedShown = Number(1000 / gameData.updateSpeed).toFixed(2)
+    var statPointCostShown = Numer(statPointCost).toFixed(0)
     var trainingLevelShown = Number(gameData.trainingPerClick).toFixed(2)
     if (powerTrainCooldown == true){
         document.getElementById("powerTrainActive").hidden = false        
@@ -454,7 +454,7 @@ function updateHTML(){
     document.getElementById("textAPTotal").innerHTML = "AP Total: " + numberWithCommas(gameData.totalAP)
     document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(gameData.availableAP)
     document.getElementById("buyAPButton").innerHTML = "Buy 1 AP (Attribute Point) for " + numberWithCommas(costOfAPShown) + " Training Points" 
-    document.getElementById("buyStatPointButton").innerHTML = "Buy Stat Point for " + numberWithCommas(gameData.statPointCost) + " Training Points"
+    document.getElementById("buyStatPointButton").innerHTML = "Buy Stat Point for " + numberWithCommas(statPointCostShown) + " Training Points"
     document.getElementById("perClickUpgrade").innerHTML = "Increase Training Level (" + numberWithCommas(trainingLevelShown) + " per tick) for " + numberWithCommas(gameData.trainingPerClickCost) + " Training Points"
     document.getElementById("statPointsDisplay").innerHTML = gameData.statPoints + "/" + gameData.maxStatPoints
     document.getElementById("currentHPStat").innerHTML = gameData.maxHitPoints + " HP"
