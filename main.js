@@ -27,6 +27,7 @@ var gameData = {
     updateUpgradesBought: 0,
     powerTrainUpgradeMultiplier: 1,
     idleUpgradeMultiplier: 1,
+    statPointUpgradeMultiplier: 1,
     autoUpgrade: false,
     autoPurchaseAP: false,
     autoPurchaseStatPoints: false,
@@ -56,7 +57,7 @@ function statGain(){
     if (gameData.allocatedHP > 0){        
         if (document.getElementById("progressBarHP").value >= 10000){
             document.getElementById("progressBarHP").value = 0
-            gameData.maxHitPoints += 1
+            gameData.maxHitPoints += 1 * gameData.statPointUpgradeMultiplier
             updateHTML()
         }
         document.getElementById("progressBarHP").value += 5 * gameData.allocatedHP
@@ -66,7 +67,7 @@ function statGain(){
     if (gameData.allocatedAtt > 0){        
         if (document.getElementById("progressBarAttack").value >= 10000){
             document.getElementById("progressBarAttack").value = 0
-            gameData.attackPoints += 1
+            gameData.attackPoints += 1 * gameData.statPointUpgradeMultiplier
             updateHTML()
         }
         document.getElementById("progressBarAttack").value += 5 * gameData.allocatedAtt
@@ -74,7 +75,7 @@ function statGain(){
     if (gameData.allocatedDef > 0){        
         if (document.getElementById("progressBarDefense").value >= 10000){
             document.getElementById("progressBarDefense").value = 0
-            gameData.defensePoints += 1
+            gameData.defensePoints += 1 * gameData.statPointUpgradeMultiplier
             updateHTML()
         }
         document.getElementById("progressBarDefense").value += 5 * gameData.allocatedDef
@@ -82,7 +83,7 @@ function statGain(){
     if (gameData.allocatedSpe > 0){        
         if (document.getElementById("progressBarSpeed").value >= 10000){
             document.getElementById("progressBarSpeed").value = 0
-            gameData.speedPoints += 1
+            gameData.speedPoints += 1 * gameData.statPointUpgradeMultiplier
             updateHTML()
         }
         document.getElementById("progressBarSpeed").value += 5 * gameData.allocatedSpe
@@ -354,6 +355,25 @@ function toggleAutoPurchaseStatPoints(){
     }
 }
 
+function buyStatPointBoost(){
+    if (gameData.availableAP > 0){   
+        gameData.availableAP -= 1
+        gameData.statPointUpgradeMultiplier += 1
+        document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(gameData.availableAP)
+        document.getElementById("statPointBoostCurrent").innerHTML = "Current Stat Point Multiplier: " + numberWithCommas(gameData.statPointUpgradeMultiplier)
+    }
+}
+
+function buyTrainingPointBoost(){
+    if (gameData.availableAP > 0){   
+        gameData.availableAP -= 1
+        gameData.idleUpgradeMultiplier += 1
+        document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(gameData.availableAP)
+        document.getElementById("trainingPointBoostCurrent").innerHTML = "Current Stat Point Multiplier: " + numberWithCommas(gameData.idleUpgradeMultiplier)
+        updateHTML()
+    }
+}
+
 function buySuperIdle(){
     if (gameData.availableAP > 0){   
         gameData.availableAP -= 1
@@ -436,7 +456,7 @@ function numberWithCommas(x){
 
 function updateHTML(){
     var trainingShown = Number(gameData.training).toFixed(0)
-    var trainingPerSecondShown = Number(gameData.trainingPerClick * 1000 / gameData.updateSpeed).toFixed(2)
+    var trainingPerSecondShown = Number(gameData.trainingPerClick * gameData.idleUpgradeMultiplier * 1000 / gameData.updateSpeed).toFixed(2)
     var costOfAPShown = Number(gameData.buyAPCost).toFixed(0)
     var statPointCostShown = Number(gameData.statPointCost).toFixed(0)
     var trainingLevelShown = Number(gameData.trainingPerClick).toFixed(2)
