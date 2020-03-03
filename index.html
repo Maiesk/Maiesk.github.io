@@ -5,100 +5,268 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Idle Battle Test Version</title>
     <script>
-        function show(shown, hidden0, hidden1) {
+        function show(shown, hidden0, hidden1, hidden2) {
             document.getElementById(shown).style.display='block';
             document.getElementById(hidden0).style.display='none';
-            document.getElementById(hidden1).style.display='none';
+            if (hidden1 != null){
+                document.getElementById(hidden1).style.display='none';
+            }
+            if (hidden2 != null){
+                document.getElementById(hidden2).style.display='none';
+            }
             return false;
+        }
+        function startFight(ID){
+            document.getElementById("battleTab").style.display='none';
+            document.getElementById("enemiesTab").style.display='none';
+            document.getElementById("fightScreen").style.display='block';
+            document.getElementById("enemyFightImage").src = gameData.enemyList[ID].imagePath;
         }
     </script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/countup.js/1.8.2/countUp.min.js'></script>
     <style>
-        #currentTrainingPoints{
-            -webkit-text-stroke-width: 1px;
-            -webkit-text-stroke-color: white;
-        }
-        #availableStudyPoints{
-            -webkit-text-stroke-width: 0.5px;
-            -webkit-text-stroke-color: white;
-            font-size: 30px;
+        .currentTrainingPoints{
+            font-size: 25px; 
+            color: rgb(6, 128, 128); 
+            font-family: Verdana, Geneva, Tahoma, sans-serif; 
+            font-weight: bolder;
+            -webkit-text-stroke-width: 2px;
+            -webkit-text-stroke-color: rgb(0, 0, 0);
         }
         #battlePowerPerSecond{
-            -webkit-text-stroke-width: 0.5px;
-            -webkit-text-stroke-color: white;
-            font-size: 30px;
+            -webkit-text-stroke-width: 1.5px;
+            -webkit-text-stroke-color: black;
+            font-size: 20px;
         }
         .mainButtonLayout{
             font-size: 25px; 
             color: black; 
-            background-color:rgb(126, 182, 247); 
-            border-color: lightgrey; 
+            background-color: rgb(6, 128, 128); 
+            border-color: #474646;
             font-weight: bold;
+        }
+        .statButtonLayout{
+            font-size: 25px; 
+            color: black; 
+            background-color: rgb(6, 128, 128); 
+            border-color: #474646;
+            font-weight: bold;
+            max-width: 40px;
+            min-width: 40px;
+            text-align: center;
         }
         .navMenuButton{
             font-size: 30px; 
             color: black; 
-            background-color:rgb(126, 182, 247); 
-            border-color: lightgrey; 
+            background-color: rgb(6, 128, 128); 
+            border-color: #474646; 
             font-weight: bold;
             width: 200px;
         }
         .apPageText{
-            -webkit-text-stroke-width: 0.5px;
-            -webkit-text-stroke-color: white;
+            -webkit-text-stroke-width: 2px;
+            -webkit-text-stroke-color: black;
             font-size: 30px;
+        }
+        .itemText{
+            color:  rgb(6, 128, 128);
+            font-size: 15px;
+            font-weight: bold;
+            text-align: center;
+            word-wrap: normal;
+        }
+        .itemImages{
+            width: 60px;
+            height: 60px;
+        }
+        .itemImagesSmaller{
+            width: 30px;
+            height: 30px;
+            align-self: center;
+        }
+        .enemyImage{
+            width:200px; 
+            height:200px;
+        }
+        .divBackground{
+            background-color: rgb(47, 49, 56); 
+            max-width: 1000px; 
+            border-left: 2px solid rgb(178, 178, 178); 
+            border-right: 2px solid rgb(178, 178, 178); 
+            border-bottom: 2px solid grey; 
+            border-top: 2px solid grey
+        }
+        .no-spacing {
+            border-spacing:0; 
+            border-collapse: collapse; 
+            padding-bottom: 0px;
+            padding-top: 0px;
+        }
+        .progessBars{
+            background-color: green;
+            max-width: 200px;
+            color:white;
+            text-align: left;
+            padding-left: 0px;
         }
     </style>
 </head>
-<body style="background-color:black">
+<body style="background-color:rgb(25, 25, 26)">
     <center>
         <button class="mainButtonLayout" onclick="saveGame()">Save</button>
         <button class="mainButtonLayout" onclick="loadGame()">Load</button><br>
         <br>
-        <button class="navMenuButton" onclick="return show('trainingTab','shopTab','battleTab')">Training</button>
-        <button class="navMenuButton" onclick="return show('battleTab','trainingTab','shopTab')">Battle</button>
-        <button class="navMenuButton" onclick="return show('shopTab','trainingTab','battleTab')">Shop</button>
-    </center>
-        <div id="trainingTab">
-            <center><b>
-                <font style="font-size: 72px; color:rgb(126, 182, 247); font-family:Arial, Helvetica, sans-serif; font-weight: bolder"><p id="currentTrainingPoints">0 Training Points</p></font>  
-                <font style="color:rgb(126, 182, 247); font-family:Arial, Helvetica, sans-serif; font-weight: bold"><p id="availableStudyPoints">Study Points: 1/1</p>      
-                <button id="powerTrainButton" hidden class="mainButtonLayout" onclick="powerTrain()">Power Train</button><br>                  
-                <p hidden id="battlePowerPerSecond">1.00 Training Points per second</p>
-                <p hidden id="powerTrainActive">POWER TRAIN ACTIVE</p><br>
-                <button class="mainButtonLayout" onclick="idleStudy()">Idle Mode</button>
-                <button class="mainButtonLayout" onclick="activeStudy()">Active Mode</button><br>
-                <br><button class="mainButtonLayout" onclick="buyTrainingPerClick()" id="perClickUpgrade">Increase Training Level (1.00 per tick) Cost: 50 Training Points</button><br>
-                <br><button class="mainButtonLayout" onclick="lowerUpdateSpeed()" id="perSpeedUpdate">Increase Update Speed (10.00 ticks per second) Cost: 1000 Training Points</button><br>
-                <br><button class="mainButtonLayout" onclick="buyAP()" id="buyAPButton">Buy 1 AP (Attribute Point) Cost: 50,000 Training Points</button><br>                    
-                <br><button hidden class="mainButtonLayout" onclick="toggleAutoUpgrade()" id="toggleAutoUpgradeButton">Auto Upgrade: ON</button>
+        <button class="navMenuButton" onclick="return show('trainingTab','shopTab','battleTab','fightScreen')">Training</button>
+        <button class="navMenuButton" onclick="return show('battleTab','trainingTab','shopTab','fightScreen')">Battle</button>
+        <button class="navMenuButton" onclick="return show('shopTab','trainingTab','battleTab','fightScreen')">Shop</button>
+        <br>
+        <p id="loadingText" hidden class="currentTrainingPoints" style="font-size: 50px">Loading...</p>
+        <br>
+        <div id="trainingTab" class="divBackground">
+            <br>
+                <table class="currentTrainingPoints">
+                    <tr>
+                        <td>Training Points</td>
+                        <td></td>
+                        <td>Stat Points</td>
+                    </tr>
+                    <tr>
+                        <td><p style="text-align: center" id="currentTrainingPoints">0</p></td>
+                        <td></td>
+                        <td><p style="text-align: center" id="statPointsDisplay">0/0</p></td>
+                    </tr>
+                    <tr>
+                        <td><p id="currentHPStat">0 HP</p></td>
+                        <td><progress id="progressBarHP" class="progessBars" max=10000 value=0></progress></td>
+                        <td id="statPointsOnHP" style="text-align: center">0</td>
+                        <td style="text-align: center"><button class="statButtonLayout" onclick="allocateHP(true)">+</button><button class="statButtonLayout" onclick="allocateHP(false)">-</button></td>
+                    </tr>
+                    <tr>
+                        <td><p id="currentAttackStat">0 Attack</p></td>
+                        <td><progress id="progressBarAttack" class="progessBars" max=10000 value=0></progress></td>
+                        <td id="statPointsOnAttack" style="text-align: center">0</td>
+                        <td style="text-align: center"><button class="statButtonLayout" onclick="allocateAttack(true)">+</button><button class="statButtonLayout" onclick="allocateAttack(false)">-</button></td>
+                    </tr>
+                    <tr>
+                        <td><p id="currentDefenseStat">0 Defense</p></td>
+                        <td><progress id="progressBarDefense" class="progessBars" max=10000 value=0></progress></td>
+                        <td id="statPointsOnDefense" style="text-align: center">0</td>
+                        <td style="text-align: center"><button class="statButtonLayout" onclick="allocateDefense(true)">+</button><button class="statButtonLayout" onclick="allocateDefense(false)">-</button></td>
+                    </tr>
+                    <tr>
+                        <td><p id="currentSpeedStat">0 Speed</p></td>
+                        <td><progress id="progressBarSpeed" class="progessBars" max=10000 value=0></progress></td>
+                        <td id="statPointsOnSpeed" style="text-align: center">0</td>
+                        <td style="text-align: center"><button class="statButtonLayout" onclick="allocateSpeed(true)">+</button><button class="statButtonLayout" onclick="allocateSpeed(false)">-</button></td>
+                    </tr> 
+                </table>
+            </font>
+                <font style="color: rgb(6, 128, 128); font-family:Verdana, Geneva, Tahoma, sans-serif; font-weight: bold">
+                <table>
+                    <tr>
+                        <td style="padding-right: 50px">
+                            <p style="max-width: 300px; text-align: center" id="battlePowerPerSecond">10.00 Training Points per second</p>
+                        </td>
+                        <td>
+                            <button id="powerTrainButton" class="mainButtonLayout" onclick="powerTrain()">Power Train</button>
+                        </td>
+                    </tr>
+                </table>                       
+                <p class="currentTrainingPoints" hidden id="powerTrainActive">POWER TRAIN ACTIVE</p>
+                <br><button class="mainButtonLayout" onclick="buyTrainingPerClick()" id="perClickUpgrade">Increase Training Level (1.00 per tick) for 50 Training Points</button><br>
+                <br><button class="mainButtonLayout" onclick="buyStatPoint()" id="buyStatPointButton">Buy Stat Point for 1,000 Training Points</button><br>
+                <br><button class="mainButtonLayout" onclick="buyAP()" id="buyAPButton">Buy 1 AP (Attribute Point) for 50,000 Training Points</button><br>                    
+                <br>
+                <table>
+                    <tr>
+                        <td>
+                            <button hidden class="mainButtonLayout" onclick="toggleAutoUpgrade()" id="toggleAutoUpgradeButton">Auto Upgrade: ON</button>
+                        </td>
+                        <td>
+                            <button hidden class="mainButtonLayout" onclick="toggleAutoPurchaseAP()" id="toggleAutoPurchaseAPButton">Auto Buy AP: ON</button>
+                        </td>
+                        <td>
+                            <button hidden class="mainButtonLayout" onclick="toggleAutoPurchaseStatPoints()" id="toggleAutoPurchaseStatPointsButton">Auto Buy SP: ON</button>
+                        </td>
+                    </tr>
+                </table>
                 </font>
-                <p hidden id="hiddenTestNim"></p>
-            </b></center>
+            
         </div>
             
-        <div id="shopTab" style="display:none">
+        <div id="shopTab" style="display:none" class="divBackground">
             <center><b>
-                <font style="color:rgb(126, 182, 247); font-family:Arial, Helvetica, sans-serif; font-weight: bold"><p class="apPageText" id="textAPTotal">AP Total: 0</p>
+                <font style="color: rgb(6, 128, 128); font-family:Verdana, Geneva, Tahoma, sans-serif; font-weight: bold"><p class="apPageText" id="textAPTotal">AP Total: 0</p>
                 <p class="apPageText" id="textAPAvailable">AP Available: 0</p>
                 <button id="buyAutoUpgradeButton" class="mainButtonLayout" onclick="buyAutoUpgrade()">Buy Auto Upgrade: 10 AP</button><br><br>
                 <button id="buyAutoPurchaseAPButton" class="mainButtonLayout" onclick="buyAutoPurchaseAP()">Buy AutoPurchase for AP: 10 AP</button><br><br>
+                <button id="buyAutoPurchaseStatPointsButton" class="mainButtonLayout" onclick="buyAutoPurchaseStatPoints()">Buy AutoPurchase for Stat Points: 10 AP</button><br><br>
                 <button class="mainButtonLayout" onclick="buySuperIdle()">Buy Super Idle (+2x Training Per Tick While Idle): 1 AP</button><p id="superIdleCurrent" class="apPageText">Current Idle Multiplier: None</p>  
                 <button class="mainButtonLayout" onclick="buySuperPowerTrain()">Buy Super Power Train (Power Train +2x Stronger) : 1 AP</button><p id="superPowerTrainCurrent" class="apPageText">Current Power Train Multiplier: None</p><br>
-                <button hidden class="mainButtonLayout" onclick="">Buy Extra Study Point (Inactive): 100 AP</button><p hidden class="apPageText">Current: 0</p><br><br>
                 </font>
             </b></center>                 
         </div>
-
-        <div id="battleTab" style="display:none">
-            <center><font style="color:rgb(126, 182, 247); font-family:Arial, Helvetica, sans-serif; font-weight: bold"><p id="comingSoon">Coming soon...</p></font>
-            <table>
-                <tr></tr>
-            </table>
-            </center>  
+ 
+        <div id="battleTab" style="display:none" class="divBackground">
+            <center><font style="color: rgb(6, 128, 128); font-family:Verdana, Geneva, Tahoma, sans-serif; font-weight: bold"><p id="comingSoon">Coming soon...</p></font></center>
+            <center><button class="navMenuButton" onclick="return show('enemiesTab','inventoryTab',)">Enemies</button>
+            <button class="navMenuButton" onclick="return show('inventoryTab','enemiesTab',)">Inventory</button>  
+            <div id="inventoryTab">
+                <font style="color: rgb(6, 128, 128); font-family:Verdana, Geneva, Tahoma, sans-serif; font-weight: bold">
+                <p class="apPageText" style="color: rgb(6, 128, 128)">Inventory</p>
+                <table style="border: 1px solid white; background-color: rgb(25, 25, 26)">
+                    <tr>
+                        <td><center><figure><img src="" id="testWeapon0" class="itemImages" onclick=""><figcaption class="itemText" id="testWeaponCaption0" style="width: 90px; align-content: center"> </figcaption></figure></center></td>
+                        <td><center><figure><img src="" id="testWeapon1" class="itemImages" onclick=""><figcaption class="itemText" id="testWeaponCaption1" style="width: 90px; align-content: center"> </figcaption></figure></center></td>
+                        <td><center><figure><img src="" id="testWeapon2" class="itemImages" onclick=""><figcaption class="itemText" id="testWeaponCaption2" style="width: 90px; align-content: center"> </figcaption></figure></center></td>
+                        <td><center><figure><img src="" id="testWeapon3" class="itemImages" onclick=""><figcaption class="itemText" id="testWeaponCaption3" style="width: 90px; align-content: center"> </figcaption></figure></center></td>
+                    </tr>
+                </table>
+                <br>
+                <p class="apPageText" style="color: rgb(6, 128, 128)">Equipped</p>
+                <table>
+                    <tr>
+                        <td><img class="itemImages" id="table0" src=" "></td>
+                        <td><img class="itemImages" id="table1" src=" "></td>
+                        <td><img class="itemImages" id="table2" src=" "></td>
+                        <td><img class="itemImages" id="table3" src=" "></td>
+                    </tr>
+                    <tr>
+                        <td><img class="itemImages" id="table4" src=" "></td>
+                        <td><img class="itemImages" id="table5" src=" "></td>
+                        <td><img class="itemImages" id="table6" src=" "></td>
+                        <td><img class="itemImages" id="table7" src=" "></td>
+                    </tr>
+                </table>
+                </font>
+            </div>
+            
+            <div id="enemiesTab" style="display:none">
+            <font style="color: rgb(6, 128, 128); font-family:Verdana, Geneva, Tahoma, sans-serif; font-weight: bold"><p class="apPageText" style="color: rgb(6, 128, 128)">Challengers Await</p>
+                <table>
+                    <tr>
+                        <td><figure><img id="enemy0" class="enemyImage" src="" onclick="startFight(0)"><figcaption style="border: 1px solid black; background-color: rgb(27, 27, 41)" class="itemText" id="enemyName0"></figcaption></figcaption></figure></td>
+                        <td><figure><img id="enemy1" class="enemyImage" src="" onclick="startFight(1)"><figcaption style="border: 1px solid black; background-color: rgb(27, 27, 41)" class="itemText" id="enemyName1"></figcaption></figcaption></figure></td>
+                    </tr>
+                </table>
+            </font>
+            </div>
+            </center>
+            
         </div>
-
-
+        <div id="fightScreen" style="display:none">
+            <center>
+            <table>
+                <tr>
+                    <td><img class="enemyImage" src="/images/enemies/pipo-enemy014b.png"></td>
+                    <td><img id="enemyFightImage" class="enemyImage" src=""></td>
+                </tr>
+            </table>
+            </center>
+        </div>
+    </center>
+        
     <script src="main.js" charset="UTF-8" type="text/javascript"></script>
+    
 </body>
 </html>
