@@ -438,7 +438,7 @@ function updateHTML(){
     var trainingShown = Number(gameData.training).toFixed(0)
     var trainingPerSecondShown = Number(gameData.trainingPerClick * 1000 / gameData.updateSpeed).toFixed(2)
     var costOfAPShown = Number(gameData.buyAPCost).toFixed(0)
-    var statPointCostShown = Numer(statPointCost).toFixed(0)
+    var statPointCostShown = Number(statPointCost).toFixed(0)
     var trainingLevelShown = Number(gameData.trainingPerClick).toFixed(2)
     if (powerTrainCooldown == true){
         document.getElementById("powerTrainActive").hidden = false        
