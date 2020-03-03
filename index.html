@@ -172,7 +172,6 @@
                         </td>
                     </tr>
                 </table>                       
-                <p class="currentTrainingPoints" hidden id="powerTrainActive">POWER TRAIN ACTIVE</p>
                 <br><button class="mainButtonLayout" onclick="buyTrainingPerClick()" id="perClickUpgrade">Increase Training Level (1.00 per tick) for 50 Training Points</button><br>
                 <br><button class="mainButtonLayout" onclick="buyStatPoint()" id="buyStatPointButton">Buy Stat Point for 1,000 Training Points</button><br>
                 <br><button class="mainButtonLayout" onclick="buyAP()" id="buyAPButton">Buy 1 AP (Attribute Point) for 50,000 Training Points</button><br>                    
@@ -201,8 +200,8 @@
                 <button id="buyAutoUpgradeButton" class="mainButtonLayout" onclick="buyAutoUpgrade()">Buy Auto Upgrade: 10 AP</button><br><br>
                 <button id="buyAutoPurchaseAPButton" class="mainButtonLayout" onclick="buyAutoPurchaseAP()">Buy AutoPurchase for AP: 10 AP</button><br><br>
                 <button id="buyAutoPurchaseStatPointsButton" class="mainButtonLayout" onclick="buyAutoPurchaseStatPoints()">Buy AutoPurchase for Stat Points: 10 AP</button><br><br>
-                <button class="mainButtonLayout" onclick="buyStatPointBoost()">Stat Point Speed +1x: 1 AP</button><p id="statPointBoostCurrent" class="currentTrainingPoints">Current Stat Point Multiplier: None</p>  
-                <button class="mainButtonLayout" onclick="buyTrainingPointBoost()">Training Point Speed +1x: 1 AP</button><p id="trainingPointBoostCurrent" class="currentTrainingPoints">Current Training Point Multiplier: None</p><br>
+                <button id="buyStatPointBoostButton" class="mainButtonLayout" onclick="buyStatPointBoost()">+1 Stat Point per Bar: 1 AP</button><p id="statPointBoostCurrent" class="currentTrainingPoints">Current Stat Point Multiplier: None</p>  
+                <button id="buyTrainingPointBoostButton" class="mainButtonLayout" onclick="buyTrainingPointBoost()">+1x Training Point Speed: 1 AP</button><p id="trainingPointBoostCurrent" class="currentTrainingPoints">Current Training Point Multiplier: None</p><br>
                 </font>
             </b></center>                 
         </div>
