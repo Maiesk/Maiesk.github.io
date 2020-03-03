@@ -369,7 +369,7 @@ function buyTrainingPointBoost(){
         gameData.availableAP -= 1
         gameData.idleUpgradeMultiplier += 1
         document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(gameData.availableAP)
-        document.getElementById("trainingPointBoostCurrent").innerHTML = "Current Stat Point Multiplier: " + numberWithCommas(gameData.idleUpgradeMultiplier)
+        document.getElementById("trainingPointBoostCurrent").innerHTML = "Current Training Point Multiplier: " + numberWithCommas(gameData.idleUpgradeMultiplier)
         updateHTML()
     }
 }
