@@ -21,6 +21,10 @@ var gameData = {
     allocatedAtt: 0,
     allocatedDef: 0,
     allocatedSpe: 0,
+    currentProgressHP: 0,
+    currentProgressAtt: 0,
+    currentProgressDef: 0,
+    currentProgressSpe: 0,
     upgradesBought: 0,
     powerTrainUpgradeMultiplier: 1,
     trainingPointBoostCost: 5,
@@ -59,8 +63,7 @@ function statGain(){
             updateHTML()
         }
         document.getElementById("progressBarHP").value += 5 * gameData.allocatedHP
-        var currentProgress = document.getElementById("progressBarHP").value
-        document.getElementById("progressBarHP").innerHTML = 10000 / currentProgress + "%"
+        gameData.currentProgressHP = document.getElementById("progressBarHP").value
     }
     if (gameData.allocatedAtt > 0){        
         if (document.getElementById("progressBarAttack").value >= 10000){
@@ -70,6 +73,7 @@ function statGain(){
             updateHTML()
         }
         document.getElementById("progressBarAttack").value += 5 * gameData.allocatedAtt
+        gameData.currentProgressAtt = document.getElementById("progressBarAttack").value
     }
     if (gameData.allocatedDef > 0){        
         if (document.getElementById("progressBarDefense").value >= 10000){
@@ -79,6 +83,7 @@ function statGain(){
             updateHTML()
         }
         document.getElementById("progressBarDefense").value += 5 * gameData.allocatedDef
+        gameData.currentProgressDef = document.getElementById("progressBarDefense").value
     }
     if (gameData.allocatedSpe > 0){        
         if (document.getElementById("progressBarSpeed").value >= 10000){
@@ -86,8 +91,9 @@ function statGain(){
             document.getElementById("progressBarSpeed").max = 10000 * (1.25**gameData.speedPoints)
             gameData.speedPoints += 1 * gameData.statPointUpgradeMultiplier
             updateHTML()
-        }
+        }        
         document.getElementById("progressBarSpeed").value += 5 * gameData.allocatedSpe
+        gameData.currentProgressSpe = document.getElementById("progressBarSpeed").value
     }
 }
 
@@ -350,6 +356,10 @@ function loadGame(){
         document.getElementById("loadingText").hidden = false
         setTimeout(function(){
             updateHTML()
+            document.getElementById("progressBarHP").value = gameData.currentProgressHP
+            document.getElementById("progressBarAttack").value = gameData.currentProgressAtt
+            document.getElementById("progressBarDefense").value = gameData.currentProgressDef
+            document.getElementById("progressBarSpeed").value = gameData.currentProgressSpe
             document.getElementById("trainingTab").hidden = false
             document.getElementById("battleTab").hidden = false
             document.getElementById("shopTab").hidden = false
