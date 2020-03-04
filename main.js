@@ -21,10 +21,7 @@ var gameData = {
     allocatedAtt: 0,
     allocatedDef: 0,
     allocatedSpe: 0,
-    powerTrainPower: 2,
-    powerTrainSpeed: 2,
     upgradesBought: 0,
-    updateUpgradesBought: 0,
     powerTrainUpgradeMultiplier: 1,
     trainingPointBoostCost: 5,
     idleUpgradeMultiplier: 1,
@@ -33,8 +30,6 @@ var gameData = {
     autoUpgrade: false,
     autoPurchaseAP: false,
     autoPurchaseStatPoints: false,
-    powerTrainTrainingMultiplier: 0,
-    powerTrainUpdateMultiplier: 1,
     enemyList: [],
     allItems: []
 }
@@ -148,14 +143,26 @@ var powerTrainCooldown = false;
 function powerTrain(){
     if (powerTrainCooldown == false){
         var originalTrainingPerClick = gameData.trainingPerClick
-        gameData.trainingPerClick *= (gameData.powerTrainPower * gameData.powerTrainUpgradeMultiplier) 
+        gameData.trainingPerClick *= gameData.powerTrainUpgradeMultiplier
         powerTrainCooldown = true
         mainGameLoop = window.setInterval(function (){
             update();
         }, gameData.updateSpeed);
         updateHTML()
-        var trainingPerSecondShown = Number(gameData.trainingPerClick * 1000 / gameData.updateSpeed).toFixed(2)
-        document.getElementById("powerTrainButton").innerHTML = "ACTIVE: "     
+        document.getElementById("powerTrainButton").disabled = true
+        document.getElementById("powerTrainButton").style = "background-color: #474646; color: #373636"
+        var trainingPerSecondShown = Number(gameData.trainingPerClick * 2000 / gameData.updateSpeed).toFixed(2)
+        var timeLeft = 5
+        document.getElementById("battlePowerPerSecond").innerHTML = numberWithCommas(trainingPerSecondShown) + " Training Points per second for " + timeLeft + " seconds!"   
+        var countdown = setInterval(function(){
+            if (timeLeft == 1){
+                clearInterval(countdown)
+            }
+            else{
+                timeLeft -= 1
+                document.getElementById("battlePowerPerSecond").innerHTML = numberWithCommas(trainingPerSecondShown) + " Training Points per second for " + timeLeft + " seconds!"   
+            }
+        }, 1000)
         setTimeout(function(){ 
             if (gameData.upgradesBought > 0){
                 gameData.trainingPerClick = originalTrainingPerClick * (1.5)**gameData.upgradesBought
@@ -165,10 +172,10 @@ function powerTrain(){
             }
             clearInterval(mainGameLoop)
             powerTrainCooldown = false
-            gameData.powerTrainTrainingMultiplier = 0
-            gameData.powerTrainUpdateMultiplier = 1
             gameData.upgradesBought = 0
             document.getElementById("powerTrainButton").innerHTML = "Power Train"
+            document.getElementById("powerTrainButton").disabled = false
+            document.getElementById("powerTrainButton").style = "background-color: rgb(6, 128, 128); color: black"
             updateHTML()
         }, 5000)  
     }
@@ -193,72 +200,6 @@ function buyStatPoint(){
         gameData.maxStatPoints += 1
         gameData.statPointCost *= 5
         updateHTML()
-    }
-}
-
-function idleStudy(){
-    if (gameData.studyPoints > 0){
-        gameData.trainingPerClick *= gameData.idleUpgradeMultiplier
-        mainGameLoop = window.setInterval(function (){
-           update();
-        }, gameData.updateSpeed)
-        gameData.studyPoints -= 1
-        document.getElementById("battlePowerPerSecond").hidden = false
-        gameData.idle = true      
-        updateHTML()
-    }
-    else if (gameData.idle == true){
-        clearInterval(mainGameLoop)
-        gameData.studyPoints += 1
-        gameData.trainingPerClick /= gameData.idleUpgradeMultiplier
-        document.getElementById("battlePowerPerSecond").hidden = true
-        gameData.idle = false
-    }
-    else if (gameData.active == true && powerTrainCooldown == false){
-        gameData.active = false
-        gameData.idle = true
-        gameData.trainingPerClick *= gameData.idleUpgradeMultiplier
-        mainGameLoop = window.setInterval(function (){
-            update();
-        }, gameData.updateSpeed)
-        document.getElementById("powerTrainButton").hidden = true
-        document.getElementById("battlePowerPerSecond").hidden = false
-        updateHTML()
-    }
-}
-
-function activeStudy(){
-    if (gameData.studyPoints > 0){
-        gameData.studyPoints -= 1
-        document.getElementById("battlePowerPerSecond").innerHTML = "Click Power Train to earn " + gameData.powerTrainPower * gameData.powerTrainUpgradeMultiplier * gameData.powerTrainSpeed + "x your training per second for 5 seconds!"
-        document.getElementById("battlePowerPerSecond").hidden = false
-        gameData.active = true
-        document.getElementById("powerTrainButton").hidden = false
-    }
-    else if (gameData.active == true && powerTrainCooldown == false){
-        gameData.studyPoints += 1
-        gameData.active = false
-        document.getElementById("battlePowerPerSecond").hidden = true
-        document.getElementById("powerTrainButton").hidden = true
-    }
-    else if (gameData.idle == true){
-        clearInterval(mainGameLoop)
-        gameData.idle = false
-        gameData.active = true
-        gameData.trainingPerClick /= gameData.idleUpgradeMultiplier
-        document.getElementById("powerTrainButton").hidden = false
-        updateHTML()
-    }
-}
-   
-function lowerUpdateSpeed(){
-    if (gameData.training >= gameData.updateSpeedCost){
-        gameData.powerTrainUpdateMultiplier /= 1.35
-        gameData.training -= gameData.updateSpeedCost
-        gameData.updateSpeed /= 1.35
-        gameData.updateSpeedCost *= 10
-        updateHTML()
-        resetUpdateSpeed()        
     }
 }
 
@@ -366,7 +307,6 @@ function buyStatPointBoost(){
         document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(gameData.availableAP)
         document.getElementById("statPointBoostCurrent").innerHTML = "Current Stat Point Multiplier: " + numberWithCommas(gameData.statPointUpgradeMultiplier)
         document.getElementById("buyStatPointBoostButton").innerHTML = "+1 Stat Point per Bar: " + gameData.statPointBoostCost + " AP"
-
     }
 }
 
@@ -382,23 +322,7 @@ function buyTrainingPointBoost(){
     }
 }
 
-function buySuperIdle(){
-    if (gameData.availableAP > 0){   
-        gameData.availableAP -= 1
-        if (gameData.idle == true){
-            idleStudy()
-        }
-        if (gameData.idleUpgradeMultiplier == 1){
-            gameData.idleUpgradeMultiplier = 2
-        }
-        else {
-            gameData.idleUpgradeMultiplier += 2
-        }
-        idleStudy()
-        document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(gameData.availableAP)
-        document.getElementById("superIdleCurrent").innerHTML = "Current Idle Multiplier: " + numberWithCommas(gameData.idleUpgradeMultiplier)
-    }
-}
+/* Currently defunct but may be brought back later
 
 function buySuperPowerTrain(){
     if (gameData.availableAP > 0){    
@@ -412,7 +336,7 @@ function buySuperPowerTrain(){
         document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(gameData.availableAP)
         document.getElementById("superPowerTrainCurrent").innerHTML = "Current Power Train Multiplier: " + numberWithCommas(gameData.powerTrainUpgradeMultiplier)
     }
-}
+}*/
 
 //TODO Learn error message display AND/OR find solution to power train loading issue
 function loadGame(){
@@ -468,10 +392,7 @@ function updateHTML(){
     var costOfAPShown = Number(gameData.buyAPCost).toFixed(0)
     var statPointCostShown = Number(gameData.statPointCost).toFixed(0)
     var trainingLevelShown = Number(gameData.trainingPerClick).toFixed(2)
-    if (powerTrainCooldown == true){
-        document.getElementById("powerTrainActive").hidden = false        
-    }
-    document.getElementById("battlePowerPerSecond").innerHTML = numberWithCommas(trainingPerSecondShown) + " Training Points per second"   
+    document.getElementById("battlePowerPerSecond").innerHTML = numberWithCommas(trainingPerSecondShown) + " Training Points per second!"   
     if (gameData.autoPurchaseAP == false){
         document.getElementById("buyAutoPurchaseAPButton").innerHTML = "Buy AutoPurchase for AP: 10 AP"
     }
@@ -552,7 +473,6 @@ createItem("Sword of Extremities", 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, false, tr
 createItem("Sword of Coolness", 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, false, true, "/images/weapons/04 - Steel sword.png")
 createItem("Sword of Otherness", 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, false, true, "/images/weapons/08 - Red copper sword.png")
 createItem("Fourth Sword", 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, false, true, "/images/weapons/29 - Occult sword variant 1.png")
-
 
 
 function printSuccess(){
