@@ -472,15 +472,14 @@ function createItem(name, ID, fire, air, earth, water, melee, fireDefense, airDe
     }
     gameData.allItems[item.ID] = item
     document.getElementById("testWeapon" + item.ID).src = item.imagePath
-    document.getElementById("testWeapon" + item.ID).onclick = function(){setSelected(item.ID)}
+    document.getElementById("testWeaponClick" + item.ID).onclick = function(){setSelected(item.ID)}
     document.getElementById("testWeaponCaption" + item.ID).innerHTML = item.name
     return item;
 }
 
 createEnemy(0, "Snek", 10, 1, 1, 1, "/images/enemies/pipo-enemy003b.png")
 createEnemy(1, "Sloim", 10, 1, 1, 1, "/images/enemies/pipo-enemy009b.png")
-createItem("Sword of Extremities", 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, false, true, "/images/weapons/01 - Old stone sword.png")
-createItem("Sword of Coolness", 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, false, true, "/images/weapons/04 - Steel sword.png")
+createItem("Training Sword", 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, false, true, "/images/weapons/04 - Steel sword.png")
 createItem("Sword of Otherness", 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, false, true, "/images/weapons/08 - Red copper sword.png")
 createItem("Fourth Sword", 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, false, true, "/images/weapons/29 - Occult sword variant 1.png")
 
@@ -507,10 +506,12 @@ function setSelected(ID){
 function reloadInventoryDisplay(){
     for (var i = 0; i < 8; i++){
         if (gameData.equipment[i] != null){ 
-            document.getElementById("table" + i).src = gameData.equipment[i].imagePath        
+            document.getElementById("table" + i).src = gameData.equipment[i].imagePath
+            document.getElementById("equipmentName" + i).innerHTML = gameData.equipment[i].name       
         }
         else {
-            document.getElementById("table" + i).src = " "
+            document.getElementById("table" + i).src = "/images/weapons/emptyEquipmentSlot.png"
+            document.getElementById("equipmentName" + i).innerHTML = " "      
         }
     }
 }

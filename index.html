@@ -3,6 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href='https://fonts.googleapis.com/css?family=Fredoka One' rel='stylesheet'>
     <title>Idle Battle Test Version</title>
     <script>
         function show(shown, hidden0, hidden1, hidden2) {
@@ -21,6 +22,7 @@
             document.getElementById("enemiesTab").style.display='none';
             document.getElementById("fightScreen").style.display='block';
             document.getElementById("enemyFightImage").src = gameData.enemyList[ID].imagePath;
+            document.getElementById("fightScreenEnemyName").innerHTML = gameData.enemyList[ID].name;
         }
     </script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/countup.js/1.8.2/countUp.min.js'></script>
@@ -28,13 +30,13 @@
         .currentTrainingPoints{
             font-size: 25px; 
             color: rgb(6, 128, 128); 
-            font-family: Verdana, Geneva, Tahoma, sans-serif; 
-            font-weight: bolder;
-            -webkit-text-stroke-width: 2px;
+            font-family: Fredoka One; 
+            font-weight: bold;
+            -webkit-text-stroke-width: 1px;
             -webkit-text-stroke-color: rgb(0, 0, 0);
         }
         #battlePowerPerSecond{
-            -webkit-text-stroke-width: 1.5px;
+            -webkit-text-stroke-width: 1px;
             -webkit-text-stroke-color: black;
             font-size: 20px;
         }
@@ -43,14 +45,17 @@
             color: black; 
             background-color: rgb(6, 128, 128); 
             border-color: #474646;
-            font-weight: bold;
+            font-weight: normal;
+            border-radius: 5px;
+            border-width: 3px;
+            font-family: Fredoka One;
         }
         .statButtonLayout{
             font-size: 25px; 
             color: black; 
             background-color: rgb(6, 128, 128); 
             border-color: #474646;
-            font-weight: bold;
+            font-weight: normal;
             max-width: 40px;
             min-width: 40px;
             text-align: center;
@@ -60,19 +65,23 @@
             color: black; 
             background-color: rgb(6, 128, 128); 
             border-color: #474646; 
-            font-weight: bold;
+            font-weight: normal;
             width: 200px;
+            border-width: 3px;
+            border-radius: 5px;
+            font-family: Fredoka One;
         }
         .apPageText{
-            -webkit-text-stroke-width: 2px;
+            -webkit-text-stroke-width: 1px;
             -webkit-text-stroke-color: black;
             font-size: 30px;
         }
         .itemText{
+            -webkit-text-stroke-width: 1px;
+            -webkit-text-stroke-color: black;
             color:  rgb(6, 128, 128);
-            font-size: 15px;
+            font-size: 20px;
             font-weight: bold;
-            text-align: center;
             word-wrap: normal;
         }
         .itemImages{
@@ -93,7 +102,7 @@
             max-width: 1000px; 
             border-left: 2px solid rgb(178, 178, 178); 
             border-right: 2px solid rgb(178, 178, 178); 
-            border-bottom: 2px solid grey; 
+            border-bottom: 2px solid grey;
             border-top: 2px solid grey
         }
         .no-spacing {
@@ -161,7 +170,7 @@
                     </tr> 
                 </table>
             </font>
-                <font style="color: rgb(6, 128, 128); font-family:Verdana, Geneva, Tahoma, sans-serif; font-weight: bold">
+                <font style="color: rgb(6, 128, 128); font-family: Fredoka One; font-weight: bold">
                 <table>
                     <tr>
                         <td style="padding-right: 50px">
@@ -195,7 +204,11 @@
             
         <div id="shopTab" style="display:none" class="divBackground">
             <center><b>
-                <font style="color: rgb(6, 128, 128); font-family:Verdana, Geneva, Tahoma, sans-serif; font-weight: bold"><p class="apPageText" id="textAPTotal">AP Total: 0</p>
+            <br>
+            <button class="navMenuButton" onclick="return show('attributePointShop','goldShop')">AP Shop</button>
+            <button class="navMenuButton" onclick="return show('goldShop','attributePointShop')">Gold Shop</button>          
+            <div id="attributePointShop">
+                <font style="color: rgb(6, 128, 128); font-family: Fredoka One; font-weight: bold"><p class="apPageText" id="textAPTotal">AP Total: 0</p>
                 <p class="apPageText" id="textAPAvailable">AP Available: 0</p>
                 <button id="buyAutoUpgradeButton" class="mainButtonLayout" onclick="buyAutoUpgrade()">Buy Auto Upgrade: 10 AP</button><br><br>
                 <button id="buyAutoPurchaseAPButton" class="mainButtonLayout" onclick="buyAutoPurchaseAP()">Buy AutoPurchase for AP: 10 AP</button><br><br>
@@ -203,45 +216,89 @@
                 <button id="buyStatPointBoostButton" class="mainButtonLayout" onclick="buyStatPointBoost()">+1 Stat Point per Bar: 1 AP</button><p id="statPointBoostCurrent" class="currentTrainingPoints">Current Stat Point Multiplier: None</p>  
                 <button id="buyTrainingPointBoostButton" class="mainButtonLayout" onclick="buyTrainingPointBoost()">+1x Training Point Speed: 1 AP</button><p id="trainingPointBoostCurrent" class="currentTrainingPoints">Current Training Point Multiplier: None</p><br>
                 </font>
+            </div>
+            <div id="goldShop" style="display:none">
+                <p class="currentTrainingPoints">Earn Gold by defeating enemies in Battle mode. Coming soon.</p>
+            </div>
             </b></center>                 
         </div>
  
         <div id="battleTab" style="display:none" class="divBackground">
-            <center><font style="color: rgb(6, 128, 128); font-family:Verdana, Geneva, Tahoma, sans-serif; font-weight: bold"><p id="comingSoon">Coming soon...</p></font></center>
-            <center><button class="navMenuButton" onclick="return show('enemiesTab','inventoryTab',)">Enemies</button>
-            <button class="navMenuButton" onclick="return show('inventoryTab','enemiesTab',)">Inventory</button>  
+            <br>
+            <center><button class="navMenuButton" onclick="return show('enemiesTab','inventoryTab','equipmentTab')">Enemies</button>
+            <button class="navMenuButton" onclick="return show('inventoryTab','enemiesTab','equipmentTab')">Inventory</button>
+            <button class="navMenuButton" onclick="return show('equipmentTab','enemiesTab','inventoryTab')">Equipment</button>  
+            
             <div id="inventoryTab">
-                <font style="color: rgb(6, 128, 128); font-family:Verdana, Geneva, Tahoma, sans-serif; font-weight: bold">
+                <font style="color: rgb(6, 128, 128); font-family: Fredoka One; font-weight: bold">
                 <p class="apPageText" style="color: rgb(6, 128, 128)">Inventory</p>
                 <table style="border: 1px solid white; background-color: rgb(25, 25, 26)">
                     <tr>
-                        <td><center><figure><img src="" id="testWeapon0" class="itemImages" onclick=""><figcaption class="itemText" id="testWeaponCaption0" style="width: 90px; align-content: center"> </figcaption></figure></center></td>
-                        <td><center><figure><img src="" id="testWeapon1" class="itemImages" onclick=""><figcaption class="itemText" id="testWeaponCaption1" style="width: 90px; align-content: center"> </figcaption></figure></center></td>
-                        <td><center><figure><img src="" id="testWeapon2" class="itemImages" onclick=""><figcaption class="itemText" id="testWeaponCaption2" style="width: 90px; align-content: center"> </figcaption></figure></center></td>
-                        <td><center><figure><img src="" id="testWeapon3" class="itemImages" onclick=""><figcaption class="itemText" id="testWeaponCaption3" style="width: 90px; align-content: center"> </figcaption></figure></center></td>
+                        <td id="testWeaponClick0"><center><figure><img src="" id="testWeapon0" class="itemImages"><figcaption class="itemText" id="testWeaponCaption0" style="width: 90px; align-content: center"> </figcaption></figure></center></td>
+                        <td id="testWeaponClick1"><center><figure><img src="" id="testWeapon1" class="itemImages"><figcaption class="itemText" id="testWeaponCaption1" style="width: 90px; align-content: center"> </figcaption></figure></center></td>
+                        <td id="testWeaponClick2"><center><figure><img src="" id="testWeapon2" class="itemImages"><figcaption class="itemText" id="testWeaponCaption2" style="width: 90px; align-content: center"> </figcaption></figure></center></td>
+                        <td id="testWeaponClick3"><center><figure><img src="" id="testWeapon3" class="itemImages"><figcaption class="itemText" id="testWeaponCaption3" style="width: 90px; align-content: center"> </figcaption></figure></center></td>
+                        <td></td>
+                        <td></td>
                     </tr>
                 </table>
                 <br>
-                <p class="apPageText" style="color: rgb(6, 128, 128)">Equipped</p>
-                <table>
-                    <tr>
-                        <td><img class="itemImages" id="table0" src=" "></td>
-                        <td><img class="itemImages" id="table1" src=" "></td>
-                        <td><img class="itemImages" id="table2" src=" "></td>
-                        <td><img class="itemImages" id="table3" src=" "></td>
-                    </tr>
-                    <tr>
-                        <td><img class="itemImages" id="table4" src=" "></td>
-                        <td><img class="itemImages" id="table5" src=" "></td>
-                        <td><img class="itemImages" id="table6" src=" "></td>
-                        <td><img class="itemImages" id="table7" src=" "></td>
-                    </tr>
-                </table>
                 </font>
             </div>
             
+            <div id="equipmentTab" style="display:none">
+                <font style="color: rgb(6, 128, 128); font-family: Fredoka One; font-weight: bold">
+                <p class="apPageText" style="color: rgb(6, 128, 128)">Equipped</p>
+                <center>
+                <table style="min-width: 700px">
+                    <tr>
+                        <td></td>
+                        <td><p class="apPageText" style="padding-left: 50px">Name</p></td>
+                        <td><p class="apPageText" style="padding-left: 50px">Damage</p></td>
+                        <td><p class="apPageText" style="padding-left: 50px">Defense</p></td>
+                    </tr>
+                    <tr>
+                        <td><img class="itemImages" id="table0" src="/images/weapons/emptyEquipmentSlot.png"></td>
+                        <td><p class="itemText" style="padding-left: 10px" id="equipmentName0"></p></td>
+                    </tr>
+                    <tr>
+                        <td><img class="itemImages" id="table1" src="/images/weapons/emptyEquipmentSlot.png"></td>
+                        <td><p class="itemText" style="padding-left: 10px" id="equipmentName1"></p></td>
+                    </tr>
+                    <tr>    
+                        <td><img class="itemImages" id="table2" src="/images/weapons/emptyEquipmentSlot.png"></td>
+                        <td><p class="itemText" style="padding-left: 10px" id="equipmentName2"></p></td>
+                    </tr>
+                    <tr>
+                        <td><img class="itemImages" id="table3" src="/images/weapons/emptyEquipmentSlot.png"></td>
+                        <td><p class="itemText" style="padding-left: 10px" id="equipmentName3"></p></td>
+                    </tr>
+                    <tr>
+                        <td><img class="itemImages" id="table4" src="/images/weapons/emptyEquipmentSlot.png"></td>
+                        <td><p class="itemText" style="padding-left: 10px" id="equipmentName4"></p></td>
+                    </tr>
+                    <tr>
+                        <td><img class="itemImages" id="table5" src="/images/weapons/emptyEquipmentSlot.png"></td>
+                        <td><p class="itemText" style="padding-left: 10px" id="equipmentName5"></p></td>
+                    </tr>
+                    <tr>
+                        <td><img class="itemImages" id="table6" src="/images/weapons/emptyEquipmentSlot.png"></td>
+                        <td><p class="itemText" style="padding-left: 10px" id="equipmentName6"></p></td>
+                    </tr>
+                    <tr>
+                        <td><img class="itemImages" id="table7" src="/images/weapons/emptyEquipmentSlot.png"></td>
+                        <td><p class="itemText" style="padding-left: 10px" id="equipmentName7"></p></td>
+                    </tr>
+                    <tr>
+                        <td><br></td>
+                    </tr>
+                </table>
+                </center>
+                </font>
+            </div>
+
             <div id="enemiesTab" style="display:none">
-            <font style="color: rgb(6, 128, 128); font-family:Verdana, Geneva, Tahoma, sans-serif; font-weight: bold"><p class="apPageText" style="color: rgb(6, 128, 128)">Challengers Await</p>
+            <font style="color: rgb(6, 128, 128); font-family: Fredoka One; font-weight: bold"><p class="apPageText" style="color: rgb(6, 128, 128)">Challengers Await</p>
                 <table>
                     <tr>
                         <td><figure><img id="enemy0" class="enemyImage" src="" onclick="startFight(0)"><figcaption style="border: 1px solid black; background-color: rgb(27, 27, 41)" class="itemText" id="enemyName0"></figcaption></figcaption></figure></td>
@@ -257,10 +314,15 @@
             <center>
             <table>
                 <tr>
-                    <td><img class="enemyImage" src="/images/enemies/pipo-enemy014b.png"></td>
-                    <td><img id="enemyFightImage" class="enemyImage" src=""></td>
+                    <td><figure><img class="enemyImage" src="/images/enemies/pipo-enemy014b.png"><figcaption class="currentTrainingPoints" style="text-align: center">Player</figcaption></figure></td>
+                    <td style="vertical-align: bottom; padding-bottom: 50px; max-width: 100px;"><p class="currentTrainingPoints" style="text-align: center">VS</p></td>
+                    <td><figure><img id="enemyFightImage" class="enemyImage" src=""><figcaption id="fightScreenEnemyName" class="currentTrainingPoints" style="text-align: center"></figcaption></figure></td>
                 </tr>
-                <tr><p id="apPageText">Currently nothing happens here.</p></tr>
+                <tr>
+                    <td></td>
+                    <td><center><button class="mainButtonLayout">Fight!</button></center></td>
+                    <td></td>
+                </tr>
             </table>
             </center>
         </div>
