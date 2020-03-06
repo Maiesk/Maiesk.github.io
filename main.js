@@ -412,7 +412,7 @@ function updateHTML(){
     document.getElementById("currentTrainingPoints").innerHTML = numberWithCommas(trainingShown)
     document.getElementById("textAPTotal").innerHTML = "AP Total: " + numberWithCommas(gameData.totalAP)
     document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(gameData.availableAP)
-    document.getElementById("buyAPButton").innerHTML = "Buy 1 AP (Attribute Point) for " + numberWithCommas(costOfAPShown) + " Training Points" 
+    document.getElementById("buyAPButton").innerHTML = "Prestige to get 1 AP for " + numberWithCommas(costOfAPShown) + " Training Points" 
     document.getElementById("buyStatPointButton").innerHTML = "Buy Stat Point for " + numberWithCommas(statPointCostShown) + " Training Points"
     document.getElementById("perClickUpgrade").innerHTML = "Increase Training Level (" + numberWithCommas(trainingLevelShown) + " per tick) for " + numberWithCommas(gameData.trainingPerClickCost) + " Training Points"
     document.getElementById("statPointsDisplay").innerHTML = gameData.statPoints + "/" + gameData.maxStatPoints
@@ -479,9 +479,10 @@ function createItem(name, ID, fire, air, earth, water, melee, fireDefense, airDe
 
 createEnemy(0, "Snek", 10, 1, 1, 1, "/images/enemies/pipo-enemy003b.png")
 createEnemy(1, "Sloim", 10, 1, 1, 1, "/images/enemies/pipo-enemy009b.png")
-createItem("Training Sword", 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, false, true, "/images/weapons/04 - Steel sword.png")
-createItem("Sword of Otherness", 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, false, true, "/images/weapons/08 - Red copper sword.png")
-createItem("Fourth Sword", 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, false, true, "/images/weapons/29 - Occult sword variant 1.png")
+createItem("Training Sword", 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, false, true, "/images/weapons/04 - Steel sword.png")
+createItem("Sword of Otherness", 1, 3, 3, 0, 0, 5, 1, 1, 1, 1, 1, 1, false, true, "/images/weapons/08 - Red copper sword.png")
+createItem("Fourth Sword", 2, 4, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1, false, true, "/images/weapons/29 - Occult sword variant 1.png")
+createItem("Sword of Extremities", 3, 0, 0, 0, 0, 17, 1, 1, 1, 1, 1, 1, false, true, "/images/weapons/01 - Old stone sword.png")
 
 
 function printSuccess(){
@@ -494,6 +495,7 @@ function setSelected(ID){
         isEquipped = true
         var index = gameData.equipment.indexOf(gameData.allItems[ID])
         gameData.equipment.splice(index, 1)
+        clearDamageIcons()
         document.getElementById("testWeapon" + ID).style.border=""
     }
     if (!isEquipped){
@@ -505,13 +507,57 @@ function setSelected(ID){
 
 function reloadInventoryDisplay(){
     for (var i = 0; i < 8; i++){
-        if (gameData.equipment[i] != null){ 
+        if (gameData.equipment[i]){ 
             document.getElementById("table" + i).src = gameData.equipment[i].imagePath
-            document.getElementById("equipmentName" + i).innerHTML = gameData.equipment[i].name       
+            document.getElementById("equipmentName" + i).innerHTML = gameData.equipment[i].name
+            loadDamageIcons(i);       
         }
         else {
             document.getElementById("table" + i).src = "/images/weapons/emptyEquipmentSlot.png"
-            document.getElementById("equipmentName" + i).innerHTML = " "      
+            document.getElementById("equipmentName" + i).innerHTML = ""
+            document.getElementById("damage" + i).innerHTML = ""
+            loadDamageIcons(i - 1)      
+        }
+    }
+}
+
+function clearDamageIcons(){
+    for (var i = 0; i < gameData.equipment.length; i++){
+        document.getElementById("damage" + i).innerHTML = ""
+    }
+}
+
+function loadDamageIcons(i) {
+    if (document.getElementById("damage" + i).innerHTML == ""){
+        for (var j = 0; j < gameData.equipment[i].fire; j++) {
+            var image = new Image();
+            image.src = "/images/icons/FireIcon.png";
+            image.width = 20;
+            document.getElementById("damage" + i).appendChild(image);
+        }
+        for (var j = 0; j < gameData.equipment[i].air; j++) {
+            var image = new Image();
+            image.src = "/images/icons/AirIcon.png";
+            image.width = 20;
+            document.getElementById("damage" + i).appendChild(image);
+        }
+        for (var j = 0; j < gameData.equipment[i].earth; j++) {
+            var image = new Image();
+            image.src = "/images/icons/EarthIcon.png";
+            image.width = 20;
+            document.getElementById("damage" + i).appendChild(image);
+        }
+        for (var j = 0; j < gameData.equipment[i].water; j++) {
+            var image = new Image();
+            image.src = "/images/icons/WaterIcon.png";
+            image.width = 20;
+            document.getElementById("damage" + i).appendChild(image);
+        }
+        for (var j = 0; j < gameData.equipment[i].melee; j++) {
+            var image = new Image();
+            image.src = "/images/icons/PhysIcon2.png";
+            image.width = 20;
+            document.getElementById("damage" + i).appendChild(image);
         }
     }
 }

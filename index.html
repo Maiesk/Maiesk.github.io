@@ -27,7 +27,15 @@
     </script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/countup.js/1.8.2/countUp.min.js'></script>
     <style>
-        .currentTrainingPoints{
+        .standardText{
+            font-size: 25px; 
+            color: rgb(6, 128, 128); 
+            font-family: Fredoka One; 
+            font-weight: bold;
+            -webkit-text-stroke-width: 1px;
+            -webkit-text-stroke-color: rgb(0, 0, 0);
+        }
+        #currentTrainingPoints{
             font-size: 25px; 
             color: rgb(6, 128, 128); 
             font-family: Fredoka One; 
@@ -45,7 +53,7 @@
             color: black; 
             background-color: rgb(6, 128, 128); 
             border-color: #474646;
-            font-weight: normal;
+            font-weight: 100;
             border-radius: 5px;
             border-width: 3px;
             font-family: Fredoka One;
@@ -65,7 +73,7 @@
             color: black; 
             background-color: rgb(6, 128, 128); 
             border-color: #474646; 
-            font-weight: normal;
+            font-weight: 100;
             width: 200px;
             border-width: 3px;
             border-radius: 5px;
@@ -129,11 +137,11 @@
         <button class="navMenuButton" onclick="return show('battleTab','trainingTab','shopTab','fightScreen')">Battle</button>
         <button class="navMenuButton" onclick="return show('shopTab','trainingTab','battleTab','fightScreen')">Shop</button>
         <br>
-        <p id="loadingText" hidden class="currentTrainingPoints" style="font-size: 50px">Loading...</p>
+        <p id="loadingText" hidden class="standardText" style="font-size: 50px">Loading...</p>
         <br>
         <div id="trainingTab" class="divBackground">
             <br>
-                <table class="currentTrainingPoints">
+                <table class="standardText">
                     <tr>
                         <td>Training Points</td>
                         <td></td>
@@ -183,7 +191,7 @@
                 </table>                       
                 <br><button class="mainButtonLayout" onclick="buyTrainingPerClick()" id="perClickUpgrade">Increase Training Level (1.00 per tick) for 50 Training Points</button><br>
                 <br><button class="mainButtonLayout" onclick="buyStatPoint()" id="buyStatPointButton">Buy Stat Point for 1,000 Training Points</button><br>
-                <br><button class="mainButtonLayout" onclick="buyAP()" id="buyAPButton">Buy 1 AP (Attribute Point) for 50,000 Training Points</button><br>                    
+                <br><button class="mainButtonLayout" onclick="buyAP()" id="buyAPButton">Prestige to get 1 AP for 50,000 Training Points</button><br>                    
                 <br>
                 <table>
                     <tr>
@@ -213,12 +221,12 @@
                 <button id="buyAutoUpgradeButton" class="mainButtonLayout" onclick="buyAutoUpgrade()">Buy Auto Upgrade: 10 AP</button><br><br>
                 <button id="buyAutoPurchaseAPButton" class="mainButtonLayout" onclick="buyAutoPurchaseAP()">Buy AutoPurchase for AP: 10 AP</button><br><br>
                 <button id="buyAutoPurchaseStatPointsButton" class="mainButtonLayout" onclick="buyAutoPurchaseStatPoints()">Buy AutoPurchase for Stat Points: 10 AP</button><br><br>
-                <button id="buyStatPointBoostButton" class="mainButtonLayout" onclick="buyStatPointBoost()">+1 Stat Point per Bar: 1 AP</button><p id="statPointBoostCurrent" class="currentTrainingPoints">Current Stat Point Multiplier: None</p>  
-                <button id="buyTrainingPointBoostButton" class="mainButtonLayout" onclick="buyTrainingPointBoost()">+1x Training Point Speed: 1 AP</button><p id="trainingPointBoostCurrent" class="currentTrainingPoints">Current Training Point Multiplier: None</p><br>
+                <button id="buyStatPointBoostButton" class="mainButtonLayout" onclick="buyStatPointBoost()">+1 Stat Point per Bar: 1 AP</button><p id="statPointBoostCurrent" class="standardText">Current Stat Point Multiplier: None</p>  
+                <button id="buyTrainingPointBoostButton" class="mainButtonLayout" onclick="buyTrainingPointBoost()">+1x Training Point Speed: 1 AP</button><p id="trainingPointBoostCurrent" class="standardText">Current Training Point Multiplier: None</p><br>
                 </font>
             </div>
             <div id="goldShop" style="display:none">
-                <p class="currentTrainingPoints">Earn Gold by defeating enemies in Battle mode. Coming soon.</p>
+                <p class="standardText">Earn Gold by defeating enemies in Battle mode. Coming soon.</p>
             </div>
             </b></center>                 
         </div>
@@ -250,44 +258,59 @@
                 <font style="color: rgb(6, 128, 128); font-family: Fredoka One; font-weight: bold">
                 <p class="apPageText" style="color: rgb(6, 128, 128)">Equipped</p>
                 <center>
-                <table style="min-width: 700px">
+                <table style="width: 700px">
                     <tr>
                         <td></td>
-                        <td><p class="apPageText" style="padding-left: 50px">Name</p></td>
-                        <td><p class="apPageText" style="padding-left: 50px">Damage</p></td>
-                        <td><p class="apPageText" style="padding-left: 50px">Defense</p></td>
+                        <td style="width: 200px"><p class="apPageText" style="text-align: center">Name</p></td>
+                        <td style="width: 200px"><p class="apPageText" style="text-align: center">Damage</p></td>
+                        <td style="width: 200px"><p class="apPageText" style="text-align: center">Defense</p></td>
                     </tr>
                     <tr>
                         <td><img class="itemImages" id="table0" src="/images/weapons/emptyEquipmentSlot.png"></td>
                         <td><p class="itemText" style="padding-left: 10px" id="equipmentName0"></p></td>
+                        <td><div id="damage0"></div></td>
                     </tr>
                     <tr>
                         <td><img class="itemImages" id="table1" src="/images/weapons/emptyEquipmentSlot.png"></td>
                         <td><p class="itemText" style="padding-left: 10px" id="equipmentName1"></p></td>
+                        <td><div id="damage1"></div></td>
+
                     </tr>
                     <tr>    
                         <td><img class="itemImages" id="table2" src="/images/weapons/emptyEquipmentSlot.png"></td>
                         <td><p class="itemText" style="padding-left: 10px" id="equipmentName2"></p></td>
+                        <td><div id="damage2"></div></td>
+
                     </tr>
                     <tr>
                         <td><img class="itemImages" id="table3" src="/images/weapons/emptyEquipmentSlot.png"></td>
                         <td><p class="itemText" style="padding-left: 10px" id="equipmentName3"></p></td>
+                        <td><div id="damage3"></div></td>
+
                     </tr>
                     <tr>
                         <td><img class="itemImages" id="table4" src="/images/weapons/emptyEquipmentSlot.png"></td>
                         <td><p class="itemText" style="padding-left: 10px" id="equipmentName4"></p></td>
+                        <td><div id="damage4"></div></td>
+
                     </tr>
                     <tr>
                         <td><img class="itemImages" id="table5" src="/images/weapons/emptyEquipmentSlot.png"></td>
                         <td><p class="itemText" style="padding-left: 10px" id="equipmentName5"></p></td>
+                        <td><div id="damage5"></div></td>
+
                     </tr>
                     <tr>
                         <td><img class="itemImages" id="table6" src="/images/weapons/emptyEquipmentSlot.png"></td>
                         <td><p class="itemText" style="padding-left: 10px" id="equipmentName6"></p></td>
+                        <td><div id="damage6"></div></td>
+
                     </tr>
                     <tr>
                         <td><img class="itemImages" id="table7" src="/images/weapons/emptyEquipmentSlot.png"></td>
                         <td><p class="itemText" style="padding-left: 10px" id="equipmentName7"></p></td>
+                        <td><div id="damage7"></div></td>
+
                     </tr>
                     <tr>
                         <td><br></td>
@@ -314,9 +337,9 @@
             <center>
             <table>
                 <tr>
-                    <td><figure><img class="enemyImage" src="/images/enemies/pipo-enemy014b.png"><figcaption class="currentTrainingPoints" style="text-align: center">Player</figcaption></figure></td>
-                    <td style="vertical-align: bottom; padding-bottom: 50px; max-width: 100px;"><p class="currentTrainingPoints" style="text-align: center">VS</p></td>
-                    <td><figure><img id="enemyFightImage" class="enemyImage" src=""><figcaption id="fightScreenEnemyName" class="currentTrainingPoints" style="text-align: center"></figcaption></figure></td>
+                    <td><figure><img class="enemyImage" src="/images/enemies/pipo-enemy014b.png"><figcaption class="standardText" style="text-align: center">Player</figcaption></figure></td>
+                    <td style="vertical-align: bottom; padding-bottom: 50px; max-width: 100px;"><p class="standardText" style="text-align: center">VS</p></td>
+                    <td><figure><img id="enemyFightImage" class="enemyImage" src=""><figcaption id="fightScreenEnemyName" class="standardText" style="text-align: center"></figcaption></figure></td>
                 </tr>
                 <tr>
                     <td></td>
