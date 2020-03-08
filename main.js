@@ -34,6 +34,7 @@ var gameData = {
     autoUpgrade: false,
     autoPurchaseAP: false,
     autoPurchaseStatPoints: false,
+    frozen: false,
     enemyList: [],
     allItems: []
 }
@@ -439,6 +440,7 @@ function createEnemy(ID, name, hitPoints, attackPoints, defensePoints, speedPoin
         ID: ID,
         name: name,
         hitPoints: hitPoints,
+        maxHitPoints: hitPoints,
         attackPoints: attackPoints,
         defensePoints: defensePoints,
         speedPoints: speedPoints,
@@ -480,9 +482,15 @@ function createItem(name, ID, fire, air, earth, water, melee, fireDefense, airDe
 createEnemy(0, "Snek", 10, 1, 1, 1, "/images/enemies/pipo-enemy003b.png")
 createEnemy(1, "Sloim", 10, 1, 1, 1, "/images/enemies/pipo-enemy009b.png")
 createItem("Training Sword", 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, false, true, "/images/weapons/04 - Steel sword.png")
-createItem("Sword of Otherness", 1, 3, 3, 0, 0, 5, 1, 1, 1, 1, 1, 1, false, true, "/images/weapons/08 - Red copper sword.png")
+createItem("The Edge Tester", 1, 4, 4, 2, 2, 5, 3, 3, 3, 3, 7, 1, false, true, "/images/weapons/08 - Red copper sword.png")
 createItem("Fourth Sword", 2, 4, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1, false, true, "/images/weapons/29 - Occult sword variant 1.png")
 createItem("Sword of Extremities", 3, 0, 0, 0, 0, 17, 1, 1, 1, 1, 1, 1, false, true, "/images/weapons/01 - Old stone sword.png")
+createItem("Sword Excalibur The Longest Of The Etymological Blades of Yargastenholm", 4, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 0, false, true, "/images/weapons/24 - Silver rebirth sword.png")
+createItem("Them", 5, 4, 4, 0, 4, 0, 0, 0, 4, 0, 4, 1, false, true, "/images/weapons/14 - Twin serrated swords.png")
+createItem("Dank Sword", 6, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, true, "/images/weapons/21 - Amethyst sword.png")
+createItem("El Shieldo", 7, 0, 0, 0, 0, 0, 5, 5, 5, 5, 15, 1, false, true, "/images/weapons/23.png")
+createItem("The Bound Breaker", 8, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 1, false, true, "/images/weapons/09 - Icy sword.png")
+createItem("Just a Shield", 9, 0, 0, 0, 0, 0, 1, 2, 2, 2, 5, 1, false, true, "/images/weapons/18.png")
 
 
 function printSuccess(){
@@ -495,12 +503,14 @@ function setSelected(ID){
         isEquipped = true
         var index = gameData.equipment.indexOf(gameData.allItems[ID])
         gameData.equipment.splice(index, 1)
-        clearDamageIcons()
+        clearIcons()
         document.getElementById("testWeapon" + ID).style.border=""
     }
     if (!isEquipped){
-        gameData.equipment.push(gameData.allItems[ID])
-        document.getElementById("testWeapon" + ID).style.border="1px solid white"
+        if (gameData.equipment.length < 8){  
+            gameData.equipment.push(gameData.allItems[ID])
+            document.getElementById("testWeapon" + ID).style.border="1px solid white"
+        }
     }
     reloadInventoryDisplay()
 }
@@ -511,53 +521,246 @@ function reloadInventoryDisplay(){
             document.getElementById("table" + i).src = gameData.equipment[i].imagePath
             document.getElementById("equipmentName" + i).innerHTML = gameData.equipment[i].name
             loadDamageIcons(i);       
+            loadDefenseIcons(i)
         }
         else {
             document.getElementById("table" + i).src = "/images/weapons/emptyEquipmentSlot.png"
             document.getElementById("equipmentName" + i).innerHTML = ""
             document.getElementById("damage" + i).innerHTML = ""
-            loadDamageIcons(i - 1)      
+            document.getElementById("defense" + i).innerHTML = ""     
         }
     }
 }
 
-function clearDamageIcons(){
+function clearIcons(){
     for (var i = 0; i < gameData.equipment.length; i++){
         document.getElementById("damage" + i).innerHTML = ""
+        document.getElementById("defense" + i).innerHTML = ""
     }
 }
 
 function loadDamageIcons(i) {
+    var iconCounter = 0
     if (document.getElementById("damage" + i).innerHTML == ""){
         for (var j = 0; j < gameData.equipment[i].fire; j++) {
             var image = new Image();
             image.src = "/images/icons/FireIcon.png";
-            image.width = 20;
+            image.width = 25;
             document.getElementById("damage" + i).appendChild(image);
+            iconCounter += 1
         }
         for (var j = 0; j < gameData.equipment[i].air; j++) {
             var image = new Image();
             image.src = "/images/icons/AirIcon.png";
-            image.width = 20;
+            image.width = 25;
             document.getElementById("damage" + i).appendChild(image);
+            iconCounter += 1
         }
         for (var j = 0; j < gameData.equipment[i].earth; j++) {
             var image = new Image();
             image.src = "/images/icons/EarthIcon.png";
-            image.width = 20;
+            image.width = 25;
             document.getElementById("damage" + i).appendChild(image);
+            iconCounter += 1
         }
         for (var j = 0; j < gameData.equipment[i].water; j++) {
             var image = new Image();
             image.src = "/images/icons/WaterIcon.png";
-            image.width = 20;
+            image.width = 25;
             document.getElementById("damage" + i).appendChild(image);
+            iconCounter += 1
         }
         for (var j = 0; j < gameData.equipment[i].melee; j++) {
             var image = new Image();
             image.src = "/images/icons/PhysIcon2.png";
-            image.width = 20;
+            image.width = 25;
             document.getElementById("damage" + i).appendChild(image);
+            iconCounter += 1
         }
+        if (iconCounter < 8){
+            document.getElementById("damageCell" + i).style = "vertical-align: center"
+        }
+    }
+}
+
+function loadDefenseIcons(i) {
+    var iconCounter = 0
+    if (document.getElementById("defense" + i).innerHTML == ""){
+        for (var j = 0; j < gameData.equipment[i].fireDefense; j++) {
+            var image = new Image();
+            image.src = "/images/icons/FireIconBlock.png";
+            image.width = 25;
+            document.getElementById("defense" + i).appendChild(image);
+            iconCounter += 1
+        }
+        for (var j = 0; j < gameData.equipment[i].airDefense; j++) {
+            var image = new Image();
+            image.src = "/images/icons/AirIconBlock.png";
+            image.width = 25;
+            document.getElementById("defense" + i).appendChild(image);
+            iconCounter += 1
+        }
+        for (var j = 0; j < gameData.equipment[i].earthDefense; j++) {
+            var image = new Image();
+            image.src = "/images/icons/EarthIconBlock.png";
+            image.width = 25;
+            document.getElementById("defense" + i).appendChild(image);
+            iconCounter += 1
+        }
+        for (var j = 0; j < gameData.equipment[i].waterDefense; j++) {
+            var image = new Image();
+            image.src = "/images/icons/WaterIconBlock.png";
+            image.width = 25;
+            document.getElementById("defense" + i).appendChild(image);
+            iconCounter += 1
+        }
+        for (var j = 0; j < gameData.equipment[i].meleeDefense; j++) {
+            var image = new Image();
+            image.src = "/images/icons/PhysIconBlock.png";
+            image.width = 25;
+            document.getElementById("defense" + i).appendChild(image);
+            iconCounter += 1
+        }
+        if (iconCounter < 8){
+            document.getElementById("defenseCell" + i).style = "vertical-align: center"
+        }
+    }
+}
+
+function initiateBattle(fightEnemyID){
+    var enemy = gameData.enemyList[fightEnemyID]
+    document.getElementById("enemyBattleImage").src = enemy.imagePath
+    updateHP(enemy)
+    loadEquipmentForBattle()
+}
+
+function updateHP(enemy){    
+    document.getElementById("battleScreenEnemyName").innerHTML = enemy.name + "<br/>" + enemy.hitPoints + "/" + enemy.maxHitPoints
+    document.getElementById("battleScreenPlayerName").innerHTML = "Player <br/>" + gameData.hitPoints + "/" + gameData.maxHitPoints
+}
+
+function loadEquipmentForBattle(){
+    for (var i = 0; i < gameData.equipment.length; i++){
+        document.getElementById("equippedWeapon" + i).src = gameData.equipment[i].imagePath
+    }
+}
+
+function determineTier(stat){
+    var statTier = 0
+    if (stat < 10){
+        statTier = 0.5
+    }
+    else if (stat > 9 && stat < 20){
+        statTier = 0.75
+    }
+    else if (stat > 19 && stat < 35){
+        statTier = 1
+    }
+    else if (stat > 34 && stat < 55){
+        statTier = 1.25
+    }
+    else if (stat > 54 && stat < 75){
+        statTier = 1.5
+    }
+    else if (stat > 74 && stat < 100){
+        statTier = 2
+    }
+    else if (stat > 99 && stat < 150){
+        statTier = 2.5
+    }
+    else if (stat > 149 && stat < 200){
+        statTier = 3
+    }
+    else if (stat > 199 && stat < 250){
+        statTier = 3.5
+    }
+    else if (stat > 249 && stat < 300){
+        statTier = 4
+    }
+    else if (stat > 299 && stat < 350){
+        statTier = 5
+    }
+    else if (stat > 349 && stat < 400){
+        statTier = 6
+    }
+    else if (stat > 399 && stat < 450){
+        statTier = 7
+    }
+    else if (stat > 449 && stat < 500){
+        statTier = 8
+    }
+    else if (stat > 499 && stat < 1000){
+        statTier = 9
+    }
+    else if (stat > 999){
+        statTier = stat / 100
+    }
+    return statTier;
+}
+
+function determineModifier(attackType){
+    var multiplier = 1;
+    if (type == "Berserk"){
+        multiplier = 1.5
+    }
+    else if (type == "Fierce"){
+        multiplier = 1.25
+    }
+    else if (type == "Defensive"){
+        multiplier = 0.75
+    }
+    return multiplier
+}
+
+function attack(enemy, playerItem1, playerItem2, enemyItem1, enemyItem2, attackType, defenseType){
+    if (!gameData.frozen){
+        var playerStrength = determineTier(gameData.strength);
+        var enemyDefense = determineTier(enemy.defense);
+        var attackModifier = determineModifier(attackType);
+        var enemyDefenseModifier = determineModifier(defenseType);
+        var totalHeal = 0;
+        var totalDamage = 0;
+        if (playerItem1 !== null && playerItem2 !== null){
+            physDamage = (playerItem1.melee*playerStrength + playerItem2.melee*playerStrength) - (enemyItem1.meleeDefense*enemyDefense + enemyItem2.meleeDefense*enemyDefense);
+            fireDamage = (playerItem1.fire*playerStrength + playerItem2.fire*playerStrength) - (enemyItem1.fireDefense*enemyDefense + enemyItem2.fireDefense*enemyDefense);
+            waterDamage = (playerItem1.water*playerStrength + playerItem2.water*playerStrength) - (enemyItem1.waterDefense*enemyDefense + enemyItem2.waterDefense*enemyDefense);
+            earthDamage = (playerItem1.earth*playerStrength + playerItem2.earth*playerStrength) - (enemyItem1.earthDefense*enemyDefense + enemyItem2.earthDefense*enemyDefense);
+            airDamage = (playerItem1.air*playerStrength + playerItem2.air*playerStrength) - (enemyItem1.airDefense*enemyDefense + enemyItem2.airDefense*enemyDefense);
+            totalDamage = Math.round((darkDamage + lightDamage + physDamage + fireDamage + waterDamage + earthDamage + airDamage) * attackModifier * enemyDefenseModifier);
+            totalHeal = playerItem1.heal + playerItem2.heal
+        }
+        if (playerItem2 == null && playerItem1 != null){
+            physDamage = (playerItem1.melee*playerStrength) - (enemyItem1.meleeDefense*enemyDefense + enemyItem2.meleeDefense*enemyDefense);
+            fireDamage = (playerItem1.fire*playerStrength) - (enemyItem1.fireDefense*enemyDefense + enemyItem2.fireDefense*enemyDefense);
+            waterDamage = (playerItem1.water*playerStrength) - (enemyItem1.waterDefense*enemyDefense + enemyItem2.waterDefense*enemyDefense);
+            earthDamage = (playerItem1.earth*playerStrength) - (enemyItem1.earthDefense*enemyDefense + enemyItem2.earthDefense*enemyDefense);
+            airDamage = (playerItem1.air*playerStrength) - (enemyItem1.airDefense*enemyDefense + enemyItem2.airDefense*enemyDefense);
+            totalDamage = Math.round((darkDamage + lightDamage + physDamage + fireDamage + waterDamage + earthDamage + airDamage) * attackModifier * enemyDefenseModifier);
+            totalHeal = playerItem1.heal
+        }
+        if (totalDamage < 0){
+            totalDamage = 0;
+        }
+        // SET DAMAGE HTML HERE
+        enemy.hitPoints = enemy.hitPoints - totalDamage
+        if (gameData.hitPoints + totalHeal > gameData.maxHP){
+            gameData.hitPoints = gameData.maxHP;
+        }
+        else{
+            gameData.hitPoints = gameData.hitPoints + totalHeal
+        }
+        if (gameData.hitPoints <= 0){
+            gameData.hitPoints = 0;
+        }
+        if(playerItem1 != null){
+            // SET WEAPON MESSAGE HTML WITH ICONS HERE
+        }
+        if (playerItem2 != null){
+            // SET SECOND WEAPON MESSAGE HTML WITH ICONS HERE
+        }
+
+    }
+    else{
+        gameData.frozen = false
     }
 }
