@@ -166,7 +166,7 @@ function powerTrain(){
         
         document.getElementById("loadButton").disabled = true
         document.getElementById("loadButton").style = "background-color: #474646; color: #373636"
-        var trainingPerSecondShown = Number(player.trainingPerClick * 2000 / player.updateSpeed).toFixed(2)
+        var trainingPerSecondShown = Number(player.trainingPerClick * 2000 / player.updateSpeed * player.idleUpgradeMultiplier).toFixed(2)
         var timeLeft = 5
         document.getElementById("battlePowerPerSecond").innerHTML = numberWithCommas(trainingPerSecondShown) + " Training Points per second for " + timeLeft + " seconds!"   
         var countdown = setInterval(function(){
@@ -242,7 +242,6 @@ function buyAP(){
         }
         player.trainingPerClickCost = 20
         player.training = 0
-        resetUpdateSpeed()  
         updateHTML()
     }
 }
