@@ -1177,8 +1177,33 @@ function fight(){
     while (enemyWeaponIndexOne == enemyWeaponIndexTwo){
         enemyWeaponIndexTwo = Math.floor(Math.random() * enemy.equipment.length)
     }
-    attack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
-    enemyAttack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
+    if (player.speedPoints > enemy.speedPoints){
+        attack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
+        if (enemy.hitPoints > 0){
+            enemyAttack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
+        }
+    }
+    else if (enemy.speedPoints < enemy.speedPoints){
+        enemyAttack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
+        if (player.hitPoints > 0){
+            attack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
+        }
+    }
+    else{
+        var coinFlip = Math.floor(Math.random() * 2);
+        if (coinFlip == 0){
+            enemyAttack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
+            if (player.hitPoints > 0){
+                attack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
+            }
+        }
+        else{
+            attack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
+            if (enemy.hitPoints > 0){
+                enemyAttack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
+            }
+        }
+    }
     if (player.hitPoints <= 0){
         document.getElementById("fightButton").disabled = true
         document.getElementById("fightButton").style = "background-color: #474646; color: #373636; min-width: 194px;"
