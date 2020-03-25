@@ -24,8 +24,8 @@
             document.getElementById("battleTab").style.display='none';
             document.getElementById("enemiesTab").style.display='none';
             document.getElementById("fightSetupScreen").style.display='block';
-            document.getElementById("enemyFightImage").src = gameData.enemyList[ID].imagePath;
-            document.getElementById("fightScreenEnemyName").innerHTML = gameData.enemyList[ID].name;
+            document.getElementById("enemyFightImage").src = player.enemyList[ID].imagePath;
+            document.getElementById("fightScreenEnemyName").innerHTML = player.enemyList[ID].name;
             fightEnemyID = ID
         }
         function startFight(fightEnemyID){
@@ -36,10 +36,17 @@
             show('navMenu','battleScreen')
             return show('trainingTab','shopTab','battleTab','fightSetupScreen')
         }
+        function returnToEnemies(){
+            show('navMenu','battleScreen')
+            show('battleTab','shopTab','trainingTab','fightSetupScreen')
+            return show('enemiesTab')
+        }
     </script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/countup.js/1.8.2/countUp.min.js'></script>
     <style>
+        
         .standardText{
+            opacity: 1;
             font-size: 25px; 
             color: rgb(6, 128, 128); 
             font-family: Fredoka One; 
@@ -48,6 +55,7 @@
             -webkit-text-stroke-color: rgb(0, 0, 0);
         }
         #currentTrainingPoints{
+            opacity: 1;
             font-size: 25px; 
             color: rgb(6, 128, 128); 
             font-family: Fredoka One; 
@@ -61,6 +69,7 @@
             font-size: 20px;
         }
         .mainButtonLayout{
+            opacity: 1;
             font-size: 25px; 
             color: black; 
             background-color: rgb(6, 128, 128); 
@@ -92,17 +101,19 @@
             font-family: Fredoka One;
         }
         .apPageText{
+            opacity: 1;
             -webkit-text-stroke-width: 1px;
             -webkit-text-stroke-color: black;
             font-size: 30px;
         }
         .itemText{
+            opacity: 1;
             -webkit-text-stroke-width: 1px;
             -webkit-text-stroke-color: black;
             color:  rgb(6, 128, 128);
             font-size: 20px;
             font-weight: bold;
-            word-wrap: normal;
+            word-wrap: break-word;
         }
         .itemImages{
             width: 60px;
@@ -118,7 +129,8 @@
             height:200px;
         }
         .divBackground{
-            background-color: rgb(47, 49, 56); 
+            opacity: 1;
+            background-image: linear-gradient(to bottom right, rgb(57, 59, 66), rgb(20, 20, 20));
             max-width: 1000px; 
             border-left: 2px solid rgb(178, 178, 178); 
             border-right: 2px solid rgb(178, 178, 178); 
@@ -141,13 +153,32 @@
         .tableRow{
             margin-top: 20px;
         }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted black;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+
+            /* Position the tooltip */
+            position: absolute;
+            z-index: 1;
+        }
     </style>
 </head>
-<body style="background-color:rgb(25, 25, 26)">
+<body style="background: linear-gradient(to bottom right, rgb(35, 35, 36), rgb(10, 10, 10)) fixed">
     <center>
     <div id="navMenu">
-        <button class="mainButtonLayout" onclick="saveGame()">Save</button>
-        <button class="mainButtonLayout" onclick="loadGame()">Load</button><br>
+        <button id="saveButton" class="mainButtonLayout" onclick="saveGame()">Save</button>
+        <button id="loadButton" class="mainButtonLayout" onclick="loadGame()">Load</button><br>
         <br>
         <button class="navMenuButton" onclick="return show('trainingTab','shopTab','battleTab','fightSetupScreen')">Training</button>
         <button class="navMenuButton" onclick="return show('battleTab','trainingTab','shopTab','fightSetupScreen')">Battle</button>
@@ -170,25 +201,25 @@
                         <td><p style="text-align: center" id="statPointsDisplay">0/0</p></td>
                     </tr>
                     <tr>
-                        <td><p id="currentHPStat">0 HP</p></td>
+                        <td><p id="currentHPStat">10 HP</p></td>
                         <td><progress id="progressBarHP" class="progessBars" max=10000 value=0></progress></td>
                         <td id="statPointsOnHP" style="text-align: center">0</td>
                         <td style="text-align: center"><button class="statButtonLayout" onclick="allocateHP(true)">+</button><button class="statButtonLayout" onclick="allocateHP(false)">-</button></td>
                     </tr>
                     <tr>
-                        <td><p id="currentAttackStat">0 Attack</p></td>
+                        <td><p id="currentAttackStat">1 Attack</p></td>
                         <td><progress id="progressBarAttack" class="progessBars" max=10000 value=0></progress></td>
                         <td id="statPointsOnAttack" style="text-align: center">0</td>
                         <td style="text-align: center"><button class="statButtonLayout" onclick="allocateAttack(true)">+</button><button class="statButtonLayout" onclick="allocateAttack(false)">-</button></td>
                     </tr>
                     <tr>
-                        <td><p id="currentDefenseStat">0 Defense</p></td>
+                        <td><p id="currentDefenseStat">1 Defense</p></td>
                         <td><progress id="progressBarDefense" class="progessBars" max=10000 value=0></progress></td>
                         <td id="statPointsOnDefense" style="text-align: center">0</td>
                         <td style="text-align: center"><button class="statButtonLayout" onclick="allocateDefense(true)">+</button><button class="statButtonLayout" onclick="allocateDefense(false)">-</button></td>
                     </tr>
                     <tr>
-                        <td><p id="currentSpeedStat">0 Speed</p></td>
+                        <td><p id="currentSpeedStat">1 Speed</p></td>
                         <td><progress id="progressBarSpeed" class="progessBars" max=10000 value=0></progress></td>
                         <td id="statPointsOnSpeed" style="text-align: center">0</td>
                         <td style="text-align: center"><button class="statButtonLayout" onclick="allocateSpeed(true)">+</button><button class="statButtonLayout" onclick="allocateSpeed(false)">-</button></td>
@@ -238,7 +269,7 @@
                 <button id="buyAutoUpgradeButton" class="mainButtonLayout" onclick="buyAutoUpgrade()">Buy Auto Upgrade: 10 AP</button><br><br>
                 <button id="buyAutoPurchaseAPButton" class="mainButtonLayout" onclick="buyAutoPurchaseAP()">Buy AutoPurchase for AP: 10 AP</button><br><br>
                 <button id="buyAutoPurchaseStatPointsButton" class="mainButtonLayout" onclick="buyAutoPurchaseStatPoints()">Buy AutoPurchase for Stat Points: 10 AP</button><br><br>
-                <button id="buyStatPointBoostButton" class="mainButtonLayout" onclick="buyStatPointBoost()">+1 Stat Point per Bar: 1 AP</button><p id="statPointBoostCurrent" class="standardText">Current Stat Point Multiplier: None</p>  
+                <button id="buyStatPointBoostButton" class="mainButtonLayout" onclick="buyStatPointBoost()">+1 Stat Point per Bar: 5 AP</button><p id="statPointBoostCurrent" class="standardText">Current Stat Point Multiplier: None</p>  
                 <button id="buyTrainingPointBoostButton" class="mainButtonLayout" onclick="buyTrainingPointBoost()">+1x Training Point Speed: 1 AP</button><p id="trainingPointBoostCurrent" class="standardText">Current Training Point Multiplier: None</p><br>
                 </font>
             </div>
@@ -296,7 +327,7 @@
                         <td><p class="itemText" style="padding-left: 10px" id="equipmentName0"></p></td>
                         <td id="damageCell0" style="vertical-align: top"><div id="damage0" style="text-align:right"></div></td>
                         <td id="defenseCell0" style="vertical-align: top"><div id="defense0" style="text-align:right;"></div></td>
-                        <td></td>
+                        <td id="abilityCell0" style="vertical-align: center"><div id="ability0" class="itemText" style="text-align: right"></div><div id="abilityFreeze0" style="text-align: right"></div></td>
                     </tr>
                     <tr style="height: 10px"></tr>
                     <tr class="tableRow" id="equipmentRow1">
@@ -304,7 +335,7 @@
                         <td><p class="itemText" style="padding-left: 10px" id="equipmentName1"></p></td>                        
                         <td id="damageCell1" style="vertical-align: top"><div id="damage1" style="text-align:right"></div></td>
                         <td id="defenseCell1" style="vertical-align: top"><div id="defense1" style="text-align:right;"></div></td>
-                        <td></td>
+                        <td id="abilityCell1" style="vertical-align: center"><div id="ability1" class="itemText" style="text-align: right"></div><div id="abilityFreeze1" style="text-align: right"></div></td>
                     </tr>
                     <tr style="height: 10px"></tr>
                     <tr class="tableRow" id="equipmentRow2">    
@@ -312,7 +343,7 @@
                         <td><p class="itemText" style="padding-left: 10px" id="equipmentName2"></p></td>                    
                         <td id="damageCell2" style="vertical-align: top"><div id="damage2" style="text-align:right"></div></td>
                         <td id="defenseCell2" style="vertical-align: top"><div id="defense2" style="text-align:right;"></div></td>
-                        <td></td>
+                        <td id="abilityCell2" style="vertical-align: center"><div id="ability2" class="itemText" style="text-align: right"></div><div id="abilityFreeze2" style="text-align: right"></div></td>
                     </tr>
                     <tr style="height: 10px"></tr>
                     <tr class="tableRow" id="equipmentRow3">
@@ -320,7 +351,7 @@
                         <td><p class="itemText" style="padding-left: 10px" id="equipmentName3"></p></td>                        
                         <td id="damageCell3" style="vertical-align: top"><div id="damage3" style="text-align:right"></div></td>
                         <td id="defenseCell3" style="vertical-align: top"><div id="defense3" style="text-align:right;"></div></td>
-                        <td></td>
+                        <td id="abilityCell3" style="vertical-align: center"><div id="ability3" class="itemText" style="text-align: right"></div><div id="abilityFreeze3" style="text-align: right"></div></td>
                     </tr>
                     <tr style="height: 10px"></tr>
                     <tr class="tableRow" id="equipmentRow4">
@@ -328,7 +359,7 @@
                         <td><p class="itemText" style="padding-left: 10px" id="equipmentName4"></p></td>                       
                         <td id="damageCell4" style="vertical-align: top"><div id="damage4" style="text-align:right"></div></td>
                         <td id="defenseCell4" style="vertical-align: top"><div id="defense4" style="text-align:right;"></div></td>
-                        <td></td>
+                        <td id="abilityCell4" style="vertical-align: center"><div id="ability4" class="itemText" style="text-align: right"></div><div id="abilityFreeze4" style="text-align: right"></div></td>
                     </tr>
                     <tr style="height: 10px"></tr>
                     <tr class="tableRow" id="equipmentRow5">
@@ -336,7 +367,7 @@
                         <td><p class="itemText" style="padding-left: 10px" id="equipmentName5"></p></td>                       
                         <td id="damageCell5" style="vertical-align: top"><div id="damage5" style="text-align:right"></div></td>
                         <td id="defenseCell5" style="vertical-align: top"><div id="defense5" style="text-align:right;"></div></td>
-                        <td></td>
+                        <td id="abilityCell5" style="vertical-align: center"><div id="ability5" class="itemText" style="text-align: right"></div><div id="abilityFreeze5" style="text-align: right"></div></td>
                     </tr>
                     <tr style="height: 10px"></tr>
                     <tr class="tableRow" id="equipmentRow6">
@@ -344,7 +375,7 @@
                         <td><p class="itemText" style="padding-left: 10px" id="equipmentName6"></p></td>
                         <td id="damageCell6" style="vertical-align: top"><div id="damage6" style="text-align:right"></div></td>
                         <td id="defenseCell6" style="vertical-align: top"><div id="defense6" style="text-align:right;"></div></td>
-                        <td></td>
+                        <td id="abilityCell6" style="vertical-align: center"><div id="ability6" class="itemText" style="text-align: right"></div><div id="abilityFreeze6" style="text-align: right"></div></td>
                     </tr>
                     <tr style="height: 10px"></tr>
                     <tr class="tableRow" id="equipmentRow7">
@@ -352,7 +383,7 @@
                         <td><p class="itemText" style="padding-left: 10px" id="equipmentName7"></p></td>
                         <td id="damageCell7" style="vertical-align: top"><div id="damage7" style="text-align:right"></div></td>
                         <td id="defenseCell7" style="vertical-align: top"><div id="defense7" style="text-align:right;"></div></td>
-                        <td></td>
+                        <td id="abilityCell7" style="vertical-align: center"><div id="ability7" class="itemText" style="text-align: right"></div><div id="abilityFreeze7" style="text-align: right"></div></td>
                     </tr>
                     <tr>
                         <td><br></td>
@@ -364,12 +395,70 @@
 
             <div id="enemiesTab" style="display:none">
             <font style="color: rgb(6, 128, 128); font-family: Fredoka One; font-weight: bold"><p class="apPageText" style="color: rgb(6, 128, 128)">Challengers Await</p>
-                <table>
-                    <tr>
-                        <td><figure><img id="enemy0" class="enemyImage" src="" onclick="setupFight(0)"><figcaption style="border: 1px solid black; background-color: rgb(27, 27, 41)" class="itemText" id="enemyName0"></figcaption></figcaption></figure></td>
-                        <td><figure><img id="enemy1" class="enemyImage" src="" onclick="setupFight(1)"><figcaption style="border: 1px solid black; background-color: rgb(27, 27, 41)" class="itemText" id="enemyName1"></figcaption></figcaption></figure></td>
-                    </tr>
-                </table>
+                            <div style="width: 300px; border: 1px solid black; background-color: rgb(27, 27, 41); display: inline-block">
+                                <center><img id="enemy0" class="enemyImage" src="" onclick="setupFight(0)"></center>
+                                <table stlye="width: 300px">
+                                    <th colspan="2">
+                                        <p class="itemText" style="font-size: 35px" id="enemyName0">
+                                    </th>
+                                    <tr>
+                                        <td style="width: 100px; padding-left: 30px; padding-right: 10px">    
+                                            <p class="itemText" id="enemyHitPoints0">
+                                        </td>
+                                        <td style="width: 100px; padding-left: 10px; padding-right: 30px; text-align: right">                                           
+                                            <p class="itemText" id="enemyAttack0"> 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 100px; padding-left: 30px; padding-right: 10px">
+                                            <p class="itemText" id="enemyDefense0">
+                                        </td>
+                                        <td style="width: 100px; padding-left: 10px; padding-right: 30px; text-align: right">
+                                            <p class="itemText" id="enemySpeed0">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 100px; padding-left: 30px; padding-right: 10px">
+                                            <p class="itemText" id="enemyWins0">
+                                        </td>
+                                        <td style="width: 100px; padding-left: 10px; padding-right: 30px; text-align: right">
+                                            <p class="itemText" id="enemyLosses0">
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>    
+                            <div style="width: 300px; border: 1px solid black; background-color: rgb(27, 27, 41); display:inline-block">
+                                <center><img id="enemy1" class="enemyImage" src="" onclick="setupFight(1)"></center>
+                                <table stlye="width: 300px">
+                                    <th colspan="2">
+                                        <p class="itemText" style="font-size: 35px" id="enemyName1">
+                                    </th>
+                                    <tr>
+                                        <td style="width: 100px; padding-left: 30px; padding-right: 10px">    
+                                            <p class="itemText" id="enemyHitPoints1">
+                                        </td>
+                                        <td style="width: 100px; padding-left: 10px; padding-right: 30px; text-align: right">                                           
+                                            <p class="itemText" id="enemyAttack1"> 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 100px; padding-left: 30px; padding-right: 10px">
+                                            <p class="itemText" id="enemyDefense1">
+                                        </td>
+                                        <td style="width: 100px; padding-left: 10px; padding-right: 30px; text-align: right">
+                                            <p class="itemText" id="enemySpeed1">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 100px; padding-left: 30px; padding-right: 10px">
+                                            <p class="itemText" id="enemyWins1">
+                                        </td>
+                                        <td style="width: 100px; padding-left: 10px; padding-right: 30px; text-align: right">
+                                            <p class="itemText" id="enemyLosses1">
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>    
             </font>
             </div>
             </center>
@@ -385,13 +474,18 @@
                 </tr>
                 <tr>
                     <td></td>
-                    <td><center><button class="mainButtonLayout" onclick="startFight(fightEnemyID)">Fight!</button></center></td>
+                    <td>
+                        <div class="tooltip">
+                            <span class="tooltipText" id="tooltipFight" hidden>Select at least one weapon!</span>
+                            <center><button class="mainButtonLayout" onclick="startFight(fightEnemyID)">Fight!</button></center>
+                        </div>
+                    </td>
                     <td></td>
                 </tr>
             </table>
             </center>
         </div>
-        <div id="battleScreen" style="display:none">
+        <div id="battleScreen" class="divBackground" style="display:none; min-height: 1000px">
             <table style="border-collapse: collapse; border-spacing: 0px; padding: 0px">
                 <tr style="max-height: 20px; border-collapse: collapse; border-spacing: 0px; padding: 0px">
                     <td style="max-height: 20px"><figure><img class="enemyImage" src="/images/enemies/pipo-enemy014b.png"><figcaption id="battleScreenPlayerName" class="standardText" style="text-align: center">Player</figcaption></figure></td>
@@ -404,50 +498,97 @@
                     <td style="vertical-align: top"><p id="enemyCurrentHP" class="standardText" style="text-align: center"></p></td>
                 </tr>
                 <tr>
-                    <table style="width: 400px; border: 1px solid grey; text-align: center">
+                    <button id="outcomeButton" style="margin-top: 10px" class="navMenuButton" onclick="returnToEnemies()" hidden>OUTCOME</button>
+                    <table style="width: 200px; text-align: center; display: inline-block; position: absolute">
+                        <th colspan="2" style="margin-bottom: 10px"><button id="fightButton" class="mainButtonLayout" style="min-width: 194px;" onclick="fight()">Fight!</button></th>
+                        <tr></tr>
                         <tr>
-                            <td><img id="equippedWeapon0" class="itemImages"></td>
-                            <td><img id="equippedWeapon1" class="itemImages"></td>
-                            <td><img id="equippedWeapon2" class="itemImages"></td>
-                            <td><img id="equippedWeapon3" class="itemImages"></td>
+                            <td><img id="equippedWeapon0" class="itemImages" onclick="selectWeapon(0)"></td>
+                            <td><img id="equippedWeapon1" class="itemImages" onclick="selectWeapon(1)"></td>
                         </tr>
                         <tr>
-                            <td><img id="equippedWeapon4" class="itemImages"></td>
-                            <td><img id="equippedWeapon5" class="itemImages"></td>
-                            <td><img id="equippedWeapon6" class="itemImages"></td>
-                            <td><img id="equippedWeapon7" class="itemImages"></td>
+                            <td><img id="equippedWeapon2" class="itemImages" onclick="selectWeapon(2)"></td>
+                            <td><img id="equippedWeapon3" class="itemImages" onclick="selectWeapon(3)"></td>
+                        </tr>
+                        <tr>
+                            <td><img id="equippedWeapon4" class="itemImages" onclick="selectWeapon(4)"></td>
+                            <td><img id="equippedWeapon5" class="itemImages" onclick="selectWeapon(5)"></td>
+                        </tr>
+                        <tr>
+                            <td><img id="equippedWeapon6" class="itemImages" onclick="selectWeapon(6)"></td>
+                            <td><img id="equippedWeapon7" class="itemImages" onclick="selectWeapon(7)"></td>
                         </tr>
                     </table>
-                    <table style="width: 800px; border: 1px solid grey; color: white; background-color: rgb(47, 49, 56)">
-                        <tr>
-                            <td><p>ICONS</p></td>
-                            <td><p style="text-align: center">ATTACK TEXT</p></td>
-                            <td><p style="text-align: right">ICONS</p></td>
+                    <table style="max-width: 600px; min-width: 600px; min-height: 400px; border: 1px solid grey; color: white; background-color: rgb(47, 49, 56); display: inline-block; margin-left: 220px; padding-right: 15px">
+                        <tr id="attackIconRow0" hidden>
+                            <td><p id="attackIconsLeft-2" style="min-width: 200px; max-width: 200px"></p></td>
+                            <td><p id="attackText0" style="text-align: center; min-width: 200px; max-width: 200px;"></p></td>
+                            <td><p id="attackIconsRight0" style="text-align: right; min-width: 200px; max-width: 200px;"></p></td>
                         </tr>
-                        <tr>
-                            <td><p>ICONS</p></td>
-                            <td><p style="text-align: center">ATTACK TEXT</p></td>
-                            <td><p style="text-align: right">ICONS</p></td>
+                        <tr id="attackIconRow1" hidden>
+                            <td><p id="attackIconsLeft-1"></p></td>
+                            <td><p id="attackText1" style="text-align: center"></p></td>
+                            <td><p id="attackIconsRight1" style="text-align: right; max-width: 200px;"></p></td>
                         </tr>
-                        <tr>
-                            <td><p>DEFENSE ICONS</p></td>
-                            <td><p style="text-align: center">DEFENSE TEXT</p></td>
-                            <td><p style="text-align: right">DEFENSE ICONS</p></td>
+                        <tr id="enemyAttackIconRow0" hidden>
+                            <td><p id="attackIconsLeft0" style="min-width: 200px; max-width: 200px"></p></td>
+                            <td><p id="enemyAttackText0" style="text-align: center; min-width: 200px; max-width: 200px;"></p></td>
+                            <td><p id="enemyAttackIconsRight0" style="text-align: right; min-width: 200px; max-width: 200px;"></p></td>
                         </tr>
-                        <tr>
-                            <td><p>DEFENSE ICONS</p></td>
-                            <td><p style="text-align: center">DEFENSE TEXT</p></td>
-                            <td><p style="text-align: right">DEFENSE ICONS</p></td>
+                        <tr id="enemyAttackIconRow1" hidden>
+                            <td><p id="attackIconsLeft1"></p></td>
+                            <td><p id="enemyAttackText1" style="text-align: center"></p></td>
+                            <td><p id="enemyAttackIconsRight1" style="text-align: right; max-width: 200px;"></p></td>
                         </tr>
-                        <tr>
-                            <td><p>ICON + AMOUNT</p></td>
-                            <td><p style="text-align: center">HEAL TEXT</p></td>
-                            <td><p style="text-align: right">ICON + AMOUNT</p></td>
+                        <tr id="defenseIconRow0" hidden>
+                            <td><p id="defenseIconsLeft0"></p></td>
+                            <td><p id="defenseText0" style="text-align: center"></p></td>
+                            <td><p id="defenseIconsRight0" style="text-align: right; max-width: 200px;"></p></td>
                         </tr>
-                        <tr>
-                            <td><p>DAMAGE</p></td>
+                        <tr id="defenseIconRow1" hidden>
+                            <td><p id="defenseIconsLeft1"></p></td>
+                            <td><p id="defenseText1" style="text-align: center"></p></td>
+                            <td><p id="defenseIconsRight1" style="text-align: right; max-width: 200px;"></p></td>
+                        </tr>
+                        <tr id="enemyDefenseIconRow0" hidden>
+                            <td><p id="enemyDefenseIconsLeft0"></p></td>
+                            <td><p id="enemyDefenseText0" style="text-align: center"></p></td>
+                            <td><p id="enemyDefenseIconsRight0" style="text-align: right; max-width: 200px;"></p></td>
+                        </tr>
+                        <tr id="enemyDefenseIconRow1" hidden>
+                            <td><p id="enemyDefenseIconsLeft1"></p></td>
+                            <td><p id="enemyDefenseText1" style="text-align: center"></p></td>
+                            <td><p id="enemyDefenseIconsRight1" style="text-align: right; max-width: 200px;"></p></td>
+                        </tr>
+                        <tr id="playerHealRow0" hidden>
+                            <td><p id="playerHealIcons0"></p></td>
+                            <td><p id="playerHealText0" style="text-align: center"></p></td>
+                            <td><p style="text-align: right; max-width: 200px;"></p></td>
+                        </tr>
+                        <tr id="playerHealRow1" hidden>
+                            <td><p id="playerHealIcons1"></p></td>
+                            <td><p id="playerHealText1" style="text-align: center"></p></td>
+                            <td><p style="text-align: right; max-width: 200px;"></p></td>
+                        </tr>
+                        <tr id="enemyHealRow0" hidden>
                             <td><p></p></td>
-                            <td><p style="text-align: right">DAMAGE</p></td>
+                            <td><p id="enemyHealText0" style="text-align: center"></p></td>
+                            <td><p id="enemyHealIcons0" style="text-align: right; max-width: 200px;"></p></td>
+                        </tr>
+                        <tr id="enemyHealRow1" hidden>
+                            <td><p></p></td>
+                            <td><p id="enemyHealText1" style="text-align: center"></p></td>
+                            <td><p id="enemyHealIcons1" style="text-align: right; max-width: 200px;"></p></td>
+                        </tr>
+                        <tr>
+                            <td><p hidden id="healIconsLeft">ICON + AMOUNT</p></td>
+                            <td><p hidden style="text-align: center">HEAL TEXT</p></td>
+                            <td><p hidden id="healIconsRight" style="text-align: right; max-width: 200px;">ICON + AMOUNT</p></td>
+                        </tr>
+                        <tr id="damageRow" hidden>
+                            <td><p id="damageLeft">DAMAGE</p></td>
+                            <td><p></p></td>
+                            <td><p id="damageRight" style="text-align: right; max-width: 200px;">DAMAGE</p></td>
                         </tr>
                     </table>
                     <button class="navMenuButton" onclick="returnToTraining()">Return to Training</button>
