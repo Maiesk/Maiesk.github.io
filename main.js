@@ -175,7 +175,7 @@ function powerTrain(){
             }
             else{
                 timeLeft -= 1
-                trainingPerSecondShown = Number(player.trainingPerClick * 2000 / player.updateSpeed).toFixed(2)
+                trainingPerSecondShown = Number(player.trainingPerClick * 2000 / player.updateSpeed * player.idleUpgradeMultiplier).toFixed(2)
                 document.getElementById("battlePowerPerSecond").innerHTML = numberWithCommas(trainingPerSecondShown) + " Training Points per second for " + timeLeft + " seconds!"   
             }
         }, 1000)
@@ -1162,6 +1162,7 @@ function enemyAttack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItem
         player.frozen = false
     }
     updateHP(enemy)
+    document.getElementById("damageRow").hidden = false
 }
 
 function fight(){
@@ -1183,7 +1184,7 @@ function fight(){
             enemyAttack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
         }
     }
-    else if (enemy.speedPoints < enemy.speedPoints){
+    else if (player.speedPoints < enemy.speedPoints){
         enemyAttack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
         if (player.hitPoints > 0){
             attack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
