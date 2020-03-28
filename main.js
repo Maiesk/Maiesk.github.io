@@ -13,6 +13,7 @@ var player = {
     updateSpeed: 100,
     availableAP: 0,
     totalAP: 0,
+    gold: 0,
     buyAPCost: 50000,
     statPointCost: 1000,
     statPoints: 0,
@@ -36,7 +37,9 @@ var player = {
     autoPurchaseStatPoints: false,
     frozen: false,
     enemyList: [],
-    allItems: []
+    allItems: [],
+    currentZone: 1,
+    zones: []
 }
 
 function update(){
@@ -452,7 +455,7 @@ var options = {
     prefix: '',
 };
 
-function createEnemy(ID, name, hitPoints, attackPoints, defensePoints, speedPoints, imagePath, ladderValue, timesDefeated, timesLostTo, equipment) {
+function createEnemy(ID, name, hitPoints, attackPoints, defensePoints, speedPoints, imagePath, ladderValue, timesDefeated, timesLostTo, equipment, dropMin, dropMax) {
     var enemy = {
         ID: ID,
         name: name,
@@ -465,12 +468,11 @@ function createEnemy(ID, name, hitPoints, attackPoints, defensePoints, speedPoin
         imagePath: imagePath,
         ladderValue: ladderValue,
         timesDefeated: timesDefeated,
-        timesLostTo: timesLostTo
+        timesLostTo: timesLostTo,
+        dropMin: dropMin,
+        dropMax: dropMax
     }
     player.enemyList[player.enemyList.length] = enemy
-    document.getElementById("enemy" + enemy.ID).src = enemy.imagePath
-    document.getElementById("enemyName" + enemy.ID).innerHTML = enemy.name
-    updateEnemyDisplay(enemy)
     return enemy;
 }
 
@@ -500,6 +502,16 @@ function createItem(name, ID, fire, air, earth, water, melee, fireDefense, airDe
     return item;
 }
 
+function createZone(ID, name, enemies){
+    var zone = {
+        ID: ID,
+        name: name,
+        enemies: enemies
+    }
+    player.zones.push(zone)
+    return zone
+}
+
 createItem("Training Sword", 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, false, true, "/images/weapons/04 - Steel sword.png")
 createItem("The Edge Tester", 1, 4, 4, 2, 2, 5, 3, 3, 3, 3, 7, 1, false, true, "/images/weapons/08 - Red copper sword.png")
 createItem("Fourth Sword", 2, 4, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1, false, true, "/images/weapons/29 - Occult sword variant 1.png")
@@ -510,8 +522,19 @@ createItem("Dank Sword", 6, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, true, "/im
 createItem("El Shieldo", 7, 0, 0, 0, 0, 0, 5, 5, 5, 5, 15, 1, false, true, "/images/weapons/23.png")
 createItem("The Bound Breaker", 8, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 1, false, true, "/images/weapons/09 - Icy sword.png")
 createItem("Just a Shield", 9, 0, 0, 0, 0, 0, 1, 2, 2, 2, 5, 1, false, true, "/images/weapons/18.png")
-createEnemy(0, "Snek", 10, 1, 1, 1, "/images/enemies/pipo-enemy003b.png", 1, 0, 0, [player.allItems[2], player.allItems[5], player.allItems[0], player.allItems[3]])
-createEnemy(1, "Sloim", 10, 1, 1, 1, "/images/enemies/pipo-enemy009b.png", 5, 0, 0, [player.allItems[1], player.allItems[7], player.allItems[4], player.allItems[6]])
+createEnemy(0, "Snek", 10, 1, 1, 1, "/images/enemies/pipo-enemy003b.png", 1, 0, 0, [player.allItems[2], player.allItems[5], player.allItems[0], player.allItems[3]], 2, 5)
+createEnemy(1, "Sloim", 10, 1, 1, 1, "/images/enemies/pipo-enemy009b.png", 3, 0, 0, [player.allItems[1], player.allItems[7], player.allItems[4], player.allItems[6]], 4, 8)
+createEnemy(2, "Coro", 25, 5, 5, 5, "/images/enemies/pipo-enemy001.png", 5, 0, 0, [player.allItems[0], player.allItems[8], player.allItems[7]], 7, 11)
+createEnemy(3, "John", 40, 15, 15, 15, "/images/enemies/pipo-enemy003b.png", 5, 0, 0, [player.allItems[2], player.allItems[5], player.allItems[0], player.allItems[3]], 15, 23)
+createEnemy(4, "Jim", 85, 20, 20, 20, "/images/enemies/pipo-enemy009b.png", 7, 0, 0, [player.allItems[1], player.allItems[7], player.allItems[4], player.allItems[6]], 20, 28)
+createEnemy(5, "Joe", 60, 35, 35, 35, "/images/enemies/pipo-enemy001.png", 10, 0, 0, [player.allItems[0], player.allItems[8], player.allItems[7]], 30, 37)
+createEnemy(6, "Johntwo", 100, 40, 40, 40, "/images/enemies/pipo-enemy003b.png", 10, 0, 0, [player.allItems[2], player.allItems[5], player.allItems[0], player.allItems[3]], 40, 54)
+createEnemy(7, "Jimtwo", 135, 45, 45, 45, "/images/enemies/pipo-enemy009b.png", 15, 0, 0, [player.allItems[1], player.allItems[7], player.allItems[4], player.allItems[6]], 50, 62)
+createEnemy(8, "Joetwo", 175, 55, 55, 55, "/images/enemies/pipo-enemy001.png", 20, 0, 0, [player.allItems[0], player.allItems[8], player.allItems[7]], 59, 100)
+createZone(0, "The Outer Forest", [player.enemyList[0], player.enemyList[1], player.enemyList[2]])
+createZone(1, "The Inner Forest", [player.enemyList[3], player.enemyList[4], player.enemyList[5]])
+createZone(2, "The Super Forest", [player.enemyList[6], player.enemyList[7], player.enemyList[8]])
+
 
 function printSuccess(){
     console.log("Success!")
@@ -852,7 +875,7 @@ function loadAbilityIcons(actor, i, inBattle, isEnemy, first){
     if (actor.equipment[i].heal > 0 && actor.equipment[i].freeze == true){
         
     }
-    if (actor.equipment[i].freeze == true){
+    if (actor.equipment[i].freeze == true && inBattle == false){
         var image = new Image();
         image.src = "/images/icons/FreezeIcon.png";
         image.width = 25;
@@ -865,6 +888,7 @@ var fighting = false
 function initiateBattle(fightEnemyID){
     fighting = true
     document.getElementById("outcomeButton").hidden = true
+    document.getElementById("outcomeText").hidden = true
     document.getElementById("fightButton").disabled = true
     document.getElementById("playerHealRow0").hidden = true
     document.getElementById("playerHealRow1").hidden = true
@@ -1048,7 +1072,9 @@ function attack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex
         document.getElementById("playerHealRow1").hidden = true
         if (totalHeal > 0){
             loadAbilityIcons(player, playerItemIndex1, true, false, true)
-            loadAbilityIcons(player, playerItemIndex2, true, false, false)
+            if (playerItem2 !== null){
+                loadAbilityIcons(player, playerItemIndex2, true, false, false)
+            }
         }
         if(playerItem1 !== null){
             if (getTotalIcons(playerItem1, false) > 0){
@@ -1222,6 +1248,13 @@ function fight(){
         document.getElementById("outcomeButton").innerHTML = "You win! Click here."
         fighting = false
         player.enemyList[fightEnemyID].timesDefeated += 1
+        var goldEarned = Math.floor(Math.random() * (enemy.dropMax - enemy.dropMin + 1) + enemy.dropMin)
+        player.gold += goldEarned
+        console.log(player.gold)
+        console.log(goldEarned)
+        console.log(player.gold)
+        document.getElementById("outcomeText").hidden = false
+        document.getElementById("outcomeText").innerHTML = "You earned " + goldEarned + " gold by defeating " + enemy.name + "! You now have " + player.gold + " gold!"
         updateEnemyDisplay(enemy)
     }
 }
@@ -1234,12 +1267,15 @@ function ladderIncrement(enemy){
 }
 
 function updateEnemyDisplay(enemy){
-    document.getElementById("enemyHitPoints" + enemy.ID).innerHTML = "HP: " + enemy.maxHitPoints   
-    document.getElementById("enemyAttack" + enemy.ID).innerHTML = "ATT: " + enemy.attackPoints   
-    document.getElementById("enemyDefense" + enemy.ID).innerHTML = "DEF: " + enemy.defensePoints   
-    document.getElementById("enemySpeed" + enemy.ID).innerHTML = "SPE: " + enemy.speedPoints
-    document.getElementById("enemyWins" + enemy.ID).innerHTML = "WIN: " + enemy.timesDefeated   
-    document.getElementById("enemyLosses" + enemy.ID).innerHTML = "LOSS: " + enemy.timesLostTo
+    displayID = enemy.ID % 3
+    document.getElementById("enemy" + displayID).src = enemy.imagePath
+    document.getElementById("enemyName" + displayID).innerHTML = enemy.name
+    document.getElementById("enemyHitPoints" + displayID).innerHTML = "HP: " + enemy.maxHitPoints   
+    document.getElementById("enemyAttack" + displayID).innerHTML = "ATT: " + enemy.attackPoints   
+    document.getElementById("enemyDefense" + displayID).innerHTML = "DEF: " + enemy.defensePoints   
+    document.getElementById("enemySpeed" + displayID).innerHTML = "SPE: " + enemy.speedPoints
+    document.getElementById("enemyWins" + displayID).innerHTML = "WIN: " + enemy.timesDefeated   
+    document.getElementById("enemyLosses" + displayID).innerHTML = "LOSS: " + enemy.timesLostTo
 }
 
 function hideAllBattleRows(){
@@ -1252,4 +1288,28 @@ function hideAllBattleRows(){
     document.getElementById("enemyDefenseIconRow0").hidden = true
     document.getElementById("enemyDefenseIconRow1").hidden = true
     document.getElementById("damageRow").hidden = true
+}
+
+function zoneUp(){
+    if (player.currentZone < 3){
+        player.currentZone += 1
+    }
+    loadZone(player.currentZone)
+}
+
+function zoneDown(){
+    if (player.currentZone > 1){
+        player.currentZone -= 1
+    }
+    loadZone(player.currentZone)
+}
+
+loadZone(1)
+function loadZone(zone){
+    var zoneLoader = player.zones[zone - 1]
+    for (var i = 0; i < zoneLoader.enemies.length; i++){
+        updateEnemyDisplay(zoneLoader.enemies[i])
+    }
+    document.getElementById("zoneNumber").innerHTML = "Zone " + (zoneLoader.ID + 1)     
+    document.getElementById("zoneName").innerHTML = zoneLoader.name
 }

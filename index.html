@@ -104,6 +104,7 @@
             opacity: 1;
             -webkit-text-stroke-width: 1px;
             -webkit-text-stroke-color: black;
+            color: rgb(6, 128, 128);
             font-size: 30px;
         }
         .itemText{
@@ -394,71 +395,109 @@
             </div>
 
             <div id="enemiesTab" style="display:none">
-            <font style="color: rgb(6, 128, 128); font-family: Fredoka One; font-weight: bold"><p class="apPageText" style="color: rgb(6, 128, 128)">Challengers Await</p>
-                            <div style="width: 300px; border: 1px solid black; background-color: rgb(27, 27, 41); display: inline-block">
-                                <center><img id="enemy0" class="enemyImage" src="" onclick="setupFight(0)"></center>
-                                <table stlye="width: 300px">
-                                    <th colspan="2">
-                                        <p class="itemText" style="font-size: 35px" id="enemyName0">
-                                    </th>
-                                    <tr>
-                                        <td style="width: 100px; padding-left: 30px; padding-right: 10px">    
-                                            <p class="itemText" id="enemyHitPoints0">
-                                        </td>
-                                        <td style="width: 100px; padding-left: 10px; padding-right: 30px; text-align: right">                                           
-                                            <p class="itemText" id="enemyAttack0"> 
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width: 100px; padding-left: 30px; padding-right: 10px">
-                                            <p class="itemText" id="enemyDefense0">
-                                        </td>
-                                        <td style="width: 100px; padding-left: 10px; padding-right: 30px; text-align: right">
-                                            <p class="itemText" id="enemySpeed0">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width: 100px; padding-left: 30px; padding-right: 10px">
-                                            <p class="itemText" id="enemyWins0">
-                                        </td>
-                                        <td style="width: 100px; padding-left: 10px; padding-right: 30px; text-align: right">
-                                            <p class="itemText" id="enemyLosses0">
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>    
-                            <div style="width: 300px; border: 1px solid black; background-color: rgb(27, 27, 41); display:inline-block">
-                                <center><img id="enemy1" class="enemyImage" src="" onclick="setupFight(1)"></center>
-                                <table stlye="width: 300px">
-                                    <th colspan="2">
-                                        <p class="itemText" style="font-size: 35px" id="enemyName1">
-                                    </th>
-                                    <tr>
-                                        <td style="width: 100px; padding-left: 30px; padding-right: 10px">    
-                                            <p class="itemText" id="enemyHitPoints1">
-                                        </td>
-                                        <td style="width: 100px; padding-left: 10px; padding-right: 30px; text-align: right">                                           
-                                            <p class="itemText" id="enemyAttack1"> 
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width: 100px; padding-left: 30px; padding-right: 10px">
-                                            <p class="itemText" id="enemyDefense1">
-                                        </td>
-                                        <td style="width: 100px; padding-left: 10px; padding-right: 30px; text-align: right">
-                                            <p class="itemText" id="enemySpeed1">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width: 100px; padding-left: 30px; padding-right: 10px">
-                                            <p class="itemText" id="enemyWins1">
-                                        </td>
-                                        <td style="width: 100px; padding-left: 10px; padding-right: 30px; text-align: right">
-                                            <p class="itemText" id="enemyLosses1">
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>    
+                <font style="color: rgb(6, 128, 128); font-family: Fredoka One; font-weight: bold">
+                <p class="apPageText" style="color: rgb(6, 128, 128); display: inline-block; margin-right: 20px" id="zoneNumber">Zone 1 :</p>
+                <p class="apPageText" style="display: inline-block; margin-right: 20px" id="zoneName">The Forest Outskirts</p>
+                <button class="mainButtonLayout" style="margin-right: 5px; max-height: 50px" onclick="zoneUp()">Ascend</button>
+                <button class="mainButtonLayout" onclick="zoneDown()">Descend</button>
+                <br>
+                <div style="width: 300px; border: 1px solid black; background-color: rgb(27, 27, 41); display: inline-block">
+                    <center><img id="enemy0" class="enemyImage" src="" onclick="setupFight(0)"></center>
+                    <table stlye="width: 300px">
+                        <th colspan="2">
+                            <p class="itemText" style="font-size: 35px" id="enemyName0">
+                        </th>
+                        <tr>
+                            <td style="width: 100px; padding-left: 30px; padding-right: 10px">    
+                                <p class="itemText" id="enemyHitPoints0">
+                            </td>
+                            <td style="width: 100px; padding-left: 10px; padding-right: 30px; text-align: right">                                           
+                                <p class="itemText" id="enemyAttack0"> 
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 100px; padding-left: 30px; padding-right: 10px">
+                                <p class="itemText" id="enemyDefense0">
+                            </td>
+                            <td style="width: 100px; padding-left: 10px; padding-right: 30px; text-align: right">
+                                <p class="itemText" id="enemySpeed0">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 100px; padding-left: 30px; padding-right: 10px">
+                                <p class="itemText" id="enemyWins0">
+                            </td>
+                            <td style="width: 100px; padding-left: 10px; padding-right: 30px; text-align: right">
+                                <p class="itemText" id="enemyLosses0">
+                            </td>
+                        </tr>
+                    </table>
+                </div>    
+                <div style="width: 300px; border: 1px solid black; background-color: rgb(27, 27, 41); display:inline-block">
+                    <center><img id="enemy1" class="enemyImage" src="" onclick="setupFight(1)"></center>
+                    <table stlye="width: 300px">
+                        <th colspan="2">
+                            <p class="itemText" style="font-size: 35px" id="enemyName1">
+                        </th>
+                        <tr>
+                            <td style="width: 100px; padding-left: 30px; padding-right: 10px">    
+                                <p class="itemText" id="enemyHitPoints1">
+                            </td>
+                            <td style="width: 100px; padding-left: 10px; padding-right: 30px; text-align: right">                                           
+                                <p class="itemText" id="enemyAttack1"> 
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 100px; padding-left: 30px; padding-right: 10px">
+                                <p class="itemText" id="enemyDefense1">
+                            </td>
+                            <td style="width: 100px; padding-left: 10px; padding-right: 30px; text-align: right">
+                                <p class="itemText" id="enemySpeed1">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 100px; padding-left: 30px; padding-right: 10px">
+                                <p class="itemText" id="enemyWins1">
+                            </td>
+                            <td style="width: 100px; padding-left: 10px; padding-right: 30px; text-align: right">
+                                <p class="itemText" id="enemyLosses1">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div style="width: 300px; border: 1px solid black; background-color: rgb(27, 27, 41); display:inline-block">
+                    <center><img id="enemy2" class="enemyImage" src="" onclick="setupFight(2)"></center>
+                    <table stlye="width: 300px">
+                        <th colspan="2">
+                            <p class="itemText" style="font-size: 35px" id="enemyName2">
+                        </th>
+                        <tr>
+                            <td style="width: 100px; padding-left: 30px; padding-right: 10px">    
+                                <p class="itemText" id="enemyHitPoints2">
+                            </td>
+                            <td style="width: 100px; padding-left: 10px; padding-right: 30px; text-align: right">                                           
+                                <p class="itemText" id="enemyAttack2"> 
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 100px; padding-left: 30px; padding-right: 10px">
+                                <p class="itemText" id="enemyDefense2">
+                            </td>
+                            <td style="width: 100px; padding-left: 10px; padding-right: 30px; text-align: right">
+                                <p class="itemText" id="enemySpeed2">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 100px; padding-left: 30px; padding-right: 10px">
+                                <p class="itemText" id="enemyWins2">
+                            </td>
+                            <td style="width: 100px; padding-left: 10px; padding-right: 30px; text-align: right">
+                                <p class="itemText" id="enemyLosses2">
+                            </td>
+                        </tr>
+                    </table>
+                </div> 
+                               
             </font>
             </div>
             </center>
@@ -499,6 +538,7 @@
                 </tr>
                 <tr>
                     <button id="outcomeButton" style="margin-top: 10px" class="navMenuButton" onclick="returnToEnemies()" hidden>OUTCOME</button>
+                    <p id="outcomeText" style="margin-top: 10px" class="standardText" hidden>OUTCOME</button>
                     <table style="width: 200px; text-align: center; display: inline-block; position: absolute">
                         <th colspan="2" style="margin-bottom: 10px"><button id="fightButton" class="mainButtonLayout" style="min-width: 194px;" onclick="fight()">Fight!</button></th>
                         <tr></tr>
