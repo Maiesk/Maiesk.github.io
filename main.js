@@ -476,7 +476,7 @@ function createEnemy(ID, name, hitPoints, attackPoints, defensePoints, speedPoin
     return enemy;
 }
 
-function createItem(name, ID, fire, air, earth, water, melee, fireDefense, airDefense, earthDefense, waterDefense, meleeDefense, heal, oncePerBattle, freeze, imagePath){
+function createItem(name, ID, fire, air, earth, water, melee, light, dark, fireDefense, airDefense, earthDefense, waterDefense, meleeDefense, lightDefense, darkDefense, heal, oncePerBattle, freeze, imagePath, itemCost){
     var item = {
         name: name,
         ID: ID,
@@ -485,20 +485,25 @@ function createItem(name, ID, fire, air, earth, water, melee, fireDefense, airDe
         air: air,
         water: water,
         melee: melee,
+        light: light,
+        dark: dark,
         fireDefense: fireDefense,
         airDefense: airDefense,
         earthDefense: earthDefense,
         waterDefense: waterDefense,
         meleeDefense: meleeDefense,
+        lightDefense: lightDefense,
+        darkDefense: darkDefense,
         heal: heal,
         oncePerBattle: oncePerBattle,
         freeze: freeze,
-        imagePath: imagePath
+        imagePath: imagePath,
+        itemCost: itemCost
     }
     player.allItems[item.ID] = item
-    document.getElementById("testWeapon" + item.ID).src = item.imagePath
-    document.getElementById("testWeaponClick" + item.ID).onclick = function(){setSelected(item.ID)}
-    document.getElementById("testWeaponCaption" + item.ID).innerHTML = item.name
+    document.getElementById("goldShopItem" + item.ID).src = item.imagePath
+    document.getElementById("goldShopItem" + item.ID).onclick = function(){buyItem(item.ID)}
+    document.getElementById("goldShopItemCaption" + item.ID).innerHTML = item.name  + "<br/>" + item.itemCost + " Gold"
     return item;
 }
 
@@ -512,16 +517,48 @@ function createZone(ID, name, enemies){
     return zone
 }
 
-createItem("Training Sword", 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, false, true, "/images/weapons/04 - Steel sword.png")
-createItem("The Edge Tester", 1, 4, 4, 2, 2, 5, 3, 3, 3, 3, 7, 1, false, true, "/images/weapons/08 - Red copper sword.png")
-createItem("Fourth Sword", 2, 4, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1, false, true, "/images/weapons/29 - Occult sword variant 1.png")
-createItem("Sword of Extremities", 3, 0, 0, 0, 0, 17, 1, 1, 1, 1, 1, 1, false, true, "/images/weapons/01 - Old stone sword.png")
-createItem("Blade of Yargastenholm", 4, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 100, false, true, "/images/weapons/24 - Silver rebirth sword.png")
-createItem("Them", 5, 4, 4, 0, 4, 0, 0, 0, 4, 0, 4, 1, false, true, "/images/weapons/14 - Twin serrated swords.png")
-createItem("Dank Sword", 6, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, true, "/images/weapons/21 - Amethyst sword.png")
-createItem("El Shieldo", 7, 0, 0, 0, 0, 0, 5, 5, 5, 5, 15, 1, false, true, "/images/weapons/23.png")
-createItem("The Bound Breaker", 8, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 1, false, true, "/images/weapons/09 - Icy sword.png")
-createItem("Just a Shield", 9, 0, 0, 0, 0, 0, 1, 2, 2, 2, 5, 1, false, true, "/images/weapons/18.png")
+function buyItem(ID){
+    var buyItem = player.allItems[ID]
+    if (player.gold >= buyItem.itemCost){
+        player.gold -= buyItem.itemCost
+        document.getElementById("goldShopItem" + ID).onclick = ""
+        document.getElementById("goldShopItemCaption" + ID).innerHTML = buyItem.name  + "<br/>" + "Bought"
+        player.inventory.push(buyItem)
+        loadInventoryDisplay(ID)
+    }
+}
+
+function loadInventoryDisplay(ID){ 
+    var cell = document.createElement("div");
+    var figure = document.createElement("figure")
+    var caption = document.createElement("figcaption")
+    var image = document.createElement("img")
+    cell.style = "width: 180px"
+    var index = player.inventory.length - 1
+    cell.id = "inventory" + index
+    image.src = player.inventory[index].imagePath
+    image.className = "itemImages"
+    caption.innerHTML = player.innerHTML = player.inventory[index].name  
+    caption.className = "itemText"
+    caption.style = "width: 100px; align-content: center"
+    figure.appendChild(image)
+    figure.appendChild(caption)
+    cell.appendChild(figure)
+    document.getElementById("inventoryGrid").appendChild(cell);  
+    document.getElementById("inventory" + index).onclick = function(){setSelected(index)}
+}  
+
+
+createItem("Training Sword", 0, 0, 0, 0, 3, 3, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, false, true, "/images/weapons/04 - Steel sword.png", 0)
+createItem("The Edge Tester", 1, 4, 4, 2, 2, 5, 1, 1, 3, 3, 3, 3, 7, 0, 0, 0, false, true, "/images/weapons/08 - Red copper sword.png", 20)
+createItem("Fourth Sword", 2, 4, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, false, true, "/images/weapons/29 - Occult sword variant 1.png", 10)
+createItem("Sword of Extremities", 3, 0, 0, 0, 0, 17, 17, 0, 1, 1, 1, 1, 1, 1, 1, 1, false, true, "/images/weapons/01 - Old stone sword.png", 50)
+createItem("Blade of Yargastenholm", 4, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 100, false, true, "/images/weapons/24 - Silver rebirth sword.png", 1000)
+createItem("Them", 5, 4, 4, 0, 4, 0, 0, 0, 0, 0, 4, 0, 4, 0, 0, 1, false, true, "/images/weapons/14 - Twin serrated swords.png", 200)
+createItem("Dank Sword", 6, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, true, "/images/weapons/21 - Amethyst sword.png", 1337)
+createItem("El Shieldo", 7, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 15, 10, 10, 1, false, true, "/images/weapons/23.png", 200)
+createItem("The Bound Breaker", 8, 0, 0, 0, 0, 20, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, "/images/weapons/09 - Icy sword.png", 50)
+createItem("Just a Shield", 9, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 5, 2, 2, 0, false, true, "/images/weapons/18.png", 5)
 createEnemy(0, "Snek", 10, 1, 1, 1, "/images/enemies/pipo-enemy003b.png", 1, 0, 0, [player.allItems[2], player.allItems[5], player.allItems[0], player.allItems[3]], 2, 5)
 createEnemy(1, "Sloim", 10, 1, 1, 1, "/images/enemies/pipo-enemy009b.png", 3, 0, 0, [player.allItems[1], player.allItems[7], player.allItems[4], player.allItems[6]], 4, 8)
 createEnemy(2, "Coro", 25, 5, 5, 5, "/images/enemies/pipo-enemy001.png", 5, 0, 0, [player.allItems[0], player.allItems[8], player.allItems[7]], 7, 11)
@@ -540,22 +577,21 @@ function printSuccess(){
     console.log("Success!")
 }
 
-function setSelected(ID){
+function setSelected(i){
     var isEquipped = false
-    if (player.equipment.includes(player.allItems[ID])){
+    if (player.equipment.includes(player.inventory[i])){
         isEquipped = true
-        var index = player.equipment.indexOf(player.allItems[ID])
-        player.equipment.splice(index, 1)
-        
-        document.getElementById("testWeapon" + ID).style.border=""
+        var equipIndex = player.equipment.indexOf(player.inventory[i])
+        player.equipment.splice(equipIndex, 1)
+        document.getElementById("inventory" + i).style.border=""
     }
     if (!isEquipped){
         if (player.equipment.length < 8){  
-            player.equipment.push(player.allItems[ID])
-            document.getElementById("testWeapon" + ID).style.border="1px solid white"
+            player.equipment.push(player.inventory[i])
+            document.getElementById("inventory" + i).style.border="1px solid white"
         }
     }
-    reloadInventoryDisplay()
+    reloadEquipmentDisplay()
 }
 
 var selectedItems = []
@@ -604,8 +640,7 @@ function selectWeapon(equipID){
     }
 }
 
-
-function reloadInventoryDisplay(){
+function reloadEquipmentDisplay(){
     clearIcons()
     for (var i = 0; i < 8; i++){
         if (player.equipment[i]){ 
@@ -717,6 +752,30 @@ function loadAttackIcons(type, i, isEnemy) {
             }
             iconCounter += 1
         }
+        for (var j = 0; j < loadedWeapon.light; j++) {
+            var image = new Image();
+            image.src = "/images/icons/LightIcon.png";
+            image.width = 25;
+            if (inBattle){
+                document.getElementById("" + type).appendChild(image);
+            }
+            else{
+                document.getElementById("" + type + i).appendChild(image);
+            }
+            iconCounter += 1
+        }
+        for (var j = 0; j < loadedWeapon.dark; j++) {
+            var image = new Image();
+            image.src = "/images/icons/DarkIcon.png";
+            image.width = 25;
+            if (inBattle){
+                document.getElementById("" + type).appendChild(image);
+            }
+            else{
+                document.getElementById("" + type + i).appendChild(image);
+            }
+            iconCounter += 1
+        }
         if (iconCounter < 8){
             if (type == "damage"){
                 document.getElementById("damageCell" + i).style = "vertical-align: center"
@@ -807,6 +866,14 @@ function loadDefenseIcons(type, i, isEnemy) {
             loadIconImage(type, i, "/images/icons/PhysIconBlock.png", inBattle)
             iconCounter += 1
         }
+        for (var j = 0; j < loadedWeapon.lightDefense; j++) {
+            loadIconImage(type, i, "/images/icons/LightIconBlock.png", inBattle)
+            iconCounter += 1
+        }
+        for (var j = 0; j < loadedWeapon.meleeDefense; j++) {
+            loadIconImage(type, i, "/images/icons/DarkIconBlock.png", inBattle)
+            iconCounter += 1
+        }
         if (iconCounter < 8){
             if (type == "damage"){
                 document.getElementById("damageCell" + i).style = "vertical-align: center"
@@ -894,6 +961,7 @@ function initiateBattle(fightEnemyID){
     document.getElementById("playerHealRow1").hidden = true
     document.getElementById("enemyHealRow0").hidden = true
     document.getElementById("enemyHealRow1").hidden = true
+    document.getElementById("attackOrder").innerHTML = ""
     document.getElementById("fightButton").style = "background-color: #474646; color: #373636; min-width: 194px;"
     var enemy = player.enemyList[fightEnemyID]
     document.getElementById("enemyBattleImage").src = enemy.imagePath
@@ -1205,12 +1273,14 @@ function fight(){
         enemyWeaponIndexTwo = Math.floor(Math.random() * enemy.equipment.length)
     }
     if (player.speedPoints > enemy.speedPoints){
+        document.getElementById("attackOrder").innerHTML = "You have the edge! You attack first!"
         attack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
         if (enemy.hitPoints > 0){
             enemyAttack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
         }
     }
     else if (player.speedPoints < enemy.speedPoints){
+        document.getElementById("attackOrder").innerHTML = enemy.name + " has the edge! " + enemy.name + " attacks first!"
         enemyAttack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
         if (player.hitPoints > 0){
             attack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
@@ -1218,13 +1288,15 @@ function fight(){
     }
     else{
         var coinFlip = Math.floor(Math.random() * 2);
-        if (coinFlip == 0){
+        if (coinFlip == 0){        
+            document.getElementById("attackOrder").innerHTML = enemy.name + " has the edge! " + enemy.name + " attacks first!"
             enemyAttack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
             if (player.hitPoints > 0){
                 attack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
             }
         }
-        else{
+        else{        
+            document.getElementById("attackOrder").innerHTML = "You have the edge! You attack first!"
             attack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
             if (enemy.hitPoints > 0){
                 enemyAttack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
@@ -1268,6 +1340,7 @@ function ladderIncrement(enemy){
 
 function updateEnemyDisplay(enemy){
     displayID = enemy.ID % 3
+    document.getElementById("enemy" + displayID).onclick = function(){setupFight(enemy.ID)}
     document.getElementById("enemy" + displayID).src = enemy.imagePath
     document.getElementById("enemyName" + displayID).innerHTML = enemy.name
     document.getElementById("enemyHitPoints" + displayID).innerHTML = "HP: " + enemy.maxHitPoints   
