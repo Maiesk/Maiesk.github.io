@@ -169,7 +169,7 @@ function powerTrain(){
         
         document.getElementById("loadButton").disabled = true
         document.getElementById("loadButton").style = "background-color: #474646; color: #373636"
-        var trainingPerSecondShown = Number(player.trainingPerClick * 2000 / player.updateSpeed * player.idleUpgradeMultiplier).toFixed(2)
+        var trainingPerSecondShown = Number(player.trainingPerClick * 2000 / player.updateSpeed * player.idleUpgradeMultiplier).toFixed(0)
         var timeLeft = 5
         document.getElementById("battlePowerPerSecond").innerHTML = numberWithCommas(trainingPerSecondShown) + " Training Points per second for " + timeLeft + " seconds!"   
         var countdown = setInterval(function(){
@@ -178,7 +178,7 @@ function powerTrain(){
             }
             else{
                 timeLeft -= 1
-                trainingPerSecondShown = Number(player.trainingPerClick * 2000 / player.updateSpeed * player.idleUpgradeMultiplier).toFixed(2)
+                trainingPerSecondShown = Number(player.trainingPerClick * 2000 / player.updateSpeed * player.idleUpgradeMultiplier).toFixed(0)
                 document.getElementById("battlePowerPerSecond").innerHTML = numberWithCommas(trainingPerSecondShown) + " Training Points per second for " + timeLeft + " seconds!"   
             }
         }, 1000)
@@ -219,12 +219,29 @@ function buyTrainingPerClick(){
     }
 }
 
+function fibonacci(index){
+    if (index == 1 || index == 2){
+        return 1
+    }
+    else{
+        var result = 0
+        var first = 1
+        var second = 1
+        for (var i = 2; i < index; i++){
+            var result = first + second
+            first = second
+            second = result
+        }
+        return result
+    }
+}
+
 function buyStatPoint(){
     if (player.training >= player.statPointCost){
         player.training -= player.statPointCost
         player.statPoints += 1
         player.maxStatPoints += 1
-        player.statPointCost *= 5
+        player.statPointCost = fibonacci(player.maxStatPoints) * 2000
         updateHTML()
     }
 }
@@ -397,6 +414,18 @@ function loadGame(){
             }
             resetUpdateSpeed()
             document.getElementById("trainingTab").style.display = 'block'
+            document.getElementById("inventoryGrid").innerHTML = ""
+            for (var i = 0; i < player.inventory.length; i++){
+                pushInventoryDisplay(i)
+                var itemCheck = player.inventory[i]
+                ID = player.allItems.findIndex(item => item.name === itemCheck.name);
+                if (ID > -1){
+                    document.getElementById("goldShopItem" + ID).onclick = ""
+                    document.getElementById("goldShopItemCaption" + ID).innerHTML = itemCheck.name  + "<br/>" + "Bought"
+                }
+            }
+            player.equipment = []
+            loadZone(1)
         }, 1000)
     }
     else if (player.powerTrainCooldown == true){
@@ -417,10 +446,10 @@ function numberWithCommas(x){
 
 function updateHTML(){
     var trainingShown = Number(player.training).toFixed(0)
-    var trainingPerSecondShown = Number(player.trainingPerClick * player.idleUpgradeMultiplier * 1000 / player.updateSpeed).toFixed(2)
+    var trainingPerSecondShown = Number(player.trainingPerClick * player.idleUpgradeMultiplier * 1000 / player.updateSpeed).toFixed(0)
     var costOfAPShown = Number(player.buyAPCost).toFixed(0)
     var statPointCostShown = Number(player.statPointCost).toFixed(0)
-    var trainingLevelShown = Number(player.trainingPerClick).toFixed(2)
+    var goldShown = Number(player.gold).toFixed(0)
     if (!powerTrainCooldown){
         document.getElementById("battlePowerPerSecond").innerHTML = numberWithCommas(trainingPerSecondShown) + " Training Points per second!"   
     }
@@ -435,7 +464,7 @@ function updateHTML(){
     document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(player.availableAP)
     document.getElementById("buyAPButton").innerHTML = "Prestige to get 1 AP for " + numberWithCommas(costOfAPShown) + " Training Points" 
     document.getElementById("buyStatPointButton").innerHTML = "Buy Stat Point for " + numberWithCommas(statPointCostShown) + " Training Points"
-    document.getElementById("perClickUpgrade").innerHTML = "Increase Training Level (" + numberWithCommas(trainingLevelShown) + " per tick) for " + numberWithCommas(player.trainingPerClickCost) + " Training Points"
+    document.getElementById("perClickUpgrade").innerHTML = "Increase Training Level for " + numberWithCommas(player.trainingPerClickCost) + " Training Points"
     document.getElementById("statPointsDisplay").innerHTML = player.statPoints + "/" + player.maxStatPoints
     document.getElementById("currentHPStat").innerHTML = player.maxHitPoints + " HP"
     document.getElementById("currentAttackStat").innerHTML = player.attackPoints + " Attack"
@@ -445,6 +474,7 @@ function updateHTML(){
     document.getElementById("statPointsOnAttack").innerHTML = player.allocatedAtt
     document.getElementById("statPointsOnDefense").innerHTML = player.allocatedDef
     document.getElementById("statPointsOnSpeed").innerHTML = player.allocatedSpe
+    document.getElementById("currentGold").innerHTML = "You have " + numberWithCommas(goldShown) + " Gold."
 }
 
 var options = {
@@ -517,6 +547,47 @@ function createZone(ID, name, enemies){
     return zone
 }
 
+var enemyWeapons = []
+function createEnemyWeapon(name, ID, fire, air, earth, water, melee, light, dark, fireDefense, airDefense, earthDefense, waterDefense, meleeDefense, lightDefense, darkDefense, heal, oncePerBattle, freeze){
+    var enemyWeapon = {
+        name: name,
+        ID: ID,
+        fire: fire,
+        earth: earth,
+        air: air,
+        water: water,
+        melee: melee,
+        light: light,
+        dark: dark,
+        fireDefense: fireDefense,
+        airDefense: airDefense,
+        earthDefense: earthDefense,
+        waterDefense: waterDefense,
+        meleeDefense: meleeDefense,
+        lightDefense: lightDefense,
+        darkDefense: darkDefense,
+        heal: heal,
+        oncePerBattle: oncePerBattle,
+        freeze: freeze
+    }
+    enemyWeapons[enemyWeapon.ID] = enemyWeapon
+}
+createEnemyWeapon("Snek Fangs", 0, 0, 2, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, false, false)
+createEnemyWeapon("Snek Hide", 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 3, 0, 0, 0, false, false)
+createEnemyWeapon("Venom Spit", 2, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false)
+createEnemyWeapon("Bad Breath", 3, 2, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, false, false)
+createEnemyWeapon("Sloim Cannon", 4, 0, 3, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false)
+createEnemyWeapon("Super Sloim Transform", 5, 0, 2, 0, 0, 2, 3, 0, 5, 0, 0, 0, 5, 0, 0, 0, false, false)
+createEnemyWeapon("Regenerate Sloim", 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, false, false)
+createEnemyWeapon("Expand-o-sloim", 7, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 0, 0, false, false)
+createEnemyWeapon("Coro Fangs", 8, 0, 2, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, false, false)
+createEnemyWeapon("Bat Wings", 9, 0, 0, 7, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, false, false)
+createEnemyWeapon("Neurotoxin", 10, 0, 3, 0, 0, 0, 0, 4, 0, 0, 0, 0, 8, 0, 0, 0, false, false)
+createEnemyWeapon("Eyes of Rage", 11, 4, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, false, false)
+createEnemyWeapon("Training Sword", 12, 0, 0, 0, 3, 3, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, false, false)
+createEnemyWeapon("Training Sword", 13, 0, 0, 0, 3, 3, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, false, false)
+
+
 function buyItem(ID){
     var buyItem = player.allItems[ID]
     if (player.gold >= buyItem.itemCost){
@@ -524,17 +595,16 @@ function buyItem(ID){
         document.getElementById("goldShopItem" + ID).onclick = ""
         document.getElementById("goldShopItemCaption" + ID).innerHTML = buyItem.name  + "<br/>" + "Bought"
         player.inventory.push(buyItem)
-        loadInventoryDisplay(ID)
+        pushInventoryDisplay(player.inventory.length - 1)
     }
 }
 
-function loadInventoryDisplay(ID){ 
+function pushInventoryDisplay(index){ 
     var cell = document.createElement("div");
     var figure = document.createElement("figure")
     var caption = document.createElement("figcaption")
     var image = document.createElement("img")
     cell.style = "width: 180px"
-    var index = player.inventory.length - 1
     cell.id = "inventory" + index
     image.src = player.inventory[index].imagePath
     image.className = "itemImages"
@@ -557,11 +627,11 @@ createItem("Blade of Yargastenholm", 4, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 
 createItem("Them", 5, 4, 4, 0, 4, 0, 0, 0, 0, 0, 4, 0, 4, 0, 0, 1, false, true, "/images/weapons/14 - Twin serrated swords.png", 200)
 createItem("Dank Sword", 6, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, true, "/images/weapons/21 - Amethyst sword.png", 1337)
 createItem("El Shieldo", 7, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 15, 10, 10, 1, false, true, "/images/weapons/23.png", 200)
-createItem("The Bound Breaker", 8, 0, 0, 0, 0, 20, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, "/images/weapons/09 - Icy sword.png", 50)
+createItem("The Bound Breaker", 8, 0, 0, 0, 0, 0, 20, 20, 0, 0, 0, 0, 0, 20, 20, 0, false, false, "/images/weapons/09 - Icy sword.png", 50)
 createItem("Just a Shield", 9, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 5, 2, 2, 0, false, true, "/images/weapons/18.png", 5)
-createEnemy(0, "Snek", 10, 1, 1, 1, "/images/enemies/pipo-enemy003b.png", 1, 0, 0, [player.allItems[2], player.allItems[5], player.allItems[0], player.allItems[3]], 2, 5)
-createEnemy(1, "Sloim", 10, 1, 1, 1, "/images/enemies/pipo-enemy009b.png", 3, 0, 0, [player.allItems[1], player.allItems[7], player.allItems[4], player.allItems[6]], 4, 8)
-createEnemy(2, "Coro", 25, 5, 5, 5, "/images/enemies/pipo-enemy001.png", 5, 0, 0, [player.allItems[0], player.allItems[8], player.allItems[7]], 7, 11)
+createEnemy(0, "Snek", 10, 1, 1, 1, "/images/enemies/pipo-enemy003b.png", 1, 0, 0, [enemyWeapons[0], enemyWeapons[1], enemyWeapons[2], enemyWeapons[3]], 2, 5)
+createEnemy(1, "Sloim", 10, 1, 1, 1, "/images/enemies/pipo-enemy009b.png", 3, 0, 0, [enemyWeapons[4], enemyWeapons[5], enemyWeapons[6], enemyWeapons[7]], 4, 8)
+createEnemy(2, "Coro", 25, 5, 5, 5, "/images/enemies/pipo-enemy001.png", 5, 0, 0, [enemyWeapons[8], enemyWeapons[9], enemyWeapons[10], enemyWeapons[11]], 7, 11)
 createEnemy(3, "John", 40, 15, 15, 15, "/images/enemies/pipo-enemy003b.png", 5, 0, 0, [player.allItems[2], player.allItems[5], player.allItems[0], player.allItems[3]], 15, 23)
 createEnemy(4, "Jim", 85, 20, 20, 20, "/images/enemies/pipo-enemy009b.png", 7, 0, 0, [player.allItems[1], player.allItems[7], player.allItems[4], player.allItems[6]], 20, 28)
 createEnemy(5, "Joe", 60, 35, 35, 35, "/images/enemies/pipo-enemy001.png", 10, 0, 0, [player.allItems[0], player.allItems[8], player.allItems[7]], 30, 37)
@@ -870,7 +940,7 @@ function loadDefenseIcons(type, i, isEnemy) {
             loadIconImage(type, i, "/images/icons/LightIconBlock.png", inBattle)
             iconCounter += 1
         }
-        for (var j = 0; j < loadedWeapon.meleeDefense; j++) {
+        for (var j = 0; j < loadedWeapon.darkDefense; j++) {
             loadIconImage(type, i, "/images/icons/DarkIconBlock.png", inBattle)
             iconCounter += 1
         }
@@ -1310,6 +1380,7 @@ function fight(){
         document.getElementById("outcomeButton").innerHTML = "You lose! Click here."
         fighting = false
         player.enemyList[fightEnemyID].timesLostTo += 1
+        player.zones[player.currentZone - 1].enemies[fightEnemyID % 3] = player.enemyList[fightEnemyID]
         updateEnemyDisplay(enemy)
     }
     else if (enemy.hitPoints <= 0){
@@ -1327,6 +1398,7 @@ function fight(){
         console.log(player.gold)
         document.getElementById("outcomeText").hidden = false
         document.getElementById("outcomeText").innerHTML = "You earned " + goldEarned + " gold by defeating " + enemy.name + "! You now have " + player.gold + " gold!"
+        player.zones[player.currentZone - 1].enemies[fightEnemyID % 3] = player.enemyList[fightEnemyID]
         updateEnemyDisplay(enemy)
     }
 }

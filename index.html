@@ -243,14 +243,14 @@
                 <table>
                     <tr>
                         <td style="padding-right: 50px">
-                            <p style="max-width: 300px; text-align: center" id="battlePowerPerSecond">10.00 Training Points per second!</p>
+                            <p style="max-width: 300px; text-align: center" id="battlePowerPerSecond">10 Training Points per second!</p>
                         </td>
                         <td>
                             <button id="powerTrainButton" class="mainButtonLayout" onclick="powerTrain()">Power Train</button>
                         </td>
                     </tr>
                 </table>                       
-                <br><button class="mainButtonLayout" onclick="buyTrainingPerClick()" id="perClickUpgrade">Increase Training Level (1.00 per tick) for 50 Training Points</button><br>
+                <br><button class="mainButtonLayout" onclick="buyTrainingPerClick()" id="perClickUpgrade">Increase Training Level for 50 Training Points</button><br>
                 <br><button class="mainButtonLayout" onclick="buyStatPoint()" id="buyStatPointButton">Buy Stat Point for 1,000 Training Points</button><br>
                 <br><button class="mainButtonLayout" onclick="buyAP()" id="buyAPButton">Prestige to get 1 AP for 50,000 Training Points</button><br>                    
                 <br>
@@ -287,7 +287,7 @@
                 </font>
             </div>
             <div id="goldShop" style="display:none">
-                <p class="standardText">Earn Gold by defeating enemies in Battle mode. Coming soon.</p>
+                <p id="currentGold" class="standardText">You have 0 Gold.</p>
                 <div class="grid-container">
                     <div class="cell0"><center><figure><img src="" id="goldShopItem0" class="itemImages"><figcaption class="itemText" id="goldShopItemCaption0" style="width: 100px; align-content: center"> </figcaption></figure></center></div>
                     <div class="cell1"><center><figure><img src="" id="goldShopItem1" class="itemImages"><figcaption class="itemText" id="goldShopItemCaption1" style="width: 100px; align-content: center"> </figcaption></figure></center></div>
