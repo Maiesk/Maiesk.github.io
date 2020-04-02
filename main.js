@@ -26,6 +26,7 @@ var player = {
     currentProgressAtt: 0,
     currentProgressDef: 0,
     currentProgressSpe: 0,
+    progressDivider: 0,
     upgradesBought: 0,
     powerTrainUpgradeMultiplier: 1,
     trainingPointBoostCost: 1,
@@ -63,7 +64,7 @@ function statGain(){
     if (player.allocatedHP > 0){        
         if (document.getElementById("progressBarHP").value >= document.getElementById("progressBarHP").max){
             document.getElementById("progressBarHP").value = 0
-            document.getElementById("progressBarHP").max = 10000 * (1.05**player.maxHitPoints)
+            document.getElementById("progressBarHP").max = 10000 * (1.05**player.maxHitPoints) / player.progressDivider
             player.maxHitPoints += 1 * player.statPointUpgradeMultiplier
             updateHTML()
         }
@@ -73,7 +74,7 @@ function statGain(){
     if (player.allocatedAtt > 0){        
         if (document.getElementById("progressBarAttack").value >= document.getElementById("progressBarAttack").max){
             document.getElementById("progressBarAttack").value = 0
-            document.getElementById("progressBarAttack").max = 10000 * (1.25**player.attackPoints)
+            document.getElementById("progressBarAttack").max = 10000 * (1.25**player.attackPoints) / player.progressDivider
             player.attackPoints += 1 * player.statPointUpgradeMultiplier
             updateHTML()
         }
@@ -83,7 +84,7 @@ function statGain(){
     if (player.allocatedDef > 0){        
         if (document.getElementById("progressBarDefense").value >= document.getElementById("progressBarDefense").max){
             document.getElementById("progressBarDefense").value = 0
-            document.getElementById("progressBarDefense").max = 10000 * (1.25**player.defensePoints)
+            document.getElementById("progressBarDefense").max = 10000 * (1.25**player.defensePoints) / player.progressDivider
             player.defensePoints += 1 * player.statPointUpgradeMultiplier
             updateHTML()
         }
@@ -93,7 +94,7 @@ function statGain(){
     if (player.allocatedSpe > 0){        
         if (document.getElementById("progressBarSpeed").value >= document.getElementById("progressBarSpeed").max){
             document.getElementById("progressBarSpeed").value = 0
-            document.getElementById("progressBarSpeed").max = 10000 * (1.25**player.speedPoints)
+            document.getElementById("progressBarSpeed").max = 10000 * (1.25**player.speedPoints) / player.progressDivider
             player.speedPoints += 1 * player.statPointUpgradeMultiplier
             updateHTML()
         }        
@@ -470,9 +471,9 @@ function updateHTML(){
     document.getElementById("currentTrainingPoints").innerHTML = numberWithCommas(trainingShown)
     document.getElementById("textAPTotal").innerHTML = "AP Total: " + numberWithCommas(player.totalAP)
     document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(player.availableAP)
-    document.getElementById("buyAPButton").innerHTML = "Prestige to get 1 AP for " + numberWithCommas(costOfAPShown) + " Training Points" 
-    document.getElementById("buyStatPointButton").innerHTML = "Buy Stat Point for " + numberWithCommas(statPointCostShown) + " Training Points"
-    document.getElementById("perClickUpgrade").innerHTML = "Increase Training Level for " + numberWithCommas(player.trainingPerClickCost) + " Training Points"
+    document.getElementById("buyAPButton").innerHTML = "Prestige to get 1 AP<br/>" + numberWithCommas(costOfAPShown) + " Training Points" 
+    document.getElementById("buyStatPointButton").innerHTML = "Buy Stat Point<br/>" + numberWithCommas(statPointCostShown) + " Training Points"
+    document.getElementById("perClickUpgrade").innerHTML = "Increase Training Level<br/>" + numberWithCommas(player.trainingPerClickCost) + " Training Points"
     document.getElementById("statPointsDisplay").innerHTML = player.statPoints + "/" + player.maxStatPoints
     document.getElementById("currentHPStat").innerHTML = player.maxHitPoints + " HP"
     document.getElementById("currentAttackStat").innerHTML = player.attackPoints + " Attack"
@@ -674,7 +675,6 @@ function createBattleOptionsPlayer(){
         suffix: "/" + player.maxHitPoints
     };
 }
-
 
 //document.getElementById("battleScreenEnemyName").innerHTML = enemy.name + "<br/>" + enemy.hitPoints + "/" + enemy.maxHitPoints
 
@@ -1191,10 +1191,10 @@ function determineModifier(type){
 
 function getTotalIcons(weapon, isDefense){
     if (!isDefense){
-        return weapon.fire + weapon.air + weapon.melee + weapon.water + weapon.earth
+        return weapon.fire + weapon.air + weapon.melee + weapon.water + weapon.earth + weapon.light + weapon.dark
     }
     else{
-        return weapon.fireDefense + weapon.airDefense + weapon.meleeDefense + weapon.waterDefense + weapon.earthDefense
+        return weapon.fireDefense + weapon.airDefense + weapon.meleeDefense + weapon.waterDefense + weapon.earthDefense + weapon.lightDefense + weapon.darkDefense
     }
 }
 
