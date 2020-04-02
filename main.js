@@ -36,6 +36,7 @@ var player = {
     autoPurchaseAP: false,
     autoPurchaseStatPoints: false,
     frozen: false,
+    currentStance: "Steady",
     enemyList: [],
     allItems: [],
     currentZone: 1,
@@ -440,6 +441,13 @@ function saveGame(){
     }
 }
 
+
+var autoSave = window.setInterval(function (){
+    saveGame()
+    setTimeout(function(){
+    }, 500)
+}, 60000);
+
 function numberWithCommas(x){
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
@@ -476,14 +484,6 @@ function updateHTML(){
     document.getElementById("statPointsOnSpeed").innerHTML = player.allocatedSpe
     document.getElementById("currentGold").innerHTML = "You have " + numberWithCommas(goldShown) + " Gold."
 }
-
-var options = {
-    useEasing: false, 
-    useGrouping: true, 
-    separator: ',', 
-    decimal: '.', 
-    prefix: '',
-};
 
 function createEnemy(ID, name, hitPoints, attackPoints, defensePoints, speedPoints, imagePath, ladderValue, timesDefeated, timesLostTo, equipment, dropMin, dropMax) {
     var enemy = {
@@ -596,6 +596,7 @@ function buyItem(ID){
         document.getElementById("goldShopItemCaption" + ID).innerHTML = buyItem.name  + "<br/>" + "Bought"
         player.inventory.push(buyItem)
         pushInventoryDisplay(player.inventory.length - 1)
+        updateHTML()
     }
 }
 
@@ -642,6 +643,40 @@ createZone(0, "The Outer Forest", [player.enemyList[0], player.enemyList[1], pla
 createZone(1, "The Inner Forest", [player.enemyList[3], player.enemyList[4], player.enemyList[5]])
 createZone(2, "The Super Forest", [player.enemyList[6], player.enemyList[7], player.enemyList[8]])
 
+var options = {
+    useEasing: false, 
+    useGrouping: true, 
+    separator: ',', 
+    decimal: '.', 
+    prefix: '', 
+};
+
+var optionsBattle = null
+function createBattleOptions(enemy){
+    optionsBattle = {
+        useEasing: false, 
+        useGrouping: true, 
+        separator: ',', 
+        decimal: '.', 
+        prefix: enemy.name + "<br/>",
+        suffix: "/" + enemy.maxHitPoints
+    };
+}
+
+var optionsBattlePlayer = null
+function createBattleOptionsPlayer(){
+    optionsBattlePlayer = {
+        useEasing: false, 
+        useGrouping: true, 
+        separator: ',', 
+        decimal: '.', 
+        prefix: "Player<br/>",
+        suffix: "/" + player.maxHitPoints
+    };
+}
+
+
+//document.getElementById("battleScreenEnemyName").innerHTML = enemy.name + "<br/>" + enemy.hitPoints + "/" + enemy.maxHitPoints
 
 function printSuccess(){
     console.log("Success!")
@@ -666,7 +701,7 @@ function setSelected(i){
 
 var selectedItems = []
 function selectWeapon(equipID){
-    if (player.equipment[equipID] !== null && fighting == true){
+    if (player.equipment[equipID] !== undefined && fighting == true){
         document.getElementById("fightButton").disabled = false
         document.getElementById("fightButton").style = "min-width: 194px;"
         if (selectedItems[0] == null){
@@ -1020,7 +1055,7 @@ function loadAbilityIcons(actor, i, inBattle, isEnemy, first){
     }
 }
 
-var currentEnemy = null
+var currentEnemy = 0
 var fighting = false
 function initiateBattle(fightEnemyID){
     fighting = true
@@ -1042,6 +1077,8 @@ function initiateBattle(fightEnemyID){
         enemy.hitPoints = enemy.maxHitPoints
     }
     updateHP(enemy)
+    createBattleOptions(enemy)
+    createBattleOptionsPlayer()
     loadEquipmentForBattle()
     document.getElementById("attackIconRow0").hidden = true
     document.getElementById("defenseIconRow0").hidden = true
@@ -1132,12 +1169,18 @@ function determineTier(stat){
     return statTier;
 }
 
+function selectStance(stance){
+    document.getElementById("stanceButton" + player.currentStance).style.border = ""
+    player.currentStance = stance
+    document.getElementById("stanceButton" + stance).style.border = "2px solid white"
+}
+
 function determineModifier(type){
     var multiplier = 1;
-    if (type == "Berserk"){
+    if (type == "Wild"){
         multiplier = 1.5
     }
-    else if (type == "Aggressive"){
+    else if (type == "Strong"){
         multiplier = 1.25
     }
     else if (type == "Defensive"){
@@ -1162,12 +1205,12 @@ function preventNegative(damage){
     return damage
 }
 
-function attack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex2, attackType, defenseType){
+function attack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex2){
     if (!player.frozen){
         var playerStrength = determineTier(player.attackPoints);
         var enemyDefense = determineTier(enemy.defensePoints);
-        var attackModifier = determineModifier(attackType);
-        var enemyDefenseModifier = determineModifier(defenseType);
+        var attackModifier = determineModifier(player.currentStance);
+        var enemyDefenseModifier = determineModifier(enemyStance);
         var totalHeal = 0;
         var totalDamage = 0;
         var enemyItem1 = enemy.equipment[enemyItemIndex1]
@@ -1179,8 +1222,10 @@ function attack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex
             fireDamage = preventNegative((playerItem1.fire*playerStrength + playerItem2.fire*playerStrength) - (enemyItem1.fireDefense*enemyDefense + enemyItem2.fireDefense*enemyDefense));
             waterDamage = preventNegative((playerItem1.water*playerStrength + playerItem2.water*playerStrength) - (enemyItem1.waterDefense*enemyDefense + enemyItem2.waterDefense*enemyDefense));
             earthDamage = preventNegative((playerItem1.earth*playerStrength + playerItem2.earth*playerStrength) - (enemyItem1.earthDefense*enemyDefense + enemyItem2.earthDefense*enemyDefense));
-            airDamage = preventNegative((playerItem1.air*playerStrength + playerItem2.air*playerStrength) - (enemyItem1.airDefense*enemyDefense + enemyItem2.airDefense*enemyDefense));
-            totalDamage = Math.round((physDamage + fireDamage + waterDamage + earthDamage + airDamage) * attackModifier * enemyDefenseModifier);
+            airDamage = preventNegative((playerItem1.air*playerStrength + playerItem2.air*playerStrength) - (enemyItem1.airDefense*enemyDefense + enemyItem2.airDefense*enemyDefense));           
+            lightDamage = preventNegative((playerItem1.light*playerStrength + playerItem2.light*playerStrength) - (enemyItem1.lightDefense*enemyDefense + enemyItem2.lightDefense*enemyDefense));
+            darkDamage = preventNegative((playerItem1.dark*playerStrength + playerItem2.dark*playerStrength) - (enemyItem1.darkDefense*enemyDefense + enemyItem2.darkDefense*enemyDefense));
+            totalDamage = Math.round((physDamage + fireDamage + waterDamage + earthDamage + airDamage + lightDamage + darkDamage) * attackModifier * enemyDefenseModifier);
             totalHeal = playerItem1.heal + playerItem2.heal
         }
         if (playerItem2 == null && playerItem1 !== null){
@@ -1189,13 +1234,17 @@ function attack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex
             waterDamage = preventNegative((playerItem1.water*playerStrength) - (enemyItem1.waterDefense*enemyDefense + enemyItem2.waterDefense*enemyDefense));
             earthDamage = preventNegative((playerItem1.earth*playerStrength) - (enemyItem1.earthDefense*enemyDefense + enemyItem2.earthDefense*enemyDefense));
             airDamage = preventNegative((playerItem1.air*playerStrength) - (enemyItem1.airDefense*enemyDefense + enemyItem2.airDefense*enemyDefense));
-            totalDamage = Math.round((physDamage + fireDamage + waterDamage + earthDamage + airDamage) * attackModifier * enemyDefenseModifier);
+            lightDamage = preventNegative((playerItem1.light*playerStrength) - (enemyItem1.lightDefense*enemyDefense + enemyItem2.lightDefense*enemyDefense));
+            darkDamage = preventNegative((playerItem1.dark*playerStrength) - (enemyItem1.darkDefense*enemyDefense + enemyItem2.darkDefense*enemyDefense));
+            totalDamage = Math.round((physDamage + fireDamage + waterDamage + earthDamage + airDamage + lightDamage + darkDamage) * attackModifier * enemyDefenseModifier);
             totalHeal = playerItem1.heal
         }
         if (totalDamage < 0){
             totalDamage = 0;
         }
         document.getElementById("damageRight").innerHTML = totalDamage + " DMG"
+        var hpAnimationEnemy = new CountUp("battleScreenEnemyName", enemy.hitPoints, enemy.hitPoints - totalDamage, 0, 0.5, optionsBattle);
+        hpAnimationEnemy.start()
         enemy.hitPoints = enemy.hitPoints - totalDamage
         if (player.hitPoints + totalHeal > player.maxHitPoints){
             player.hitPoints = player.maxHitPoints;
@@ -1246,12 +1295,12 @@ function attack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex
     document.getElementById("damageRow").hidden = false
 }
 
-function enemyAttack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex2, attackType, defenseType){
+function enemyAttack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex2){
     if (!enemy.frozen){
         var enemyStrength = determineTier(enemy.attackPoints);
         var playerDefense = determineTier(player.defensePoints);
-        var attackModifier = determineModifier(attackType);
-        var playerDefenseModifier = determineModifier(defenseType);
+        var attackModifier = determineModifier(enemyStance);
+        var playerDefenseModifier = determineModifier(player.currentStance);
         var totalHeal = 0;
         var totalDamage = 0;
         var enemyItem1 = enemy.equipment[enemyItemIndex1]
@@ -1262,7 +1311,9 @@ function enemyAttack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItem
             waterDamage = preventNegative((enemyItem1.water*enemyStrength + enemyItem2.water*enemyStrength) - (playerItem1.waterDefense*playerDefense + playerItem2.waterDefense*playerDefense));
             earthDamage = preventNegative((enemyItem1.earth*enemyStrength + enemyItem2.earth*enemyStrength) - (playerItem1.earthDefense*playerDefense + playerItem2.earthDefense*playerDefense));
             airDamage = preventNegative((enemyItem1.air*enemyStrength + enemyItem2.air*enemyStrength) - (playerItem1.airDefense*playerDefense + playerItem2.airDefense*playerDefense));
-            totalDamage = Math.round((physDamage + fireDamage + waterDamage + earthDamage + airDamage) * attackModifier * playerDefenseModifier);
+            lightDamage = preventNegative((enemyItem1.light*enemyStrength + enemyItem2.light*enemyStrength) - (playerItem1.lightDefense*playerDefense + playerItem2.lightDefense*playerDefense));
+            darkDamage = preventNegative((enemyItem1.dark*enemyStrength + enemyItem2.dark*enemyStrength) - (playerItem1.darkDefense*playerDefense + playerItem2.darkDefense*playerDefense));
+            totalDamage = Math.round((physDamage + fireDamage + waterDamage + earthDamage + airDamage + lightDamage + darkDamage) * attackModifier * playerDefenseModifier);
             totalHeal = enemyItem1.heal + enemyItem2.heal
         }
         if (playerItem2 == null && playerItem1 !== null){
@@ -1271,13 +1322,17 @@ function enemyAttack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItem
             waterDamage = preventNegative((enemyItem1.water*enemyStrength + enemyItem2.water*enemyStrength) - (playerItem1.waterDefense*playerDefense));
             earthDamage = preventNegative((enemyItem1.earth*enemyStrength + enemyItem2.earth*enemyStrength) - (playerItem1.earthDefense*playerDefense));
             airDamage = preventNegative((enemyItem1.air*enemyStrength + enemyItem2.air*enemyStrength) - (playerItem1.airDefense*playerDefense));
-            totalDamage = Math.round((physDamage + fireDamage + waterDamage + earthDamage + airDamage) * attackModifier * playerDefenseModifier);
+            lightDamage = preventNegative((enemyItem1.light*enemyStrength + enemyItem2.light*enemyStrength) - (playerItem1.lightDefense*playerDefense));
+            darkDamage = preventNegative((enemyItem1.dark*enemyStrength + enemyItem2.dark*enemyStrength) - (playerItem1.darkDefense*playerDefense));
+            totalDamage = Math.round((physDamage + fireDamage + waterDamage + earthDamage + airDamage + lightDamage + darkDamage) * attackModifier * playerDefenseModifier);
             totalHeal = enemyItem1.heal + enemyItem2.heal
         }
         if (totalDamage < 0){
             totalDamage = 0;
         }
         document.getElementById("damageLeft").innerHTML = totalDamage + " DMG"
+        var hpAnimation = new CountUp("battleScreenPlayerName", player.hitPoints, player.hitPoints - totalDamage, 0, 0.5, optionsBattlePlayer);
+        hpAnimation.start()
         player.hitPoints = player.hitPoints - totalDamage
         if (enemy.hitPoints + totalHeal > enemy.maxHitPoints){
             enemy.hitPoints = enemy.maxHitPoints;
@@ -1329,13 +1384,18 @@ function enemyAttack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItem
     document.getElementById("damageRow").hidden = false
 }
 
+var enemyStanceArr = ["Wild", "Strong", "Steady", "Defensive"]
+var enemyStance = "Steady"
 function fight(){
     hideAllBattleRows()
+    document.getElementById("damageLeft").innerHTML = "0 DMG"
+    document.getElementById("damageRight").innerHTML = "0 DMG"
     enemy = player.enemyList[fightEnemyID]
     var enemyWeaponIndexOne = Math.floor(Math.random() * enemy.equipment.length)
     var enemyWeaponIndexTwo = Math.floor(Math.random() * enemy.equipment.length)
     var playerItem1 = selectedItems[0]
     var playerItem2 = null
+    enemyStance = enemyStanceArr[Math.floor(Math.random() * enemyStanceArr.length)]
     if (selectedItems[1] !== null){
         playerItem2 = selectedItems[1]
     }
@@ -1393,9 +1453,6 @@ function fight(){
         player.enemyList[fightEnemyID].timesDefeated += 1
         var goldEarned = Math.floor(Math.random() * (enemy.dropMax - enemy.dropMin + 1) + enemy.dropMin)
         player.gold += goldEarned
-        console.log(player.gold)
-        console.log(goldEarned)
-        console.log(player.gold)
         document.getElementById("outcomeText").hidden = false
         document.getElementById("outcomeText").innerHTML = "You earned " + goldEarned + " gold by defeating " + enemy.name + "! You now have " + player.gold + " gold!"
         player.zones[player.currentZone - 1].enemies[fightEnemyID % 3] = player.enemyList[fightEnemyID]

@@ -145,7 +145,7 @@
             padding-top: 0px;
         }
         .progessBars{
-            background-color: green;
+            background-color: rgb(6, 128, 128);
             max-width: 200px;
             color:white;
             text-align: left;
@@ -191,7 +191,8 @@
     <center>
     <div id="navMenu">
         <button id="saveButton" class="mainButtonLayout" onclick="saveGame()">Save</button>
-        <button id="loadButton" class="mainButtonLayout" onclick="loadGame()">Load</button><br>
+        <button id="loadButton" class="mainButtonLayout" onclick="loadGame()">Load</button>
+        <br>
         <br>
         <button class="navMenuButton" onclick="return show('trainingTab','shopTab','battleTab','fightSetupScreen')">Training</button>
         <button class="navMenuButton" onclick="return show('battleTab','trainingTab','shopTab','fightSetupScreen')">Battle</button>
@@ -582,6 +583,22 @@
                         <tr>
                             <td><img id="equippedWeapon6" class="itemImages" onclick="selectWeapon(6)"></td>
                             <td><img id="equippedWeapon7" class="itemImages" onclick="selectWeapon(7)"></td>
+                        </tr>
+                        <tr></tr>
+                        <tr>
+                            <td colspan="2"><button id="stanceButtonWild" class="mainButtonLayout" style="min-width: 194px;" onclick="selectStance('Wild')">Wild</button></td>
+                        </tr>
+                        
+                        <tr>
+                            <td colspan="2"><button id="stanceButtonStrong" class="mainButtonLayout" style="min-width: 194px;" onclick="selectStance('Strong')">Strong</button></td>
+                        </tr>
+                        
+                        <tr>
+                            <td colspan="2"><button id="stanceButtonSteady" class="mainButtonLayout" style="min-width: 194px; border: 2px solid white" onclick="selectStance('Steady')">Steady</button></td>
+                        </tr>
+                        
+                        <tr>
+                            <td colspan="2"><button id="stanceButtonDefensive" class="mainButtonLayout" style="min-width: 194px;" onclick="selectStance('Defensive')">Defensive</button></td>
                         </tr>
                     </table>
                     <table style="max-width: 600px; min-width: 600px; min-height: 400px; border: 1px solid grey; color: white; background-color: rgb(47, 49, 56); display: inline-block; margin-left: 220px; padding-right: 15px">
