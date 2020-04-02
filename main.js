@@ -14,6 +14,8 @@ var player = {
     availableAP: 0,
     totalAP: 0,
     gold: 0,
+    exp: 0,
+    Level: 1,
     buyAPCost: 50000,
     statPointCost: 1000,
     statPoints: 0,
@@ -26,7 +28,7 @@ var player = {
     currentProgressAtt: 0,
     currentProgressDef: 0,
     currentProgressSpe: 0,
-    progressDivider: 0,
+    progressDivider: 1,
     upgradesBought: 0,
     powerTrainUpgradeMultiplier: 1,
     trainingPointBoostCost: 1,
@@ -64,7 +66,7 @@ function statGain(){
     if (player.allocatedHP > 0){        
         if (document.getElementById("progressBarHP").value >= document.getElementById("progressBarHP").max){
             document.getElementById("progressBarHP").value = 0
-            document.getElementById("progressBarHP").max = 10000 * (1.05**player.maxHitPoints) / player.progressDivider
+            document.getElementById("progressBarHP").max = 10000 * (1.05**player.maxHitPoints) / (player.progressDivider * Math.log2(level + 1))
             player.maxHitPoints += 1 * player.statPointUpgradeMultiplier
             updateHTML()
         }
@@ -74,7 +76,7 @@ function statGain(){
     if (player.allocatedAtt > 0){        
         if (document.getElementById("progressBarAttack").value >= document.getElementById("progressBarAttack").max){
             document.getElementById("progressBarAttack").value = 0
-            document.getElementById("progressBarAttack").max = 10000 * (1.25**player.attackPoints) / player.progressDivider
+            document.getElementById("progressBarAttack").max = 10000 * (1.25**player.attackPoints) / (player.progressDivider * Math.log2(level + 1))
             player.attackPoints += 1 * player.statPointUpgradeMultiplier
             updateHTML()
         }
@@ -84,7 +86,7 @@ function statGain(){
     if (player.allocatedDef > 0){        
         if (document.getElementById("progressBarDefense").value >= document.getElementById("progressBarDefense").max){
             document.getElementById("progressBarDefense").value = 0
-            document.getElementById("progressBarDefense").max = 10000 * (1.25**player.defensePoints) / player.progressDivider
+            document.getElementById("progressBarDefense").max = 10000 * (1.25**player.defensePoints) / (player.progressDivider * Math.log2(level + 1))
             player.defensePoints += 1 * player.statPointUpgradeMultiplier
             updateHTML()
         }
@@ -94,7 +96,7 @@ function statGain(){
     if (player.allocatedSpe > 0){        
         if (document.getElementById("progressBarSpeed").value >= document.getElementById("progressBarSpeed").max){
             document.getElementById("progressBarSpeed").value = 0
-            document.getElementById("progressBarSpeed").max = 10000 * (1.25**player.speedPoints) / player.progressDivider
+            document.getElementById("progressBarSpeed").max = 10000 * (1.25**player.speedPoints) / (player.progressDivider * Math.log2(level + 1))
             player.speedPoints += 1 * player.statPointUpgradeMultiplier
             updateHTML()
         }        
@@ -155,23 +157,18 @@ var powerTrainCooldown = false;
 function powerTrain(){
     if (powerTrainCooldown == false){
         var originalTrainingPerClick = player.trainingPerClick
-        player.trainingPerClick *= player.powerTrainUpgradeMultiplier
+        player.trainingPerClick *= 2
         powerTrainCooldown = true
-        mainGameLoop = window.setInterval(function (){
-            update();
-        }, player.updateSpeed);
         updateHTML()
         document.getElementById("powerTrainButton").disabled = true
         document.getElementById("powerTrainButton").style = "background-color: #474646; color: #373636"
         document.getElementById("buyAPButton").disabled = true
         document.getElementById("buyAPButton").style = "background-color: #474646; color: #373636"
-        
         document.getElementById("saveButton").disabled = true
-        document.getElementById("saveButton").style = "background-color: #474646; color: #373636"
-        
+        document.getElementById("saveButton").style = "background-color: #474646; color: #373636"   
         document.getElementById("loadButton").disabled = true
         document.getElementById("loadButton").style = "background-color: #474646; color: #373636"
-        var trainingPerSecondShown = Number(player.trainingPerClick * 2000 / player.updateSpeed * player.idleUpgradeMultiplier).toFixed(0)
+        var trainingPerSecondShown = Number(player.trainingPerClick * 1000 / player.updateSpeed * player.idleUpgradeMultiplier).toFixed(0)
         var timeLeft = 5
         document.getElementById("battlePowerPerSecond").innerHTML = numberWithCommas(trainingPerSecondShown) + " Training Points per second for " + timeLeft + " seconds!"   
         var countdown = setInterval(function(){
@@ -180,7 +177,7 @@ function powerTrain(){
             }
             else{
                 timeLeft -= 1
-                trainingPerSecondShown = Number(player.trainingPerClick * 2000 / player.updateSpeed * player.idleUpgradeMultiplier).toFixed(0)
+                trainingPerSecondShown = Number(player.trainingPerClick * 1000 / player.updateSpeed * player.idleUpgradeMultiplier).toFixed(0)
                 document.getElementById("battlePowerPerSecond").innerHTML = numberWithCommas(trainingPerSecondShown) + " Training Points per second for " + timeLeft + " seconds!"   
             }
         }, 1000)
@@ -191,7 +188,6 @@ function powerTrain(){
             else {
                 player.trainingPerClick = originalTrainingPerClick
             }
-            clearInterval(mainGameLoop)
             powerTrainCooldown = false
             player.upgradesBought = 0
             document.getElementById("buyAPButton").disabled = false
@@ -264,6 +260,14 @@ function buyAP(){
         }
         player.trainingPerClickCost = 20
         player.training = 0
+        updateHTML()
+    }
+}
+
+function buyLevelUp(){
+    if (player.exp >= player.levelUpCost){
+        player.level += 1
+        player.exp -= player.levelUpCost
         updateHTML()
     }
 }
@@ -474,7 +478,7 @@ function updateHTML(){
     document.getElementById("buyAPButton").innerHTML = "Prestige to get 1 AP<br/>" + numberWithCommas(costOfAPShown) + " Training Points" 
     document.getElementById("buyStatPointButton").innerHTML = "Buy Stat Point<br/>" + numberWithCommas(statPointCostShown) + " Training Points"
     document.getElementById("perClickUpgrade").innerHTML = "Increase Training Level<br/>" + numberWithCommas(player.trainingPerClickCost) + " Training Points"
-    document.getElementById("statPointsDisplay").innerHTML = player.statPoints + "/" + player.maxStatPoints
+    document.getElementById("statPointsDisplay").innerHTML = "Stat Points<br/><br/>" + player.statPoints + "/" + player.maxStatPoints
     document.getElementById("currentHPStat").innerHTML = player.maxHitPoints + " HP"
     document.getElementById("currentAttackStat").innerHTML = player.attackPoints + " Attack"
     document.getElementById("currentDefenseStat").innerHTML = player.defensePoints + " Defense"
@@ -649,7 +653,7 @@ var options = {
     useGrouping: true, 
     separator: ',', 
     decimal: '.', 
-    prefix: '', 
+    prefix: 'Training Points<br/><br/>', 
 };
 
 var optionsBattle = null
@@ -1453,6 +1457,7 @@ function fight(){
         player.enemyList[fightEnemyID].timesDefeated += 1
         var goldEarned = Math.floor(Math.random() * (enemy.dropMax - enemy.dropMin + 1) + enemy.dropMin)
         player.gold += goldEarned
+        player.exp += enemy.maxHitPoints * (1 + enemy.ID)
         document.getElementById("outcomeText").hidden = false
         document.getElementById("outcomeText").innerHTML = "You earned " + goldEarned + " gold by defeating " + enemy.name + "! You now have " + player.gold + " gold!"
         player.zones[player.currentZone - 1].enemies[fightEnemyID % 3] = player.enemyList[fightEnemyID]

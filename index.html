@@ -194,6 +194,16 @@
         .trainingButtonGrid > div {
             
         }
+        #playerDisplay {
+	        display: flex;
+	        justify-content: center;
+	        position: relative;
+        }
+        .playerDisplayDivs {
+            margin-left: 50px;
+            margin-right: 50px;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body style="background: linear-gradient(to bottom right, rgb(35, 35, 36), rgb(10, 10, 10)) fixed">
@@ -211,18 +221,13 @@
         <br>
     </div>
         <div id="trainingTab" class="divBackground">
-            <br>
+            <div id="playerDisplay" class="standardText">
+                <div class="playerDisplayDivs"><p style="text-align: center" id="currentTrainingPoints">Training Points<br/>0</p></div>
+                <div class="playerDisplayDivs"><p style="text-align: center" id="currentLevel">Level<br/><br/>1</p></div>
+                <div class="playerDisplayDivs"><p style="text-align: center" id="currentEXP">EXP<br/><br/>0/50</p></div>
+                <div class="playerDisplayDivs"><p style="text-align: center" id="statPointsDisplay">Stat Points<br/><br/>0/0</p></div>
+            </div>
                 <table class="standardText">
-                    <tr>
-                        <td>Training Points</td>
-                        <td></td>
-                        <td>Stat Points</td>
-                    </tr>
-                    <tr>
-                        <td><p style="text-align: center" id="currentTrainingPoints">0</p></td>
-                        <td></td>
-                        <td><p style="text-align: center" id="statPointsDisplay">0/0</p></td>
-                    </tr>
                     <tr>
                         <td><p id="currentHPStat">10 HP</p></td>
                         <td><progress id="progressBarHP" class="progessBars" max=10000 value=0></progress></td>
@@ -248,7 +253,6 @@
                         <td style="text-align: center"><button class="statButtonLayout" onclick="allocateSpeed(true)">+</button><button class="statButtonLayout" onclick="allocateSpeed(false)">-</button></td>
                     </tr> 
                 </table>
-            </font>
                 <font style="color: rgb(6, 128, 128); font-family: Fredoka One; font-weight: bold">
                 <table>
                     <tr>
@@ -263,10 +267,9 @@
                 <br>
                 <div class="trainingButtonGrid">
                     <div><button class="mainButtonLayout" onclick="buyTrainingPerClick()" id="perClickUpgrade">Increase Training Level<br/>50 Training Points</button></div>
-                    <div><button class="mainButtonLayout" onclick="buyStatPoint()" id="buyStatPointButton">Buy Stat Point<br/>1,000 Training Points</button></div>
                     <div><button class="mainButtonLayout" onclick="buyAP()" id="buyAPButton">Prestige to get 1 AP<br/>50,000 Training Points</button></div>
-                    <div></div>
-
+                    <div><button class="mainButtonLayout" onclick="buyStatPoint()" id="buyStatPointButton">Buy Stat Point<br/>1,000 Training Points</button></div>
+                    <div><button class="mainButtonLayout" onclick="buyLevelUp()" id="buyLevelUpButton">EXP Level Up<br/>50 EXP</button></div>
                 </div>                       
                 <br><br>
                 <br><br>
