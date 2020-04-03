@@ -15,9 +15,10 @@ var player = {
     totalAP: 0,
     gold: 0,
     exp: 0,
-    Level: 1,
+    level: 1,
     buyAPCost: 50000,
     statPointCost: 1000,
+    levelUpCost: 50,
     statPoints: 0,
     maxStatPoints: 0,
     allocatedHP: 0,
@@ -66,41 +67,41 @@ function statGain(){
     if (player.allocatedHP > 0){        
         if (document.getElementById("progressBarHP").value >= document.getElementById("progressBarHP").max){
             document.getElementById("progressBarHP").value = 0
-            document.getElementById("progressBarHP").max = 10000 * (1.05**player.maxHitPoints) / (player.progressDivider * Math.log2(level + 1))
+            document.getElementById("progressBarHP").max = 10000 * (1.05**Math.sqrt(player.maxHitPoints - 10)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/10)))
             player.maxHitPoints += 1 * player.statPointUpgradeMultiplier
             updateHTML()
         }
-        document.getElementById("progressBarHP").value += 5 * player.allocatedHP
+        document.getElementById("progressBarHP").value += 10 * player.allocatedHP
         player.currentProgressHP = document.getElementById("progressBarHP").value
     }
     if (player.allocatedAtt > 0){        
         if (document.getElementById("progressBarAttack").value >= document.getElementById("progressBarAttack").max){
             document.getElementById("progressBarAttack").value = 0
-            document.getElementById("progressBarAttack").max = 10000 * (1.25**player.attackPoints) / (player.progressDivider * Math.log2(level + 1))
+            document.getElementById("progressBarAttack").max = 10000 * (1.05**Math.sqrt(player.attackPoints)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/10)))
             player.attackPoints += 1 * player.statPointUpgradeMultiplier
             updateHTML()
         }
-        document.getElementById("progressBarAttack").value += 5 * player.allocatedAtt
+        document.getElementById("progressBarAttack").value += 10 * player.allocatedAtt
         player.currentProgressAtt = document.getElementById("progressBarAttack").value
     }
     if (player.allocatedDef > 0){        
         if (document.getElementById("progressBarDefense").value >= document.getElementById("progressBarDefense").max){
             document.getElementById("progressBarDefense").value = 0
-            document.getElementById("progressBarDefense").max = 10000 * (1.25**player.defensePoints) / (player.progressDivider * Math.log2(level + 1))
+            document.getElementById("progressBarDefense").max = 10000 * (1.05**Math.sqrt(player.defensePoints)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/10)))
             player.defensePoints += 1 * player.statPointUpgradeMultiplier
             updateHTML()
         }
-        document.getElementById("progressBarDefense").value += 5 * player.allocatedDef
+        document.getElementById("progressBarDefense").value += 10 * player.allocatedDef
         player.currentProgressDef = document.getElementById("progressBarDefense").value
     }
     if (player.allocatedSpe > 0){        
         if (document.getElementById("progressBarSpeed").value >= document.getElementById("progressBarSpeed").max){
             document.getElementById("progressBarSpeed").value = 0
-            document.getElementById("progressBarSpeed").max = 10000 * (1.25**player.speedPoints) / (player.progressDivider * Math.log2(level + 1))
+            document.getElementById("progressBarSpeed").max = 10000 * (1.05**Math.sqrt(player.speedPoints)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/10)))
             player.speedPoints += 1 * player.statPointUpgradeMultiplier
             updateHTML()
         }        
-        document.getElementById("progressBarSpeed").value += 5 * player.allocatedSpe
+        document.getElementById("progressBarSpeed").value += 10 * player.allocatedSpe
         player.currentProgressSpe = document.getElementById("progressBarSpeed").value
     }
 }
@@ -268,6 +269,7 @@ function buyLevelUp(){
     if (player.exp >= player.levelUpCost){
         player.level += 1
         player.exp -= player.levelUpCost
+        player.levelUpCost *= 5
         updateHTML()
     }
 }
@@ -478,7 +480,10 @@ function updateHTML(){
     document.getElementById("buyAPButton").innerHTML = "Prestige to get 1 AP<br/>" + numberWithCommas(costOfAPShown) + " Training Points" 
     document.getElementById("buyStatPointButton").innerHTML = "Buy Stat Point<br/>" + numberWithCommas(statPointCostShown) + " Training Points"
     document.getElementById("perClickUpgrade").innerHTML = "Increase Training Level<br/>" + numberWithCommas(player.trainingPerClickCost) + " Training Points"
+    document.getElementById("buyLevelUpButton").innerHTML = "EXP Level Up<br/>" + numberWithCommas(player.levelUpCost) + " EXP"
     document.getElementById("statPointsDisplay").innerHTML = "Stat Points<br/><br/>" + player.statPoints + "/" + player.maxStatPoints
+    document.getElementById("currentEXP").innerHTML = "EXP<br/><br/>" + player.exp
+    document.getElementById("currentLevel").innerHTML = "Level<br/><br/>" + player.level
     document.getElementById("currentHPStat").innerHTML = player.maxHitPoints + " HP"
     document.getElementById("currentAttackStat").innerHTML = player.attackPoints + " Attack"
     document.getElementById("currentDefenseStat").innerHTML = player.defensePoints + " Defense"
@@ -1450,6 +1455,7 @@ function fight(){
     else if (enemy.hitPoints <= 0){
         document.getElementById("fightButton").disabled = true
         document.getElementById("fightButton").style = "background-color: #474646; color: #373636; min-width: 194px;"
+        player.exp += enemy.maxHitPoints * (1 + enemy.ID)
         ladderIncrement(player.enemyList[fightEnemyID])
         document.getElementById("outcomeButton").hidden = false
         document.getElementById("outcomeButton").innerHTML = "You win! Click here."
@@ -1457,7 +1463,6 @@ function fight(){
         player.enemyList[fightEnemyID].timesDefeated += 1
         var goldEarned = Math.floor(Math.random() * (enemy.dropMax - enemy.dropMin + 1) + enemy.dropMin)
         player.gold += goldEarned
-        player.exp += enemy.maxHitPoints * (1 + enemy.ID)
         document.getElementById("outcomeText").hidden = false
         document.getElementById("outcomeText").innerHTML = "You earned " + goldEarned + " gold by defeating " + enemy.name + "! You now have " + player.gold + " gold!"
         player.zones[player.currentZone - 1].enemies[fightEnemyID % 3] = player.enemyList[fightEnemyID]
