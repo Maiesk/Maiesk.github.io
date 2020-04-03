@@ -541,7 +541,21 @@ function createItem(name, ID, fire, air, earth, water, melee, light, dark, fireD
         itemCost: itemCost
     }
     player.allItems[item.ID] = item
-    document.getElementById("goldShopItem" + item.ID).src = item.imagePath
+    var cell = document.createElement("div");
+    var figure = document.createElement("figure")
+    var caption = document.createElement("figcaption")
+    var image = document.createElement("img")
+    cell.style = "width: 180px"
+    cell.id = "goldShopItem" + item.ID
+    image.src = item.imagePath
+    image.className = "itemImages"
+    caption.id = "goldShopItemCaption" + item.ID
+    caption.className = "itemText"
+    caption.style = "width: 100px; align-content: center"
+    figure.appendChild(image)
+    figure.appendChild(caption)
+    cell.appendChild(figure)
+    document.getElementById("goldShopGrid").appendChild(cell);
     document.getElementById("goldShopItem" + item.ID).onclick = function(){buyItem(item.ID)}
     document.getElementById("goldShopItemCaption" + item.ID).innerHTML = item.name  + "<br/>" + item.itemCost + " Gold"
     return item;
