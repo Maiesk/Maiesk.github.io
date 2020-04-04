@@ -474,7 +474,7 @@ function updateHTML(){
     if (player.autoUpgrade == false){
         document.getElementById("buyAutoUpgradeButton").innerHTML = "Buy Auto Upgrade: 10 AP"
     }
-    document.getElementById("currentTrainingPoints").innerHTML = numberWithCommas(trainingShown)
+    document.getElementById("currentTrainingPoints").innerHTML = "Training Points<br/><br/>" + numberWithCommas(trainingShown)
     document.getElementById("textAPTotal").innerHTML = "AP Total: " + numberWithCommas(player.totalAP)
     document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(player.availableAP)
     document.getElementById("buyAPButton").innerHTML = "Prestige to get 1 AP<br/>" + numberWithCommas(costOfAPShown) + " Training Points" 
@@ -482,7 +482,7 @@ function updateHTML(){
     document.getElementById("perClickUpgrade").innerHTML = "Increase Training Level<br/>" + numberWithCommas(player.trainingPerClickCost) + " Training Points"
     document.getElementById("buyLevelUpButton").innerHTML = "EXP Level Up<br/>" + numberWithCommas(player.levelUpCost) + " EXP"
     document.getElementById("statPointsDisplay").innerHTML = "Stat Points<br/><br/>" + player.statPoints + "/" + player.maxStatPoints
-    document.getElementById("currentEXP").innerHTML = "EXP<br/><br/>" + player.exp
+    document.getElementById("currentEXP").innerHTML = "EXP<br/><br/>" + player.exp + "/" + player.levelUpCost
     document.getElementById("currentLevel").innerHTML = "Level<br/><br/>" + player.level
     document.getElementById("currentHPStat").innerHTML = player.maxHitPoints + " HP"
     document.getElementById("currentAttackStat").innerHTML = player.attackPoints + " Attack"
@@ -516,7 +516,7 @@ function createEnemy(ID, name, hitPoints, attackPoints, defensePoints, speedPoin
     return enemy;
 }
 
-function createItem(name, ID, fire, air, earth, water, melee, light, dark, fireDefense, airDefense, earthDefense, waterDefense, meleeDefense, lightDefense, darkDefense, heal, oncePerBattle, freeze, imagePath, itemCost){
+function createItem(name, ID, fire, air, earth, water, melee, light, dark, fireDef, airDef, earthDef, waterDef, meleeDef, lightDef, darkDef, heal, oncePerBattle, freeze, imagePath, itemCost){
     var item = {
         name: name,
         ID: ID,
@@ -527,13 +527,13 @@ function createItem(name, ID, fire, air, earth, water, melee, light, dark, fireD
         melee: melee,
         light: light,
         dark: dark,
-        fireDefense: fireDefense,
-        airDefense: airDefense,
-        earthDefense: earthDefense,
-        waterDefense: waterDefense,
-        meleeDefense: meleeDefense,
-        lightDefense: lightDefense,
-        darkDefense: darkDefense,
+        fireDef: fireDef,
+        airDef: airDef,
+        earthDef: earthDef,
+        waterDef: waterDef,
+        meleeDef: meleeDef,
+        lightDef: lightDef,
+        darkDef: darkDef,
         heal: heal,
         oncePerBattle: oncePerBattle,
         freeze: freeze,
@@ -551,7 +551,7 @@ function createItem(name, ID, fire, air, earth, water, melee, light, dark, fireD
     image.className = "itemImages"
     caption.id = "goldShopItemCaption" + item.ID
     caption.className = "itemText"
-    caption.style = "width: 100px; align-content: center"
+    caption.style = "width: 120px; align-content: center"
     figure.appendChild(image)
     figure.appendChild(caption)
     cell.appendChild(figure)
@@ -572,7 +572,7 @@ function createZone(ID, name, enemies){
 }
 
 var enemyWeapons = []
-function createEnemyWeapon(name, ID, fire, air, earth, water, melee, light, dark, fireDefense, airDefense, earthDefense, waterDefense, meleeDefense, lightDefense, darkDefense, heal, oncePerBattle, freeze){
+function createEnemyWeapon(name, ID, fire, air, earth, water, melee, light, dark, fireDef, airDef, earthDef, waterDef, meleeDef, lightDef, darkDef, heal, oncePerBattle, freeze){
     var enemyWeapon = {
         name: name,
         ID: ID,
@@ -583,13 +583,13 @@ function createEnemyWeapon(name, ID, fire, air, earth, water, melee, light, dark
         melee: melee,
         light: light,
         dark: dark,
-        fireDefense: fireDefense,
-        airDefense: airDefense,
-        earthDefense: earthDefense,
-        waterDefense: waterDefense,
-        meleeDefense: meleeDefense,
-        lightDefense: lightDefense,
-        darkDefense: darkDefense,
+        fireDef: fireDef,
+        airDef: airDef,
+        earthDef: earthDef,
+        waterDef: waterDef,
+        meleeDef: meleeDef,
+        lightDef: lightDef,
+        darkDef: darkDef,
         heal: heal,
         oncePerBattle: oncePerBattle,
         freeze: freeze
@@ -644,16 +644,18 @@ function pushInventoryDisplay(index){
 }  
 
 
-createItem("Training Sword", 0, 0, 0, 0, 3, 3, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, false, true, "/images/weapons/04 - Steel sword.png", 0)
-createItem("The Edge Tester", 1, 4, 4, 2, 2, 5, 1, 1, 3, 3, 3, 3, 7, 0, 0, 0, false, true, "/images/weapons/08 - Red copper sword.png", 20)
-createItem("Fourth Sword", 2, 4, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, false, true, "/images/weapons/29 - Occult sword variant 1.png", 10)
-createItem("Sword of Extremities", 3, 0, 0, 0, 0, 17, 17, 0, 1, 1, 1, 1, 1, 1, 1, 1, false, true, "/images/weapons/01 - Old stone sword.png", 50)
-createItem("Blade of Yargastenholm", 4, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 100, false, true, "/images/weapons/24 - Silver rebirth sword.png", 1000)
-createItem("Them", 5, 4, 4, 0, 4, 0, 0, 0, 0, 0, 4, 0, 4, 0, 0, 1, false, true, "/images/weapons/14 - Twin serrated swords.png", 200)
-createItem("Dank Sword", 6, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, true, "/images/weapons/21 - Amethyst sword.png", 1337)
-createItem("El Shieldo", 7, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 15, 10, 10, 1, false, true, "/images/weapons/23.png", 200)
-createItem("The Bound Breaker", 8, 0, 0, 0, 0, 0, 20, 20, 0, 0, 0, 0, 0, 20, 20, 0, false, false, "/images/weapons/09 - Icy sword.png", 50)
-createItem("Just a Shield", 9, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 5, 2, 2, 0, false, true, "/images/weapons/18.png", 5)
+createItem("Dank Sword", 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, "/images/weapons/Sword_02.png", 0)
+createItem("Nomad Blade", 1, 0, 4, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, "/images/weapons/Dagger_32.png", 20)
+createItem("Grim Gavel", 2, 0, 0, 0, 0, 3, 0, 4, 0, 0, 0, 0, 7, 0, 0, 0, false, false, "/images/weapons/Hammer_23.png", 60)
+createItem("Aura Spear", 3, 0, 0, 0, 5, 1, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, false, false, "/images/weapons/Spear_35.png", 40)
+createItem("Staff of the Mountain Bear", 4, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 2, false, false, "/images/weapons/staff_12.png", 100)
+createItem("Wand of Embers", 5, 5, 0, 0, 0, 0, 3, 0, 0, 0, 0, 3, 3, 0, 3, 0, false, false, "/images/weapons/staff_33.png", 100)
+createItem("Solaire Halberd", 6, 0, 0, 0, 0, 3, 7, 0, 0, 0, 0, 0, 0, 0, 3, 0, false, false, "/images/weapons/staff_34.png", 125)
+createItem("Buckler", 7, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, false, false, "/images/weapons/shield_05.png", 0)
+createItem("Silver Shield", 8, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 3, 0, 0, 0, false, false, "/images/weapons/shield_07.png", 50)
+createItem("Golden Kite", 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 2, 5, 0, false, false, "/images/weapons/shield_08.png", 100)
+createItem("It Without Implement", 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, true, true, "/images/weapons/shield_43.png", 50000)
+
 createEnemy(0, "Snek", 10, 1, 1, 1, "/images/enemies/pipo-enemy003b.png", 1, 0, 0, [enemyWeapons[0], enemyWeapons[1], enemyWeapons[2], enemyWeapons[3]], 2, 5)
 createEnemy(1, "Sloim", 10, 1, 1, 1, "/images/enemies/pipo-enemy009b.png", 3, 0, 0, [enemyWeapons[4], enemyWeapons[5], enemyWeapons[6], enemyWeapons[7]], 4, 8)
 createEnemy(2, "Coro", 25, 5, 5, 5, "/images/enemies/pipo-enemy001.png", 5, 0, 0, [enemyWeapons[8], enemyWeapons[9], enemyWeapons[10], enemyWeapons[11]], 7, 11)
@@ -937,11 +939,11 @@ function loadDefenseIcons(type, i, isEnemy) {
         loadedWeapon = player.equipment[i]
     }
     if (checker){
-        if (loadedWeapon.fireDefense == 9999){
+        if (loadedWeapon.fireDef == 9999){
             
         }
         else{
-            for (var j = 0; j < loadedWeapon.fireDefense; j++) {
+            for (var j = 0; j < loadedWeapon.fireDef; j++) {
                 var image = new Image();
                 image.src = "/images/icons/FireIconBlock.png";
                 image.width = 25;
@@ -954,7 +956,7 @@ function loadDefenseIcons(type, i, isEnemy) {
                 iconCounter += 1
             }
         }
-        for (var j = 0; j < loadedWeapon.airDefense; j++) {
+        for (var j = 0; j < loadedWeapon.airDef; j++) {
             var image = new Image();
             image.src = "/images/icons/AirIconBlock.png";
             image.width = 25;
@@ -966,7 +968,7 @@ function loadDefenseIcons(type, i, isEnemy) {
             }
             iconCounter += 1
         }
-        for (var j = 0; j < loadedWeapon.earthDefense; j++) {
+        for (var j = 0; j < loadedWeapon.earthDef; j++) {
             var image = new Image();
             image.src = "/images/icons/EarthIconBlock.png";
             image.width = 25;
@@ -978,7 +980,7 @@ function loadDefenseIcons(type, i, isEnemy) {
             }
             iconCounter += 1
         }
-        for (var j = 0; j < loadedWeapon.waterDefense; j++) {
+        for (var j = 0; j < loadedWeapon.waterDef; j++) {
             var image = new Image();
             image.src = "/images/icons/WaterIconBlock.png";
             image.width = 25;
@@ -990,15 +992,15 @@ function loadDefenseIcons(type, i, isEnemy) {
             }
             iconCounter += 1
         }
-        for (var j = 0; j < loadedWeapon.meleeDefense; j++) {
+        for (var j = 0; j < loadedWeapon.meleeDef; j++) {
             loadIconImage(type, i, "/images/icons/PhysIconBlock.png", inBattle)
             iconCounter += 1
         }
-        for (var j = 0; j < loadedWeapon.lightDefense; j++) {
+        for (var j = 0; j < loadedWeapon.lightDef; j++) {
             loadIconImage(type, i, "/images/icons/LightIconBlock.png", inBattle)
             iconCounter += 1
         }
-        for (var j = 0; j < loadedWeapon.darkDefense; j++) {
+        for (var j = 0; j < loadedWeapon.darkDef; j++) {
             loadIconImage(type, i, "/images/icons/DarkIconBlock.png", inBattle)
             iconCounter += 1
         }
@@ -1103,6 +1105,7 @@ function initiateBattle(fightEnemyID){
     createBattleOptions(enemy)
     createBattleOptionsPlayer()
     loadEquipmentForBattle()
+    selectStance("Steady")
     document.getElementById("attackIconRow0").hidden = true
     document.getElementById("defenseIconRow0").hidden = true
     document.getElementById("attackIconRow1").hidden = true
@@ -1217,7 +1220,7 @@ function getTotalIcons(weapon, isDefense){
         return weapon.fire + weapon.air + weapon.melee + weapon.water + weapon.earth + weapon.light + weapon.dark
     }
     else{
-        return weapon.fireDefense + weapon.airDefense + weapon.meleeDefense + weapon.waterDefense + weapon.earthDefense + weapon.lightDefense + weapon.darkDefense
+        return weapon.fireDef + weapon.airDef + weapon.meleeDef + weapon.waterDef + weapon.earthDef + weapon.lightDef + weapon.darkDef
     }
 }
 
@@ -1241,24 +1244,24 @@ function attack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex
         var playerItemIndex1 = player.equipment.indexOf(playerItem1)
         var playerItemIndex2 = player.equipment.indexOf(playerItem2)
         if (playerItem1 !== null && playerItem2 !== null){
-            physDamage = preventNegative((playerItem1.melee*playerStrength + playerItem2.melee*playerStrength) - (enemyItem1.meleeDefense*enemyDefense + enemyItem2.meleeDefense*enemyDefense));
-            fireDamage = preventNegative((playerItem1.fire*playerStrength + playerItem2.fire*playerStrength) - (enemyItem1.fireDefense*enemyDefense + enemyItem2.fireDefense*enemyDefense));
-            waterDamage = preventNegative((playerItem1.water*playerStrength + playerItem2.water*playerStrength) - (enemyItem1.waterDefense*enemyDefense + enemyItem2.waterDefense*enemyDefense));
-            earthDamage = preventNegative((playerItem1.earth*playerStrength + playerItem2.earth*playerStrength) - (enemyItem1.earthDefense*enemyDefense + enemyItem2.earthDefense*enemyDefense));
-            airDamage = preventNegative((playerItem1.air*playerStrength + playerItem2.air*playerStrength) - (enemyItem1.airDefense*enemyDefense + enemyItem2.airDefense*enemyDefense));           
-            lightDamage = preventNegative((playerItem1.light*playerStrength + playerItem2.light*playerStrength) - (enemyItem1.lightDefense*enemyDefense + enemyItem2.lightDefense*enemyDefense));
-            darkDamage = preventNegative((playerItem1.dark*playerStrength + playerItem2.dark*playerStrength) - (enemyItem1.darkDefense*enemyDefense + enemyItem2.darkDefense*enemyDefense));
+            physDamage = preventNegative((playerItem1.melee*playerStrength + playerItem2.melee*playerStrength) - (enemyItem1.meleeDef*enemyDefense + enemyItem2.meleeDef*enemyDefense));
+            fireDamage = preventNegative((playerItem1.fire*playerStrength + playerItem2.fire*playerStrength) - (enemyItem1.fireDef*enemyDefense + enemyItem2.fireDef*enemyDefense));
+            waterDamage = preventNegative((playerItem1.water*playerStrength + playerItem2.water*playerStrength) - (enemyItem1.waterDef*enemyDefense + enemyItem2.waterDef*enemyDefense));
+            earthDamage = preventNegative((playerItem1.earth*playerStrength + playerItem2.earth*playerStrength) - (enemyItem1.earthDef*enemyDefense + enemyItem2.earthDef*enemyDefense));
+            airDamage = preventNegative((playerItem1.air*playerStrength + playerItem2.air*playerStrength) - (enemyItem1.airDef*enemyDefense + enemyItem2.airDef*enemyDefense));           
+            lightDamage = preventNegative((playerItem1.light*playerStrength + playerItem2.light*playerStrength) - (enemyItem1.lightDef*enemyDefense + enemyItem2.lightDef*enemyDefense));
+            darkDamage = preventNegative((playerItem1.dark*playerStrength + playerItem2.dark*playerStrength) - (enemyItem1.darkDef*enemyDefense + enemyItem2.darkDef*enemyDefense));
             totalDamage = Math.round((physDamage + fireDamage + waterDamage + earthDamage + airDamage + lightDamage + darkDamage) * attackModifier * enemyDefenseModifier);
             totalHeal = playerItem1.heal + playerItem2.heal
         }
         if (playerItem2 == null && playerItem1 !== null){
-            physDamage = preventNegative((playerItem1.melee*playerStrength) - (enemyItem1.meleeDefense*enemyDefense + enemyItem2.meleeDefense*enemyDefense));
-            fireDamage = preventNegative((playerItem1.fire*playerStrength) - (enemyItem1.fireDefense*enemyDefense + enemyItem2.fireDefense*enemyDefense));
-            waterDamage = preventNegative((playerItem1.water*playerStrength) - (enemyItem1.waterDefense*enemyDefense + enemyItem2.waterDefense*enemyDefense));
-            earthDamage = preventNegative((playerItem1.earth*playerStrength) - (enemyItem1.earthDefense*enemyDefense + enemyItem2.earthDefense*enemyDefense));
-            airDamage = preventNegative((playerItem1.air*playerStrength) - (enemyItem1.airDefense*enemyDefense + enemyItem2.airDefense*enemyDefense));
-            lightDamage = preventNegative((playerItem1.light*playerStrength) - (enemyItem1.lightDefense*enemyDefense + enemyItem2.lightDefense*enemyDefense));
-            darkDamage = preventNegative((playerItem1.dark*playerStrength) - (enemyItem1.darkDefense*enemyDefense + enemyItem2.darkDefense*enemyDefense));
+            physDamage = preventNegative((playerItem1.melee*playerStrength) - (enemyItem1.meleeDef*enemyDefense + enemyItem2.meleeDef*enemyDefense));
+            fireDamage = preventNegative((playerItem1.fire*playerStrength) - (enemyItem1.fireDef*enemyDefense + enemyItem2.fireDef*enemyDefense));
+            waterDamage = preventNegative((playerItem1.water*playerStrength) - (enemyItem1.waterDef*enemyDefense + enemyItem2.waterDef*enemyDefense));
+            earthDamage = preventNegative((playerItem1.earth*playerStrength) - (enemyItem1.earthDef*enemyDefense + enemyItem2.earthDef*enemyDefense));
+            airDamage = preventNegative((playerItem1.air*playerStrength) - (enemyItem1.airDef*enemyDefense + enemyItem2.airDef*enemyDefense));
+            lightDamage = preventNegative((playerItem1.light*playerStrength) - (enemyItem1.lightDef*enemyDefense + enemyItem2.lightDef*enemyDefense));
+            darkDamage = preventNegative((playerItem1.dark*playerStrength) - (enemyItem1.darkDef*enemyDefense + enemyItem2.darkDef*enemyDefense));
             totalDamage = Math.round((physDamage + fireDamage + waterDamage + earthDamage + airDamage + lightDamage + darkDamage) * attackModifier * enemyDefenseModifier);
             totalHeal = playerItem1.heal
         }
@@ -1266,7 +1269,11 @@ function attack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex
             totalDamage = 0;
         }
         document.getElementById("damageRight").innerHTML = totalDamage + " DMG"
-        var hpAnimationEnemy = new CountUp("battleScreenEnemyName", enemy.hitPoints, enemy.hitPoints - totalDamage, 0, 0.5, optionsBattle);
+        var difference = enemy.hitPoints - totalDamage
+        if (difference < 0){
+            difference = 0
+        }
+        var hpAnimationEnemy = new CountUp("battleScreenEnemyName", enemy.hitPoints, difference, 0, 0.5, optionsBattle);
         hpAnimationEnemy.start()
         enemy.hitPoints = enemy.hitPoints - totalDamage
         if (player.hitPoints + totalHeal > player.maxHitPoints){
@@ -1275,8 +1282,9 @@ function attack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex
         else{
             player.hitPoints = player.hitPoints + totalHeal
         }
-        if (player.hitPoints <= 0){
-            player.hitPoints = 0
+        if (enemy.hitPoints < 0){
+            enemy.hitPoints = 0
+            updateHP(enemy)
         }
         document.getElementById("playerHealRow0").hidden = true
         document.getElementById("playerHealRow1").hidden = true
@@ -1329,24 +1337,24 @@ function enemyAttack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItem
         var enemyItem1 = enemy.equipment[enemyItemIndex1]
         var enemyItem2 = enemy.equipment[enemyItemIndex2]
         if (playerItem1 !== null && playerItem2 !== null){
-            physDamage = preventNegative((enemyItem1.melee*enemyStrength + enemyItem2.melee*enemyStrength) - (playerItem1.meleeDefense*playerDefense + playerItem2.meleeDefense*playerDefense));
-            fireDamage = preventNegative((enemyItem1.fire*enemyStrength + enemyItem2.fire*enemyStrength) - (playerItem1.fireDefense*playerDefense + playerItem2.fireDefense*playerDefense));
-            waterDamage = preventNegative((enemyItem1.water*enemyStrength + enemyItem2.water*enemyStrength) - (playerItem1.waterDefense*playerDefense + playerItem2.waterDefense*playerDefense));
-            earthDamage = preventNegative((enemyItem1.earth*enemyStrength + enemyItem2.earth*enemyStrength) - (playerItem1.earthDefense*playerDefense + playerItem2.earthDefense*playerDefense));
-            airDamage = preventNegative((enemyItem1.air*enemyStrength + enemyItem2.air*enemyStrength) - (playerItem1.airDefense*playerDefense + playerItem2.airDefense*playerDefense));
-            lightDamage = preventNegative((enemyItem1.light*enemyStrength + enemyItem2.light*enemyStrength) - (playerItem1.lightDefense*playerDefense + playerItem2.lightDefense*playerDefense));
-            darkDamage = preventNegative((enemyItem1.dark*enemyStrength + enemyItem2.dark*enemyStrength) - (playerItem1.darkDefense*playerDefense + playerItem2.darkDefense*playerDefense));
+            physDamage = preventNegative((enemyItem1.melee*enemyStrength + enemyItem2.melee*enemyStrength) - (playerItem1.meleeDef*playerDefense + playerItem2.meleeDef*playerDefense));
+            fireDamage = preventNegative((enemyItem1.fire*enemyStrength + enemyItem2.fire*enemyStrength) - (playerItem1.fireDef*playerDefense + playerItem2.fireDef*playerDefense));
+            waterDamage = preventNegative((enemyItem1.water*enemyStrength + enemyItem2.water*enemyStrength) - (playerItem1.waterDef*playerDefense + playerItem2.waterDef*playerDefense));
+            earthDamage = preventNegative((enemyItem1.earth*enemyStrength + enemyItem2.earth*enemyStrength) - (playerItem1.earthDef*playerDefense + playerItem2.earthDef*playerDefense));
+            airDamage = preventNegative((enemyItem1.air*enemyStrength + enemyItem2.air*enemyStrength) - (playerItem1.airDef*playerDefense + playerItem2.airDef*playerDefense));
+            lightDamage = preventNegative((enemyItem1.light*enemyStrength + enemyItem2.light*enemyStrength) - (playerItem1.lightDef*playerDefense + playerItem2.lightDef*playerDefense));
+            darkDamage = preventNegative((enemyItem1.dark*enemyStrength + enemyItem2.dark*enemyStrength) - (playerItem1.darkDef*playerDefense + playerItem2.darkDef*playerDefense));
             totalDamage = Math.round((physDamage + fireDamage + waterDamage + earthDamage + airDamage + lightDamage + darkDamage) * attackModifier * playerDefenseModifier);
             totalHeal = enemyItem1.heal + enemyItem2.heal
         }
         if (playerItem2 == null && playerItem1 !== null){
-            physDamage = preventNegative((enemyItem1.melee*enemyStrength + enemyItem2.melee*enemyStrength) - (playerItem1.meleeDefense*playerDefense));
-            fireDamage = preventNegative((enemyItem1.fire*enemyStrength + enemyItem2.fire*enemyStrength) - (playerItem1.fireDefense*playerDefense));
-            waterDamage = preventNegative((enemyItem1.water*enemyStrength + enemyItem2.water*enemyStrength) - (playerItem1.waterDefense*playerDefense));
-            earthDamage = preventNegative((enemyItem1.earth*enemyStrength + enemyItem2.earth*enemyStrength) - (playerItem1.earthDefense*playerDefense));
-            airDamage = preventNegative((enemyItem1.air*enemyStrength + enemyItem2.air*enemyStrength) - (playerItem1.airDefense*playerDefense));
-            lightDamage = preventNegative((enemyItem1.light*enemyStrength + enemyItem2.light*enemyStrength) - (playerItem1.lightDefense*playerDefense));
-            darkDamage = preventNegative((enemyItem1.dark*enemyStrength + enemyItem2.dark*enemyStrength) - (playerItem1.darkDefense*playerDefense));
+            physDamage = preventNegative((enemyItem1.melee*enemyStrength + enemyItem2.melee*enemyStrength) - (playerItem1.meleeDef*playerDefense));
+            fireDamage = preventNegative((enemyItem1.fire*enemyStrength + enemyItem2.fire*enemyStrength) - (playerItem1.fireDef*playerDefense));
+            waterDamage = preventNegative((enemyItem1.water*enemyStrength + enemyItem2.water*enemyStrength) - (playerItem1.waterDef*playerDefense));
+            earthDamage = preventNegative((enemyItem1.earth*enemyStrength + enemyItem2.earth*enemyStrength) - (playerItem1.earthDef*playerDefense));
+            airDamage = preventNegative((enemyItem1.air*enemyStrength + enemyItem2.air*enemyStrength) - (playerItem1.airDef*playerDefense));
+            lightDamage = preventNegative((enemyItem1.light*enemyStrength + enemyItem2.light*enemyStrength) - (playerItem1.lightDef*playerDefense));
+            darkDamage = preventNegative((enemyItem1.dark*enemyStrength + enemyItem2.dark*enemyStrength) - (playerItem1.darkDef*playerDefense));
             totalDamage = Math.round((physDamage + fireDamage + waterDamage + earthDamage + airDamage + lightDamage + darkDamage) * attackModifier * playerDefenseModifier);
             totalHeal = enemyItem1.heal + enemyItem2.heal
         }
@@ -1354,7 +1362,11 @@ function enemyAttack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItem
             totalDamage = 0;
         }
         document.getElementById("damageLeft").innerHTML = totalDamage + " DMG"
-        var hpAnimation = new CountUp("battleScreenPlayerName", player.hitPoints, player.hitPoints - totalDamage, 0, 0.5, optionsBattlePlayer);
+        var difference = player.hitPoints - totalDamage
+        if (difference < 0){
+            difference = 0
+        }
+        var hpAnimation = new CountUp("battleScreenPlayerName", player.hitPoints, difference, 0, 0.5, optionsBattlePlayer);
         hpAnimation.start()
         player.hitPoints = player.hitPoints - totalDamage
         if (enemy.hitPoints + totalHeal > enemy.maxHitPoints){
@@ -1363,11 +1375,9 @@ function enemyAttack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItem
         else{
             enemy.hitPoints = enemy.hitPoints + totalHeal
         }
-        if (enemy.hitPoints <= 0){
-            enemy.hitPoints = 0
-        }
-        if (player.hitPoints <= 0){
+        if (player.hitPoints < 0){
             player.hitPoints = 0
+            updateHP(enemy)
         }
         document.getElementById("enemyHealRow0").hidden = true
         document.getElementById("enemyHealRow1").hidden = true

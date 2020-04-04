@@ -309,7 +309,7 @@
             <br>
             <button class="navMenuButton" onclick="return show('attributePointShop','goldShop')">AP Shop</button>
             <button class="navMenuButton" onclick="return show('goldShop','attributePointShop')">Gold Shop</button>          
-            <div id="attributePointShop">
+            <div id="attributePointShop" style="display:none" >
                 <font style="color: rgb(6, 128, 128); font-family: Fredoka One; font-weight: bold"><p class="apPageText" id="textAPTotal">AP Total: 0</p>
                 <p class="apPageText" id="textAPAvailable">AP Available: 0</p>
                 <button id="buyAutoUpgradeButton" class="mainButtonLayout" onclick="buyAutoUpgrade()">Buy Auto Upgrade: 10 AP</button><br><br>
@@ -319,7 +319,7 @@
                 <button id="buyTrainingPointBoostButton" class="mainButtonLayout" onclick="buyTrainingPointBoost()">+1x Training Point Speed: 1 AP</button><p id="trainingPointBoostCurrent" class="standardText">Current Training Point Multiplier: None</p><br>
                 </font>
             </div>
-            <div id="goldShop" style="display:none">
+            <div id="goldShop">
                 <p id="currentGold" class="standardText">You have 0 Gold.</p>
                 <div id="goldShopGrid" class="grid-container">
                 </div>
@@ -601,7 +601,7 @@
                         </tr>
                         
                         <tr>
-                            <td colspan="2"><button id="stanceButtonSteady" class="mainButtonLayout" style="min-width: 194px; border: 2px solid white" onclick="selectStance('Steady')">Steady</button></td>
+                            <td colspan="2"><button id="stanceButtonSteady" class="mainButtonLayout" style="min-width: 194px;" onclick="selectStance('Steady')">Steady</button></td>
                         </tr>
                         
                         <tr>
