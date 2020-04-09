@@ -17,7 +17,7 @@ var player = {
     exp: 0,
     level: 1,
     buyAPCost: 50000,
-    statPointCost: 1000,
+    statPointCost: 0,
     levelUpCost: 50,
     statPoints: 0,
     maxStatPoints: 0,
@@ -64,40 +64,40 @@ function update(){
 }
 
 function statGain(){
-    if (player.allocatedHP > 0){        
+    if (player.allocatedHP > 0 && player.level > (player.maxHitPoints / 15)){         
         if (document.getElementById("progressBarHP").value >= document.getElementById("progressBarHP").max){
             document.getElementById("progressBarHP").value = 0
-            document.getElementById("progressBarHP").max = 10000 * (1.05**Math.sqrt(player.maxHitPoints - 10)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/10)))
+            document.getElementById("progressBarHP").max = 10000 * (1.05**Math.sqrt(player.maxHitPoints - 10)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/20)))
             player.maxHitPoints += 1 * player.statPointUpgradeMultiplier
             updateHTML()
         }
         document.getElementById("progressBarHP").value += 10 * player.allocatedHP
         player.currentProgressHP = document.getElementById("progressBarHP").value
     }
-    if (player.allocatedAtt > 0){        
+    if (player.allocatedAtt > 0 && player.level > (player.attackPoints / 10)){        
         if (document.getElementById("progressBarAttack").value >= document.getElementById("progressBarAttack").max){
             document.getElementById("progressBarAttack").value = 0
-            document.getElementById("progressBarAttack").max = 10000 * (1.05**Math.sqrt(player.attackPoints)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/10)))
+            document.getElementById("progressBarAttack").max = 10000 * (1.05**Math.sqrt(player.attackPoints)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/20)))
             player.attackPoints += 1 * player.statPointUpgradeMultiplier
             updateHTML()
         }
         document.getElementById("progressBarAttack").value += 10 * player.allocatedAtt
         player.currentProgressAtt = document.getElementById("progressBarAttack").value
     }
-    if (player.allocatedDef > 0){        
+    if (player.allocatedDef > 0 && player.level > (player.defensePoints / 10)){        
         if (document.getElementById("progressBarDefense").value >= document.getElementById("progressBarDefense").max){
             document.getElementById("progressBarDefense").value = 0
-            document.getElementById("progressBarDefense").max = 10000 * (1.05**Math.sqrt(player.defensePoints)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/10)))
+            document.getElementById("progressBarDefense").max = 10000 * (1.05**Math.sqrt(player.defensePoints)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/20)))
             player.defensePoints += 1 * player.statPointUpgradeMultiplier
             updateHTML()
         }
         document.getElementById("progressBarDefense").value += 10 * player.allocatedDef
         player.currentProgressDef = document.getElementById("progressBarDefense").value
     }
-    if (player.allocatedSpe > 0){        
+    if (player.allocatedSpe > 0 && player.level > (player.speedPoints / 10)){        
         if (document.getElementById("progressBarSpeed").value >= document.getElementById("progressBarSpeed").max){
             document.getElementById("progressBarSpeed").value = 0
-            document.getElementById("progressBarSpeed").max = 10000 * (1.05**Math.sqrt(player.speedPoints)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/10)))
+            document.getElementById("progressBarSpeed").max = 10000 * (1.05**Math.sqrt(player.speedPoints)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/20)))
             player.speedPoints += 1 * player.statPointUpgradeMultiplier
             updateHTML()
         }        
@@ -240,7 +240,7 @@ function buyStatPoint(){
         player.training -= player.statPointCost
         player.statPoints += 1
         player.maxStatPoints += 1
-        player.statPointCost = fibonacci(player.maxStatPoints) * 2000
+        player.statPointCost = fibonacci(player.maxStatPoints + 1) * 2000
         updateHTML()
     }
 }
@@ -269,7 +269,7 @@ function buyLevelUp(){
     if (player.exp >= player.levelUpCost){
         player.level += 1
         player.exp -= player.levelUpCost
-        player.levelUpCost *= 5
+        player.levelUpCost = Math.round(4 * ((player.level + 3)**3) / 5).toFixed(0)
         updateHTML()
     }
 }

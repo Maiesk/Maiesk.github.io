@@ -280,7 +280,7 @@
                 <div class="trainingButtonGrid">
                     <div><button class="upgradeButtonLayout" onclick="buyTrainingPerClick()" id="perClickUpgrade">Increase Training Level<br/>50 Training Points</button></div>
                     <div><button class="upgradeButtonLayout" onclick="buyAP()" id="buyAPButton">Prestige to get 1 AP<br/>50,000 Training Points</button></div>
-                    <div><button class="upgradeButtonLayout" onclick="buyStatPoint()" id="buyStatPointButton">Buy Stat Point<br/>1,000 Training Points</button></div>
+                    <div><button class="upgradeButtonLayout" onclick="buyStatPoint()" id="buyStatPointButton">Buy Stat Point<br/>Free</button></div>
                     <div><button class="upgradeButtonLayout" onclick="buyLevelUp()" id="buyLevelUpButton">EXP Level Up<br/>50 EXP</button></div>
                 </div>                       
                 <br><br>
@@ -558,6 +558,8 @@
             </center>
         </div>
         <div id="battleScreen" class="divBackground" style="display:none; min-height: 1000px">
+            <button id="outcomeButton" style="margin-top: 10px" class="navMenuButton" onclick="returnToEnemies()" hidden>OUTCOME</button>
+            <p id="outcomeText" style="margin-top: 10px" class="standardText" hidden>OUTCOME</button>
             <table style="border-collapse: collapse; border-spacing: 0px; padding: 0px">
                 <tr style="max-height: 20px; border-collapse: collapse; border-spacing: 0px; padding: 0px">
                     <td style="max-height: 20px"><figure><img class="enemyImage" src="/images/enemies/pipo-enemy014b.png"><figcaption id="battleScreenPlayerName" class="standardText" style="text-align: center">Player</figcaption></figure></td>
@@ -570,8 +572,6 @@
                     <td style="vertical-align: top"><p id="enemyCurrentHP" class="standardText" style="text-align: center"></p></td>
                 </tr>
                 <tr>
-                    <button id="outcomeButton" style="margin-top: 10px" class="navMenuButton" onclick="returnToEnemies()" hidden>OUTCOME</button>
-                    <p id="outcomeText" style="margin-top: 10px" class="standardText" hidden>OUTCOME</button>
                     <table style="width: 200px; text-align: center; display: inline-block; position: absolute">
                         <th colspan="2" style="margin-bottom: 10px"><button id="fightButton" class="mainButtonLayout" style="min-width: 194px;" onclick="fight()">Fight!</button></th>
                         <tr></tr>
