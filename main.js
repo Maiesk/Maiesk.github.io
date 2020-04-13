@@ -2,8 +2,8 @@ var player = {
     name: "",
     attackPoints: 1,
     defensePoints: 1,
-    hitPoints: 10,
-    maxHitPoints: 10,
+    hitPoints: 11,
+    maxHitPoints: 11,
     speedPoints: 1,
     inventory: [],
     equipment: [],
@@ -29,6 +29,10 @@ var player = {
     currentProgressAtt: 0,
     currentProgressDef: 0,
     currentProgressSpe: 0,
+    currentMaxHP: 100,
+    currentMaxAtt: 100,
+    currentMaxDef: 100,
+    currentMaxSpe: 100,
     progressDivider: 1,
     upgradesBought: 0,
     powerTrainUpgradeMultiplier: 1,
@@ -60,98 +64,227 @@ function update(){
     if (player.training >= player.trainingPerClickCost && player.autoUpgrade == true){
         buyTrainingPerClick()
     }
-    statGain()
+    updateHPBar()
+    updateAttBar()
+    updateDefBar()
+    updateSpeBar()
 }
 
-function statGain(){
-    if (player.allocatedHP > 0 && player.level > (player.maxHitPoints / 15)){         
-        if (document.getElementById("progressBarHP").value >= document.getElementById("progressBarHP").max){
-            document.getElementById("progressBarHP").value = 0
-            document.getElementById("progressBarHP").max = 10000 * (1.05**Math.sqrt(player.maxHitPoints - 10)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/20)))
-            player.maxHitPoints += 1 * player.statPointUpgradeMultiplier
-            updateHTML()
-        }
-        document.getElementById("progressBarHP").value += 10 * player.allocatedHP
-        player.currentProgressHP = document.getElementById("progressBarHP").value
+function updateHPBar() {
+    if (player.allocatedHP > 0 && player.level > (player.maxHitPoints / 20)){  
+        var elementHP = document.getElementById("myprogressBarHP"); 
+        var intervalHP = setInterval(sceneHP, 15); 
+        function sceneHP() { 
+            if (player.currentProgressHP >= 100) { 
+                clearInterval(intervalHP); 
+                player.currentProgressHP = 0
+                elementHP.style.width = 0
+                if (player.maxHitPoints % 2 == 0){
+                    elementHP.style = "background: linear-gradient(to right, #ac9444, rgb(101, 141, 251) 200px);"
+                }
+                else{
+                    elementHP.style = "background: linear-gradient(to right, rgb(101, 141, 251), #ac9444 200px);"
+                }
+                player.maxHitPoints += 1
+                player.currentMaxHP = 100 * (1.05**Math.sqrt(player.maxHitPoints - 10)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/20)))
+                updateHTML()
+            } 
+            else { 
+                if (player.allocatedHP > 0){
+                    var percentageHP =  player.allocatedHP / 4 / (player.currentMaxHP / 100)
+                    if (player.currentProgressHP + percentageHP > 100){
+                        player.currentProgressHP = 100
+                    }
+                    else{
+                        player.currentProgressHP += percentageHP
+                    }                    
+                    elementHP.style.width = player.currentProgressHP + '%';  
+                    var percentShown = Number(player.currentProgressHP).toFixed(2)
+                    document.getElementById("currentProgressDisplayHP").innerHTML = percentShown + "%"
+                    clearInterval(intervalHP)
+                }
+                else{
+                    clearInterval(intervalHP)
+                }
+            } 
+        } 
     }
-    if (player.allocatedAtt > 0 && player.level > (player.attackPoints / 10)){        
-        if (document.getElementById("progressBarAttack").value >= document.getElementById("progressBarAttack").max){
-            document.getElementById("progressBarAttack").value = 0
-            document.getElementById("progressBarAttack").max = 10000 * (1.05**Math.sqrt(player.attackPoints)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/20)))
-            player.attackPoints += 1 * player.statPointUpgradeMultiplier
-            updateHTML()
-        }
-        document.getElementById("progressBarAttack").value += 10 * player.allocatedAtt
-        player.currentProgressAtt = document.getElementById("progressBarAttack").value
-    }
-    if (player.allocatedDef > 0 && player.level > (player.defensePoints / 10)){        
-        if (document.getElementById("progressBarDefense").value >= document.getElementById("progressBarDefense").max){
-            document.getElementById("progressBarDefense").value = 0
-            document.getElementById("progressBarDefense").max = 10000 * (1.05**Math.sqrt(player.defensePoints)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/20)))
-            player.defensePoints += 1 * player.statPointUpgradeMultiplier
-            updateHTML()
-        }
-        document.getElementById("progressBarDefense").value += 10 * player.allocatedDef
-        player.currentProgressDef = document.getElementById("progressBarDefense").value
-    }
-    if (player.allocatedSpe > 0 && player.level > (player.speedPoints / 10)){        
-        if (document.getElementById("progressBarSpeed").value >= document.getElementById("progressBarSpeed").max){
-            document.getElementById("progressBarSpeed").value = 0
-            document.getElementById("progressBarSpeed").max = 10000 * (1.05**Math.sqrt(player.speedPoints)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/20)))
-            player.speedPoints += 1 * player.statPointUpgradeMultiplier
-            updateHTML()
-        }        
-        document.getElementById("progressBarSpeed").value += 10 * player.allocatedSpe
-        player.currentProgressSpe = document.getElementById("progressBarSpeed").value
-    }
-}
+} 
 
-function allocateHP(increase){
+function updateAttBar() {
+    if (player.allocatedAtt > 0 && player.level > (player.attackPoints / 10)){  
+        var elementAtt = document.getElementById("myprogressBarAtt"); 
+        var intervalAtt = setInterval(sceneAtt, 15); 
+        function sceneAtt() { 
+            if (player.currentProgressAtt >= 100) { 
+                clearInterval(intervalAtt); 
+                player.currentProgressAtt = 100
+                var percentShown = Number(player.currentProgressAtt).toFixed(2)
+                document.getElementById("currentProgressDisplayAtt").innerHTML = percentShown + "%"
+                player.currentProgressAtt = 0
+                if (player.attackPoints % 2 == 0){
+                    elementAtt.style = "background: linear-gradient(to right, #ac9444, rgb(101, 141, 251) 200px);"
+                }
+                else{
+                    elementAtt.style = "background: linear-gradient(to right, rgb(101, 141, 251), #ac9444 200px);"
+                }
+                player.attackPoints += 1
+                if (player.level == player.attackPoints / 10){
+                    elementAtt.style.width = 100
+                }
+                player.currentMaxAtt = 100 * (1.05**Math.sqrt(player.attackPoints)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/20)))
+                updateHTML()
+            } 
+            else { 
+                if (player.allocatedAtt > 0){
+                    var percentageAtt =  player.allocatedAtt / 4 / (player.currentMaxAtt / 100)
+                    if (player.currentProgressAtt + percentageAtt > 100){
+                        player.currentProgressAtt = 100
+                    }
+                    else{
+                        player.currentProgressAtt += percentageAtt
+                    }                   
+                    elementAtt.style.width = player.currentProgressAtt + '%';  
+                    var percentShown = Number(player.currentProgressAtt).toFixed(2)
+                    document.getElementById("currentProgressDisplayAtt").innerHTML = percentShown + "%"
+                    clearInterval(intervalAtt)
+                }
+                else{
+                    clearInterval(intervalAtt)
+                }
+            } 
+        } 
+    }
+} 
+
+function updateDefBar() {
+    if (player.allocatedDef > 0 && player.level > (player.defensePoints / 10)){  
+        var elementDef = document.getElementById("myprogressBarDef"); 
+        var intervalDef = setInterval(scene2, 15); 
+        function scene2() { 
+            if (player.currentProgressDef >= 100) { 
+                clearInterval(intervalDef); 
+                player.currentProgressDef = 0
+                elementDef.style.width = 0
+                if (player.defensePoints % 2 == 0){
+                    elementDef.style = "background: linear-gradient(to right, #ac9444, rgb(101, 141, 251) 200px);"
+                }
+                else{
+                    elementDef.style = "background: linear-gradient(to right, rgb(101, 141, 251), #ac9444 200px);"
+                }
+                player.defensePoints += 1
+                player.currentMaxDef = 100 * (1.05**Math.sqrt(player.defensePoints)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/20)))
+                updateHTML()
+            } 
+            else { 
+                if (player.allocatedDef > 0){
+                    var percentageDef = player.allocatedDef / 4 / (player.currentMaxDef / 100)
+                    if (player.currentProgressDef + percentageDef > 100){
+                        player.currentProgressDef = 100
+                    }
+                    else{
+                        player.currentProgressDef += percentageDef
+                    }
+                    elementDef.style.width = player.currentProgressDef + '%';  
+                    var percentShown = Number(player.currentProgressDef).toFixed(2)
+                    document.getElementById("currentProgressDisplayDef").innerHTML = percentShown + "%"
+                    clearInterval(intervalDef)
+                }
+                else{
+                    clearInterval(intervalDef)
+                }
+            } 
+        } 
+    }
+} 
+
+function updateSpeBar() {
+    if (player.allocatedSpe > 0 && player.level > (player.speedPoints / 10)){  
+        var elementSpe = document.getElementById("myprogressBarSpe"); 
+        var intervalSpe = setInterval(scene2, 15); 
+        function scene2() { 
+            if (player.currentProgressSpe >= 100) { 
+                clearInterval(intervalSpe); 
+                player.currentProgressSpe = 0
+                elementSpe.style.width = 0
+                if (player.speedPoints % 2 == 0){
+                    elementSpe.style = "background: linear-gradient(to right, #ac9444, rgb(101, 141, 251) 200px);"
+                }
+                else{
+                    elementSpe.style = "background: linear-gradient(to right, rgb(101, 141, 251), #ac9444 200px);"
+                }
+                player.speedPoints += 1
+                player.currentMaxSpe = 100 * (1.05**Math.sqrt(player.speedPoints)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/20)))
+                updateHTML()
+            } 
+            else { 
+                if (player.allocatedSpe > 0){
+                    var percentageSpe =  player.allocatedSpe / 4 / (player.currentMaxSpe / 100)
+                    if (player.currentProgressSpe + percentageSpe > 100){
+                        player.currentProgressSpe = 100
+                    }
+                    else{
+                        player.currentProgressSpe += percentageSpe;  
+                    }
+                    elementSpe.style.width = player.currentProgressSpe + '%';  
+                    var percentShown = Number(player.currentProgressSpe).toFixed(2)
+                    document.getElementById("currentProgressDisplaySpe").innerHTML = percentShown + "%"
+                    clearInterval(intervalSpe)
+                }
+                else{
+                    clearInterval(intervalSpe)
+                }
+            } 
+        } 
+    }
+} 
+
+function allocateHP(increase, amount){
     if (player.statPoints > 0 && increase){
-        player.statPoints -= 1
-        player.allocatedHP += 1
+        player.statPoints -= amount
+        player.allocatedHP += amount
     }
     else if (player.allocatedHP > 0 && !increase){
-        player.statPoints += 1
-        player.allocatedHP -= 1
+        player.statPoints += amount
+        player.allocatedHP -= amount
     }
-    updateHTML()
+    updateStatButtonHTML()
 }
 
-function allocateAttack(increase){
+function allocateAttack(increase, amount){
     if (player.statPoints > 0 && increase){
-        player.statPoints -= 1
-        player.allocatedAtt += 1
+        player.statPoints -= amount
+        player.allocatedAtt += amount
     }
     else if (player.allocatedAtt > 0 && !increase){
-        player.statPoints += 1
-        player.allocatedAtt -= 1
+        player.statPoints += amount
+        player.allocatedAtt -= amount
     }
-    updateHTML()
+    updateStatButtonHTML()
 }
 
-function allocateDefense(increase){
+function allocateDefense(increase, amount){
     if (player.statPoints > 0 && increase){
-        player.statPoints -= 1
-        player.allocatedDef += 1
+        player.statPoints -= amount
+        player.allocatedDef += amount
     }
     else if (player.allocatedDef > 0 && !increase){
-        player.statPoints += 1
-        player.allocatedDef -= 1
+        player.statPoints += amount
+        player.allocatedDef -= amount
     }
-    updateHTML()
+    updateStatButtonHTML()
 }
 
-function allocateSpeed(increase){
+function allocateSpeed(increase, amount){
     if (player.statPoints > 0 && increase){
-        player.statPoints -= 1
-        player.allocatedSpe += 1
+        player.statPoints -= amount
+        player.allocatedSpe += amount
     }
     else if (player.allocatedSpe > 0 && !increase){
-        player.statPoints += 1
-        player.allocatedSpe -= 1
+        player.statPoints += amount
+        player.allocatedSpe -= amount
     }
-    updateHTML()
+    updateStatButtonHTML()
 }
 
 var powerTrainCooldown = false;
@@ -162,7 +295,7 @@ function powerTrain(){
         powerTrainCooldown = true
         updateHTML()
         document.getElementById("powerTrainButton").disabled = true
-        document.getElementById("powerTrainButton").style = "background-color: #474646; color: #373636"
+        document.getElementById("powerTrainButton").style = "background-color: #474646; color: #373636; height: 75px; width: 300px; font-size: 40px"
         document.getElementById("buyAPButton").disabled = true
         document.getElementById("buyAPButton").style = "background-color: #474646; color: #373636"
         document.getElementById("saveButton").disabled = true
@@ -192,14 +325,14 @@ function powerTrain(){
             powerTrainCooldown = false
             player.upgradesBought = 0
             document.getElementById("buyAPButton").disabled = false
-            document.getElementById("buyAPButton").style = "background-color: rgb(6, 128, 128); color: black"
+            document.getElementById("buyAPButton").style = "background-color: rgb(101, 141, 251); color: black"
             document.getElementById("powerTrainButton").innerHTML = "Power Train"
             document.getElementById("powerTrainButton").disabled = false
-            document.getElementById("powerTrainButton").style = "background-color: rgb(6, 128, 128); color: black"    
+            document.getElementById("powerTrainButton").style = "background-color: rgb(101, 141, 251); color: black; height: 75px; width: 300px; font-size: 40px"    
             document.getElementById("saveButton").disabled = false
-            document.getElementById("saveButton").style = "background-color: rgb(6, 128, 128); color: black"
+            document.getElementById("saveButton").style = "background-color: rgb(101, 141, 251); color: black"
             document.getElementById("loadButton").disabled = false
-            document.getElementById("loadButton").style = "background-color: rgb(6, 128, 128); color: black"
+            document.getElementById("loadButton").style = "background-color: rgb(101, 141, 251); color: black"
             updateHTML()
         }, 5000)  
     }
@@ -242,6 +375,7 @@ function buyStatPoint(){
         player.maxStatPoints += 1
         player.statPointCost = fibonacci(player.maxStatPoints + 1) * 2000
         updateHTML()
+        updateStatButtonHTML()
     }
 }
 
@@ -309,8 +443,9 @@ function resetUpdateSpeed(){
     if (mainGameLoop !== null){
         clearInterval(mainGameLoop)
     }
-    mainGameLoop = window.setInterval(function (){
+    mainGameLoop = window.setTimeout(function (){
         update();
+        resetUpdateSpeed()
     }, player.updateSpeed)
 }
 resetUpdateSpeed()
@@ -481,18 +616,125 @@ function updateHTML(){
     document.getElementById("buyStatPointButton").innerHTML = "Buy Stat Point<br/>" + numberWithCommas(statPointCostShown) + " Training Points"
     document.getElementById("perClickUpgrade").innerHTML = "Increase Training Level<br/>" + numberWithCommas(player.trainingPerClickCost) + " Training Points"
     document.getElementById("buyLevelUpButton").innerHTML = "EXP Level Up<br/>" + numberWithCommas(player.levelUpCost) + " EXP"
-    document.getElementById("statPointsDisplay").innerHTML = "Stat Points<br/><br/>" + player.statPoints + "/" + player.maxStatPoints
     document.getElementById("currentEXP").innerHTML = "EXP<br/><br/>" + player.exp + "/" + player.levelUpCost
     document.getElementById("currentLevel").innerHTML = "Level<br/><br/>" + player.level
     document.getElementById("currentHPStat").innerHTML = player.maxHitPoints + " HP"
     document.getElementById("currentAttackStat").innerHTML = player.attackPoints + " Attack"
     document.getElementById("currentDefenseStat").innerHTML = player.defensePoints + " Defense"
     document.getElementById("currentSpeedStat").innerHTML = player.speedPoints + " Speed"
+    document.getElementById("currentGold").innerHTML = "You have " + numberWithCommas(goldShown) + " Gold."
+}
+
+function updateStatButtonHTML(){
+    document.getElementById("statPointsDisplay").innerHTML = "Stat Points<br/><br/>" + player.statPoints + "/" + player.maxStatPoints
     document.getElementById("statPointsOnHP").innerHTML = player.allocatedHP
     document.getElementById("statPointsOnAttack").innerHTML = player.allocatedAtt
     document.getElementById("statPointsOnDefense").innerHTML = player.allocatedDef
     document.getElementById("statPointsOnSpeed").innerHTML = player.allocatedSpe
-    document.getElementById("currentGold").innerHTML = "You have " + numberWithCommas(goldShown) + " Gold."
+    if (player.statPoints < 10){
+        document.getElementById("plusTenHPButton").className = "greyedOutStatButton"
+        document.getElementById("plusTenAttackButton").className = "greyedOutStatButton"
+        document.getElementById("plusTenDefenseButton").className = "greyedOutStatButton"
+        document.getElementById("plusTenSpeedButton").className = "greyedOutStatButton"
+        document.getElementById("plusTenHPButton").disabled = true
+        document.getElementById("plusTenAttackButton").disabled = true
+        document.getElementById("plusTenDefenseButton").disabled = true
+        document.getElementById("plusTenSpeedButton").disabled = true
+    }
+    else{
+        document.getElementById("plusTenHPButton").className = "statButtonLayout"
+        document.getElementById("plusTenAttackButton").className = "statButtonLayout"
+        document.getElementById("plusTenDefenseButton").className = "statButtonLayout"
+        document.getElementById("plusTenSpeedButton").className = "statButtonLayout"
+        document.getElementById("plusTenHPButton").disabled = false
+        document.getElementById("plusTenAttackButton").disabled = false
+        document.getElementById("plusTenDefenseButton").disabled = false
+        document.getElementById("plusTenSpeedButton").disabled = false
+    }
+    if (player.statPoints < 1){
+        document.getElementById("plusOneHPButton").className = "greyedOutStatButton"
+        document.getElementById("plusOneAttackButton").className = "greyedOutStatButton"
+        document.getElementById("plusOneDefenseButton").className = "greyedOutStatButton"
+        document.getElementById("plusOneSpeedButton").className = "greyedOutStatButton"
+        document.getElementById("plusOneHPButton").disabled = true
+        document.getElementById("plusOneAttackButton").disabled = true
+        document.getElementById("plusOneDefenseButton").disabled = true
+        document.getElementById("plusOneSpeedButton").disabled = true
+    }
+    else{
+        document.getElementById("plusOneHPButton").className = "statButtonLayout"
+        document.getElementById("plusOneAttackButton").className = "statButtonLayout"
+        document.getElementById("plusOneDefenseButton").className = "statButtonLayout"
+        document.getElementById("plusOneSpeedButton").className = "statButtonLayout"
+        document.getElementById("plusOneHPButton").disabled = false
+        document.getElementById("plusOneAttackButton").disabled = false
+        document.getElementById("plusOneDefenseButton").disabled = false
+        document.getElementById("plusOneSpeedButton").disabled = false
+    }
+    if (player.allocatedHP > 0){
+        document.getElementById("minusOneHPButton").className = "statButtonLayout"
+        document.getElementById("minusOneHPButton").disabled = false
+    }
+    else{
+        document.getElementById("minusOneHPButton").className = "greyedOutStatButton"
+        document.getElementById("minusOneHPButton").disabled = true
+    }
+    if (player.allocatedAtt > 0){
+        document.getElementById("minusOneAttackButton").className = "statButtonLayout"
+        document.getElementById("minusOneAttackButton").disabled = false
+    }
+    else{
+        document.getElementById("minusOneAttackButton").className = "greyedOutStatButton"
+        document.getElementById("minusOneAttackButton").disabled = true
+    }
+    if (player.allocatedDef > 0){
+        document.getElementById("minusOneDefenseButton").className = "statButtonLayout"
+        document.getElementById("minusOneDefenseButton").disabled = false
+    }
+    else{
+        document.getElementById("minusOneDefenseButton").className = "greyedOutStatButton"
+        document.getElementById("minusOneDefenseButton").disabled = true
+    }
+    if (player.allocatedSpe > 0){
+        document.getElementById("minusOneSpeedButton").className = "statButtonLayout"
+        document.getElementById("minusOneSpeedButton").disabled = false
+    }
+    else{
+        document.getElementById("minusOneSpeedButton").className = "greyedOutStatButton"
+        document.getElementById("minusOneSpeedButton").disabled = true
+    }
+    if (player.allocatedHP > 9){
+        document.getElementById("minusTenHPButton").className = "statButtonLayout"
+        document.getElementById("minusTenHPButton").disabled = false
+    }
+    else{
+        document.getElementById("minusTenHPButton").className = "greyedOutStatButton"
+        document.getElementById("minusTenHPButton").disabled = true
+    }
+    if (player.allocatedAtt > 9){
+        document.getElementById("minusTenAttackButton").className = "statButtonLayout"
+        document.getElementById("minusTenAttackButton").disabled = false
+    }
+    else{
+        document.getElementById("minusTenAttackButton").className = "greyedOutStatButton"
+        document.getElementById("minusTenAttackButton").disabled = true
+    }
+    if (player.allocatedDef > 9){
+        document.getElementById("minusTenDefenseButton").className = "statButtonLayout"
+        document.getElementById("minusTenDefenseButton").disabled = false
+    }
+    else{
+        document.getElementById("minusTenDefenseButton").className = "greyedOutStatButton"
+        document.getElementById("minusTenDefenseButton").disabled = true
+    }
+    if (player.allocatedSpe > 9){
+        document.getElementById("minusTenSpeedButton").className = "statButtonLayout"
+        document.getElementById("minusTenSpeedButton").disabled = false
+    }
+    else{
+        document.getElementById("minusTenSpeedButton").className = "greyedOutStatButton"
+        document.getElementById("minusTenSpeedButton").disabled = true
+    }
 }
 
 function createEnemy(ID, name, hitPoints, attackPoints, defensePoints, speedPoints, imagePath, ladderValue, timesDefeated, timesLostTo, equipment, dropMin, dropMax) {
@@ -1549,3 +1791,4 @@ function loadZone(zone){
     document.getElementById("zoneNumber").innerHTML = "Zone " + (zoneLoader.ID + 1)     
     document.getElementById("zoneName").innerHTML = zoneLoader.name
 }
+updateHTML()

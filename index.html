@@ -43,12 +43,13 @@
         }
     </script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/countup.js/1.8.2/countUp.min.js'></script>
+    <link rel="stylesheet" type="text/css" href="https://loadingio.github.io/loading-bar/dist/loading-bar.css" />
+    <script src="https://loadingio.github.io/loading-bar/dist/loading-bar.js"></script>
     <style>
-        
         .standardText{
             opacity: 1;
             font-size: 25px; 
-            color: rgb(6, 128, 128); 
+            color: #ac9444; 
             font-family: Fredoka One; 
             font-weight: bold;
             -webkit-text-stroke-width: 1px;
@@ -56,8 +57,8 @@
         }
         #currentTrainingPoints{
             opacity: 1;
-            font-size: 25px; 
-            color: rgb(6, 128, 128); 
+            font-size: 30px; 
+            color: #ac9444; 
             font-family: Fredoka One; 
             font-weight: bold;
             -webkit-text-stroke-width: 1px;
@@ -72,7 +73,7 @@
             opacity: 1;
             font-size: 25px; 
             color: black; 
-            background-color: rgb(6, 128, 128); 
+            background-color: rgb(101, 141, 251); 
             border-color: #474646;
             font-weight: 100;
             border-radius: 5px;
@@ -82,8 +83,8 @@
         .upgradeButtonLayout{
             opacity: 1;
             font-size: 25px; 
-            color: black; 
-            background-color: rgb(6, 128, 128); 
+            color: black;
+            background-color: rgb(101, 141, 251); 
             border-color: #474646;
             width: 300px;
             font-weight: 100;
@@ -94,17 +95,31 @@
         .statButtonLayout{
             font-size: 25px; 
             color: black; 
-            background-color: rgb(6, 128, 128); 
+            background-color: rgb(101, 141, 251); 
             border-color: #474646;
             font-weight: normal;
-            max-width: 40px;
-            min-width: 40px;
+            max-width: 60px;
+            min-width: 60px;
+            min-height: 40px;
+            max-height: 40px;
+            text-align: center;
+        }
+        .greyedOutStatButton{
+            font-size: 25px; 
+            border-color: #474646;
+            background-color: #474646; 
+            color: black;
+            font-weight: normal;
+            max-width: 60px;
+            min-width: 60px;
+            min-height: 40px;
+            max-height: 40px;
             text-align: center;
         }
         .navMenuButton{
             font-size: 30px; 
-            color: black; 
-            background-color: rgb(6, 128, 128); 
+            color: black;
+            background-color: rgb(101, 141, 251); 
             border-color: #474646; 
             font-weight: 100;
             width: 200px;
@@ -116,14 +131,14 @@
             opacity: 1;
             -webkit-text-stroke-width: 1px;
             -webkit-text-stroke-color: black;
-            color: rgb(6, 128, 128);
+            color: rgb(101, 141, 251);
             font-size: 30px;
         }
         .itemText{
             opacity: 1;
             -webkit-text-stroke-width: 1px;
             -webkit-text-stroke-color: black;
-            color:  rgb(6, 128, 128);
+            color:  rgb(101, 141, 251);
             font-size: 20px;
             font-weight: bold;
             word-wrap: break-word;
@@ -143,8 +158,8 @@
         }
         .divBackground{
             opacity: 1;
-            background-image: linear-gradient(to bottom right, rgb(57, 59, 66), rgb(20, 20, 20));
-            max-width: 1000px; 
+            background-image: linear-gradient(to bottom right, rgb(100, 100, 100), rgb(20, 20, 20));
+            max-width: 1400px; 
             border-left: 2px solid rgb(178, 178, 178); 
             border-right: 2px solid rgb(178, 178, 178); 
             border-bottom: 2px solid grey;
@@ -157,7 +172,7 @@
             padding-top: 0px;
         }
         .progessBars{
-            background-color: rgb(6, 128, 128);
+            background-color: #a9fa;
             max-width: 200px;
             color:white;
             text-align: left;
@@ -199,12 +214,37 @@
         }
         .trainingButtonGrid {
             display: grid;
-            grid-template-columns: auto auto;
+            grid-template-columns: auto;
             grid-gap: 10px;
             width: 700px;
         }
         .trainingButtonGrid > div {
             
+        }
+        .statBarGrid {
+            display: grid;
+            grid-template-columns: auto auto;
+            grid-template-rows: auto auto;
+            grid-gap: 10px;
+            height: 600px;
+            justify-content: center;
+            margin-bottom: 30px
+        }
+        .statBarGrid > div {
+            text-align: center;
+            font-size: 30px;
+            font-family: Fredoka One; 
+            width: 400px;
+        }
+        .ldBar path.mainline {
+            stroke-width: 5;
+            stroke: #ac9444;
+            stroke-linecap: round;
+        }
+        .ldBar path.baseline {
+            stroke-width: 5;
+            stroke: rgb(101, 141, 251);
+            stroke-linecap: round;
         }
         #playerDisplay {
 	        display: flex;
@@ -212,13 +252,68 @@
 	        position: relative;
         }
         .playerDisplayDivs {
+            color: #ac9444;
             margin-left: 50px;
             margin-right: 50px;
             margin-top: 10px;
         }
+        #Progress_StatusHP { 
+            border: 1px solid white;
+            border-radius: 5px;
+            width: 200px; 
+            height: 50px;
+            text-align: left
+        } 
+        #myprogressBarHP { 
+            width: 0%; 
+            height: 50px; 
+            background: linear-gradient(to right, #ac9444, rgb(101, 141, 251) 200px);
+            border-radius: 5px
+        } 
+        #Progress_StatusAtt { 
+            border: 1px solid white;
+            border-radius: 5px;
+            width: 200px; 
+            height: 50px;
+            text-align: left        
+        } 
+        #myprogressBarAtt { 
+            width: 0%; 
+            height: 50px; 
+            background: linear-gradient(to right, #ac9444, rgb(101, 141, 251) 200px);
+            border-radius: 5px
+        } 
+        #Progress_StatusDef { 
+            border: 1px solid white;
+            border-radius: 5px;
+            width: 200px; 
+            height: 50px;
+            text-align: left     
+        } 
+        #myprogressBarDef { 
+            width: 0%; 
+            height: 50px; 
+            background: linear-gradient(to right, #ac9444, rgb(101, 141, 251) 200px);
+            border-radius: 5px
+        } 
+        #Progress_StatusSpe { 
+            border: 1px solid white;
+            border-radius: 5px;
+            width: 200px; 
+            height: 50px;
+            text-align: left      
+        } 
+        #myprogressBarSpe { 
+            width: 0%; 
+            height: 50px; 
+            background: linear-gradient(to right, #ac9444, rgb(101, 141, 251) 200px);
+            border-radius: 5px
+        } 
     </style>
 </head>
-<body style="background: linear-gradient(to bottom right, rgb(35, 35, 36), rgb(10, 10, 10)) fixed">
+<script>
+</script>
+<body style="background: linear-gradient(to bottom right, #292929, #090909) fixed">
     <center>
     <div id="navMenu">
         <button id="saveButton" class="mainButtonLayout" onclick="saveGame()">Save</button>
@@ -232,74 +327,88 @@
         <p id="loadingText" hidden class="standardText" style="font-size: 50px">Loading...</p>
         <br>
     </div>
-        <div id="trainingTab" class="divBackground">
-            <div id="playerDisplay" class="standardText">
-                <div class="playerDisplayDivs"><p style="text-align: center" id="currentTrainingPoints">Training Points<br/>0</p></div>
-                <div class="playerDisplayDivs"><p style="text-align: center" id="currentLevel">Level<br/><br/>1</p></div>
-                <div class="playerDisplayDivs"><p style="text-align: center" id="currentEXP">EXP<br/><br/>0/50</p></div>
-                <div class="playerDisplayDivs"><p style="text-align: center" id="statPointsDisplay">Stat Points<br/><br/>0/0</p></div>
+        <div id="trainingTab" class="divBackground" style="min-height: 800px">        
+            <div id="playerDisplay" class="standardText" style="font-size: 30px">
+                    <div class="playerDisplayDivs"><p style="text-align: center" id="currentTrainingPoints">Training Points<br/>0</p></div>
+                    <div class="playerDisplayDivs"><p style="text-align: center" id="currentLevel">Level<br/><br/>1</p></div>
+                    <div class="playerDisplayDivs"><p style="text-align: center" id="currentEXP">EXP<br/><br/>0/50</p></div>
+                    <div class="playerDisplayDivs"><p style="text-align: center" id="statPointsDisplay">Stat Points<br/><br/>0/0</p></div>
+                </div>         
+                <div id="statBarDisplay" class="statBarGrid" style="float: left; width: 70%">
+                    <div class="standardText">
+                        <center>
+                            <p id="currentHPStat">Hit Points: 10</p>
+                            <div id="Progress_StatusHP">
+                                <div id="myprogressBarHP"></div>
+                            </div>
+                            <p id="currentProgressDisplayHP">0%</p>
+                            <button id="minusTenHPButton" class="statButtonLayout" onclick="allocateHP(false, 10)">-10</button>
+                            <button id="minusOneHPButton" class="statButtonLayout" onclick="allocateHP(false, 1)">-1</button>
+                            <a style="text-align: center; margin: 10px" id="statPointsOnHP">0</a>
+                            <button id="plusOneHPButton" class="statButtonLayout" onclick="allocateHP(true, 1)">+1</button>
+                            <button id="plusTenHPButton" class="statButtonLayout" onclick="allocateHP(true, 10)">+10</button>
+                        </center>
+                    </div>
+                    <div class="standardText">
+                        <center>
+                            <p id="currentAttackStat">Attack: 1</p>
+                            <div id="Progress_StatusAtt">
+                                <div id="myprogressBarAtt"></div>
+                            </div>  
+                            <p id="currentProgressDisplayAtt">0%</p>                            
+                            <button id="minusTenAttackButton" class="statButtonLayout" onclick="allocateAttack(false, 10)">-10</button>
+                            <button id="minusOneAttackButton" class="statButtonLayout" onclick="allocateAttack(false, 1)">-1</button>
+                            <a style="text-align: center; margin: 10px" id="statPointsOnAttack">0</a>
+                            <button id="plusOneAttackButton" class="statButtonLayout" onclick="allocateAttack(true, 1)">+1</button>
+                            <button id="plusTenAttackButton" class="statButtonLayout" onclick="allocateAttack(true, 10)">+10</button>
+                        </center>
+                    </div>
+                    <div class="standardText">
+                        <center>
+                            <p id="currentDefenseStat">Defense: 1</p>
+                            <div id="Progress_StatusDef">
+                                <div id="myprogressBarDef"></div>
+                            </div> 
+                            <p id="currentProgressDisplayDef">0%</p>                            
+                            <button id="minusTenDefenseButton" class="statButtonLayout" onclick="allocateDefense(false, 10)">-10</button>
+                            <button id="minusOneDefenseButton" class="statButtonLayout" onclick="allocateDefense(false, 1)">-1</button>
+                            <a style="text-align: center; margin: 10px" id="statPointsOnDefense">0</a>
+                            <button id="plusOneDefenseButton" class="statButtonLayout" onclick="allocateDefense(true, 1)">+1</button>
+                            <button id="plusTenDefenseButton" class="statButtonLayout" onclick="allocateDefense(true, 10)">+10</button>
+                        </center>
+                    </div>
+                    <div class="standardText">
+                        <center>
+                            <p id="currentSpeedStat">Speed: 1</p>
+                            <div id="Progress_StatusSpe">
+                                <div id="myprogressBarSpe"></div>
+                            </div>                    
+                            <p id="currentProgressDisplaySpe">0%</p>                                     
+                            <button id="minusTenSpeedButton" class="statButtonLayout" onclick="allocateSpeed(false, 10)">-10</button>
+                            <button id="minusOneSpeedButton" class="statButtonLayout" onclick="allocateSpeed(false, 1)">-1</button>
+                            <a style="text-align: center; margin: 10px" id="statPointsOnSpeed">0</a>
+                            <button id="plusOneSpeedButton" class="statButtonLayout" onclick="allocateSpeed(true, 1)">+1</button>
+                            <button id="plusTenSpeedButton" class="statButtonLayout" onclick="allocateSpeed(true, 10)">+10</button>
+                        </center>
+                    </div>  
             </div>
-                <table class="standardText">
-                    <tr>
-                        <td><p id="currentHPStat">10 HP</p></td>
-                        <td><progress id="progressBarHP" class="progessBars" max=10000 value=0></progress></td>
-                        <td id="statPointsOnHP" style="text-align: center">0</td>
-                        <td style="text-align: center"><button class="statButtonLayout" onclick="allocateHP(true)">+</button><button class="statButtonLayout" onclick="allocateHP(false)">-</button></td>
-                    </tr>
-                    <tr>
-                        <td><p id="currentAttackStat">1 Attack</p></td>
-                        <td><progress id="progressBarAttack" class="progessBars" max=10000 value=0></progress></td>
-                        <td id="statPointsOnAttack" style="text-align: center">0</td>
-                        <td style="text-align: center"><button class="statButtonLayout" onclick="allocateAttack(true)">+</button><button class="statButtonLayout" onclick="allocateAttack(false)">-</button></td>
-                    </tr>
-                    <tr>
-                        <td><p id="currentDefenseStat">1 Defense</p></td>
-                        <td><progress id="progressBarDefense" class="progessBars" max=10000 value=0></progress></td>
-                        <td id="statPointsOnDefense" style="text-align: center">0</td>
-                        <td style="text-align: center"><button class="statButtonLayout" onclick="allocateDefense(true)">+</button><button class="statButtonLayout" onclick="allocateDefense(false)">-</button></td>
-                    </tr>
-                    <tr>
-                        <td><p id="currentSpeedStat">1 Speed</p></td>
-                        <td><progress id="progressBarSpeed" class="progessBars" max=10000 value=0></progress></td>
-                        <td id="statPointsOnSpeed" style="text-align: center">0</td>
-                        <td style="text-align: center"><button class="statButtonLayout" onclick="allocateSpeed(true)">+</button><button class="statButtonLayout" onclick="allocateSpeed(false)">-</button></td>
-                    </tr> 
-                </table>
-                <font style="color: rgb(6, 128, 128); font-family: Fredoka One; font-weight: bold">
-                <table>
-                    <tr>
-                        <td style="padding-right: 50px">
-                            <p style="max-width: 300px; text-align: center" id="battlePowerPerSecond">10 Training Points per second!</p>
-                        </td>
-                        <td>
-                            <button id="powerTrainButton" class="mainButtonLayout" onclick="powerTrain()">Power Train</button>
-                        </td>
-                    </tr>
-                </table>
+                <font style="color: #ac9444; font-family: Fredoka One; font-weight: bold">
                 <br>
-                <div class="trainingButtonGrid">
+                <br>        
+                <div class="trainingButtonGrid" style="float: left; width: 30%">
+                    <div>                            
+                        <button id="powerTrainButton" class="mainButtonLayout" onclick="powerTrain()" style="height: 75px; width: 300px; font-size: 40px">Power Train</button>
+                        <p style="max-width: 300px; text-align: center; min-height: 50px" id="battlePowerPerSecond">10 Training Points per second!</p>
+                    </div>
                     <div><button class="upgradeButtonLayout" onclick="buyTrainingPerClick()" id="perClickUpgrade">Increase Training Level<br/>50 Training Points</button></div>
-                    <div><button class="upgradeButtonLayout" onclick="buyAP()" id="buyAPButton">Prestige to get 1 AP<br/>50,000 Training Points</button></div>
+                    <div><button class="upgradeButtonLayout" onclick="buyAP()" id="buyAPButton">Reset Training for 1 AP<br/>50,000 Training Points</button></div>
                     <div><button class="upgradeButtonLayout" onclick="buyStatPoint()" id="buyStatPointButton">Buy Stat Point<br/>Free</button></div>
                     <div><button class="upgradeButtonLayout" onclick="buyLevelUp()" id="buyLevelUpButton">EXP Level Up<br/>50 EXP</button></div>
+                    <div></div>
                 </div>                       
-                <br><br>
-                <br><br>
-                <br><br>                    
-                <br>
-                <table>
-                    <tr>
-                        <td>
-                            <button hidden class="mainButtonLayout" onclick="toggleAutoUpgrade()" id="toggleAutoUpgradeButton">Auto Upgrade: ON</button>
-                        </td>
-                        <td>
-                            <button hidden class="mainButtonLayout" onclick="toggleAutoPurchaseAP()" id="toggleAutoPurchaseAPButton">Auto Buy AP: ON</button>
-                        </td>
-                        <td>
-                            <button hidden class="mainButtonLayout" onclick="toggleAutoPurchaseStatPoints()" id="toggleAutoPurchaseStatPointsButton">Auto Buy SP: ON</button>
-                        </td>
-                    </tr>
-                </table>
+                <button class="mainButtonLayout" onclick="toggleAutoUpgrade()" style="width: 100px; font-size: 20px; height: 100px" id="toggleAutoUpgradeButton">Auto Upgrade: ON</button>
+                <button class="mainButtonLayout" onclick="toggleAutoPurchaseStatPoints()" style="width: 100px; font-size: 20px; height: 100px" id="toggleAutoPurchaseStatPointsButton">Auto Buy SP: ON</button>
+                <button class="mainButtonLayout" onclick="toggleAutoPurchaseAP()" style="width: 100px; font-size: 20px; height: 100px" id="toggleAutoPurchaseAPButton">Auto Buy AP: ON</button>
                 </font>
             
         </div>
@@ -310,7 +419,7 @@
             <button class="navMenuButton" onclick="return show('attributePointShop','goldShop')">AP Shop</button>
             <button class="navMenuButton" onclick="return show('goldShop','attributePointShop')">Gold Shop</button>          
             <div id="attributePointShop" style="display:none" >
-                <font style="color: rgb(6, 128, 128); font-family: Fredoka One; font-weight: bold"><p class="apPageText" id="textAPTotal">AP Total: 0</p>
+                <font style="color: rgb(101, 141, 251); font-family: Fredoka One; font-weight: bold"><p class="apPageText" id="textAPTotal">AP Total: 0</p>
                 <p class="apPageText" id="textAPAvailable">AP Available: 0</p>
                 <button id="buyAutoUpgradeButton" class="mainButtonLayout" onclick="buyAutoUpgrade()">Buy Auto Upgrade: 10 AP</button><br><br>
                 <button id="buyAutoPurchaseAPButton" class="mainButtonLayout" onclick="buyAutoPurchaseAP()">Buy AutoPurchase for AP: 10 AP</button><br><br>
@@ -334,8 +443,8 @@
             <button class="navMenuButton" onclick="return show('equipmentTab','enemiesTab','inventoryTab')">Equipment</button>  
             
             <div id="inventoryTab">
-                <font style="color: rgb(6, 128, 128); font-family: Fredoka One; font-weight: bold">
-                <p class="apPageText" style="color: rgb(6, 128, 128)">Inventory</p>
+                <font style="color: rgb(101, 141, 251); font-family: Fredoka One; font-weight: bold">
+                <p class="apPageText" style="color: rgb(101, 141, 251)">Inventory</p>
                 <center><div id="inventoryGrid" class="grid-container">
 
                 </div></center>
@@ -345,8 +454,8 @@
             </div>
 
             <div id="equipmentTab" style="display:none">
-                <font style="color: rgb(6, 128, 128); font-family: Fredoka One; font-weight: bold">
-                <p class="apPageText" style="color: rgb(6, 128, 128)">Equipped</p>
+                <font style="color: rgb(101, 141, 251); font-family: Fredoka One; font-weight: bold">
+                <p class="apPageText" style="color: rgb(101, 141, 251)">Equipped</p>
                 <center>
                 <table style="width: 900px">
                     <tr>
@@ -428,8 +537,8 @@
             </div>
 
             <div id="enemiesTab" style="display:none">
-                <font style="color: rgb(6, 128, 128); font-family: Fredoka One; font-weight: bold">
-                <p class="apPageText" style="color: rgb(6, 128, 128); display: inline-block; margin-right: 20px" id="zoneNumber">Zone 1 :</p>
+                <font style="color: rgb(101, 141, 251); font-family: Fredoka One; font-weight: bold">
+                <p class="apPageText" style="color: rgb(101, 141, 251); display: inline-block; margin-right: 20px" id="zoneNumber">Zone 1 :</p>
                 <p class="apPageText" style="display: inline-block; margin-right: 20px" id="zoneName">The Forest Outskirts</p>
                 <button class="mainButtonLayout" style="margin-right: 5px; max-height: 50px" onclick="zoneUp()">Ascend</button>
                 <button class="mainButtonLayout" onclick="zoneDown()">Descend</button>
