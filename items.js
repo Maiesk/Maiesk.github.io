@@ -8,7 +8,7 @@ createItem("Solaire Halberd", 6, 0, 0, 0, 0, 3, 7, 0, 0, 0, 0, 0, 0, 0, 3, 0, fa
 createItem("Buckler", 7, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, false, false, "/images/weapons/shield_05.png", 0)
 createItem("Silver Shield", 8, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 3, 0, 0, 0, false, false, "/images/weapons/shield_07.png", 50)
 createItem("Golden Kite", 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 2, 5, 0, false, false, "/images/weapons/shield_08.png", 100)
-createItem("It Without Implement", 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, true, true, "/images/weapons/shield_43.png", 50000)
+createItem("It Without Implement", 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, true, true, "/images/weapons/shield_43.png", 5000000)
 
 createEnemyWeapon("Snek Fangs", 0, 0, 2, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, false, false)
 createEnemyWeapon("Snek Hide", 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 3, 0, 0, 0, false, false)

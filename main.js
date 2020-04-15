@@ -326,18 +326,19 @@ function powerTrain(){
             powerTrainCooldown = false
             player.upgradesBought = 0
             document.getElementById("buyAPButton").disabled = false
-            document.getElementById("buyAPButton").style = "background-color: #94b0da; color: black"
+            document.getElementById("buyAPButton").style = "color: #ac9444; background-color: #335C81"
             document.getElementById("powerTrainButton").innerHTML = "Power Train"
             document.getElementById("powerTrainButton").disabled = false
-            document.getElementById("powerTrainButton").style = "background-color: #94b0da; color: black; height: 75px; width: 300px; font-size: 40px"    
+            document.getElementById("powerTrainButton").style = "color: #ac9444; background-color: #335C81; height: 75px; width: 300px; font-size: 40px"    
             document.getElementById("saveButton").disabled = false
-            document.getElementById("saveButton").style = "background-color: #94b0da; color: black"
+            document.getElementById("saveButton").style = "color: #ac9444; background-color: #335C81"
             document.getElementById("loadButton").disabled = false
-            document.getElementById("loadButton").style = "background-color: #94b0da; color: black"
+            document.getElementById("loadButton").style = "color: #ac9444; background-color: #335C81"
             updateHTML()
         }, 5000)
     }
 }
+
 
 function buyTrainingPerClick(){
     if (player.training >= player.trainingPerClickCost){
