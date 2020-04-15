@@ -1,0 +1,27 @@
+
+createEnemy(0, "Snek", 10, 1, 1, 1, "/images/enemies/pipo-enemy003b.png", 1, 0, 0, [enemyWeapons[0], enemyWeapons[1], enemyWeapons[2], enemyWeapons[3]], 2, 5)
+createEnemy(1, "Sloim", 10, 1, 1, 1, "/images/enemies/pipo-enemy009b.png", 3, 0, 0, [enemyWeapons[4], enemyWeapons[5], enemyWeapons[6], enemyWeapons[7]], 4, 8)
+createEnemy(2, "Coro", 25, 5, 5, 5, "/images/enemies/pipo-enemy001.png", 5, 0, 0, [enemyWeapons[8], enemyWeapons[9], enemyWeapons[10], enemyWeapons[11]], 7, 11)
+createEnemy(3, "Mr. Pain, Bodyguard", 40, 15, 15, 15, "/images/enemies/pipo-enemy014b.png", 5, 0, 0, [player.allItems[2], player.allItems[5], player.allItems[0], player.allItems[3]], 15, 23)
+createEnemy(4, "Wallfiend", 100, 20, 100, 1, "/images/enemies/pipo-enemy033.png", 10, 0, 0, [player.allItems[1], player.allItems[7], player.allItems[4], player.allItems[6]], 20, 28)
+createEnemy(5, "Bizarro Seto", 60, 35, 35, 35, "/images/enemies/pipo-enemy030b.png", 10, 0, 0, [player.allItems[0], player.allItems[8], player.allItems[7]], 30, 37)
+createEnemy(6, "Fodder Knight", 100, 40, 40, 40, "/images/enemies/pipo-enemy018a.png", 10, 0, 0, [player.allItems[2], player.allItems[5], player.allItems[0], player.allItems[3]], 40, 54)
+createEnemy(7, "Mimic", 2000, 200, 1, 1, "/images/enemies/pipo-enemy032.png", 100, 0, 0, [player.allItems[1], player.allItems[7], player.allItems[4], player.allItems[6]], 2000, 2000)
+createEnemy(8, "Seto, Imp of Angst", 175, 55, 55, 55, "/images/enemies/pipo-enemy040b.png", 20, 0, 0, [player.allItems[0], player.allItems[8], player.allItems[7]], 59, 100)
+createEnemy(9, "Phantom Uzoro", 175, 55, 55, 55, "/images/enemies/pipo-enemy025.png", 20, 0, 0, [player.allItems[0], player.allItems[8], player.allItems[7]], 59, 100)
+createEnemy(10, "Skulltan", 175, 55, 55, 55, "/images/enemies/pipo-enemy026.png", 20, 0, 0, [player.allItems[0], player.allItems[8], player.allItems[7]], 59, 100)
+createEnemy(11, "Seto Immanis", 175, 55, 55, 55, "/images/enemies/pipo-enemy021b.png", 20, 0, 0, [player.allItems[0], player.allItems[8], player.allItems[7]], 59, 100)
+createEnemy(12, "Skulltan Unbound", 3000, 500, 500, 10000, "/images/enemies/pipo-boss001.png", 500, 0, 0, [player.allItems[0], player.allItems[8], player.allItems[7]], 1500, 2000)
+createEnemy(13, "SkuSeto", 3000, 500, 500, 10000, "/images/enemies/pipo-boss004.png", 500, 0, 0, [player.allItems[0], player.allItems[8], player.allItems[7]], 4000, 6000)
+createEnemy(14, "Uzoro", 3000, 500, 500, 10000, "/images/enemies/pipo-boss002.png", 500, 0, 0, [player.allItems[0], player.allItems[8], player.allItems[7]], 5000, 7000)
+createEnemy(15, "Uzoro's Will", 10000, 10000, 1000, 0, "/images/enemies/pipo-boss003.png", 10000, 0, 0, [player.allItems[0], player.allItems[8], player.allItems[7]], 1000000, 1000000)
+
+
+createZone(0, "The Inner Forest", [player.enemyList[0], player.enemyList[1], player.enemyList[2]])
+createZone(1, "The Castle Walls", [player.enemyList[3], player.enemyList[4], player.enemyList[5]])
+createZone(2, "The Dungeon Gate", [player.enemyList[6], player.enemyList[7], player.enemyList[8]])
+createZone(3, "The Hall of Seto", [player.enemyList[9], player.enemyList[10], player.enemyList[11]])
+createZone(4, "The Falling Hall", [player.enemyList[12], player.enemyList[13], player.enemyList[14]])
+createZone(5, "The Final Breath", [player.enemyList[15]])
+
+loadZone(1)

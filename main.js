@@ -48,6 +48,7 @@ var player = {
     enemyList: [],
     allItems: [],
     currentZone: 1,
+    zoneMax: 1,
     zones: []
 }
 
@@ -80,10 +81,10 @@ function updateHPBar() {
                 player.currentProgressHP = 0
                 elementHP.style.width = 0
                 if (player.maxHitPoints % 2 == 0){
-                    elementHP.style = "background: linear-gradient(to right, #ac9444, rgb(101, 141, 251) 200px);"
+                    elementHP.style = "background: linear-gradient(to right, #ac9444, #94b0da 200px);"
                 }
                 else{
-                    elementHP.style = "background: linear-gradient(to right, rgb(101, 141, 251), #ac9444 200px);"
+                    elementHP.style = "background: linear-gradient(to right, #94b0da, #ac9444 200px);"
                 }
                 player.maxHitPoints += 1
                 player.currentMaxHP = 100 * (1.05**Math.sqrt(player.maxHitPoints - 10)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/20)))
@@ -123,10 +124,10 @@ function updateAttBar() {
                 document.getElementById("currentProgressDisplayAtt").innerHTML = percentShown + "%"
                 player.currentProgressAtt = 0
                 if (player.attackPoints % 2 == 0){
-                    elementAtt.style = "background: linear-gradient(to right, #ac9444, rgb(101, 141, 251) 200px);"
+                    elementAtt.style = "background: linear-gradient(to right, #ac9444, #94b0da 200px);"
                 }
                 else{
-                    elementAtt.style = "background: linear-gradient(to right, rgb(101, 141, 251), #ac9444 200px);"
+                    elementAtt.style = "background: linear-gradient(to right, #94b0da, #ac9444 200px);"
                 }
                 player.attackPoints += 1
                 if (player.level == player.attackPoints / 10){
@@ -167,10 +168,10 @@ function updateDefBar() {
                 player.currentProgressDef = 0
                 elementDef.style.width = 0
                 if (player.defensePoints % 2 == 0){
-                    elementDef.style = "background: linear-gradient(to right, #ac9444, rgb(101, 141, 251) 200px);"
+                    elementDef.style = "background: linear-gradient(to right, #ac9444, #94b0da 200px);"
                 }
                 else{
-                    elementDef.style = "background: linear-gradient(to right, rgb(101, 141, 251), #ac9444 200px);"
+                    elementDef.style = "background: linear-gradient(to right, #94b0da, #ac9444 200px);"
                 }
                 player.defensePoints += 1
                 player.currentMaxDef = 100 * (1.05**Math.sqrt(player.defensePoints)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/20)))
@@ -208,10 +209,10 @@ function updateSpeBar() {
                 player.currentProgressSpe = 0
                 elementSpe.style.width = 0
                 if (player.speedPoints % 2 == 0){
-                    elementSpe.style = "background: linear-gradient(to right, #ac9444, rgb(101, 141, 251) 200px);"
+                    elementSpe.style = "background: linear-gradient(to right, #ac9444, #94b0da 200px);"
                 }
                 else{
-                    elementSpe.style = "background: linear-gradient(to right, rgb(101, 141, 251), #ac9444 200px);"
+                    elementSpe.style = "background: linear-gradient(to right, #94b0da, #ac9444 200px);"
                 }
                 player.speedPoints += 1
                 player.currentMaxSpe = 100 * (1.05**Math.sqrt(player.speedPoints)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/20)))
@@ -325,16 +326,16 @@ function powerTrain(){
             powerTrainCooldown = false
             player.upgradesBought = 0
             document.getElementById("buyAPButton").disabled = false
-            document.getElementById("buyAPButton").style = "background-color: rgb(101, 141, 251); color: black"
+            document.getElementById("buyAPButton").style = "background-color: #94b0da; color: black"
             document.getElementById("powerTrainButton").innerHTML = "Power Train"
             document.getElementById("powerTrainButton").disabled = false
-            document.getElementById("powerTrainButton").style = "background-color: rgb(101, 141, 251); color: black; height: 75px; width: 300px; font-size: 40px"    
+            document.getElementById("powerTrainButton").style = "background-color: #94b0da; color: black; height: 75px; width: 300px; font-size: 40px"    
             document.getElementById("saveButton").disabled = false
-            document.getElementById("saveButton").style = "background-color: rgb(101, 141, 251); color: black"
+            document.getElementById("saveButton").style = "background-color: #94b0da; color: black"
             document.getElementById("loadButton").disabled = false
-            document.getElementById("loadButton").style = "background-color: rgb(101, 141, 251); color: black"
+            document.getElementById("loadButton").style = "background-color: #94b0da; color: black"
             updateHTML()
-        }, 5000)  
+        }, 5000)
     }
 }
 
@@ -533,12 +534,9 @@ function loadGame(){
         document.getElementById("battleTab").style.display = 'none'
         document.getElementById("shopTab").style.display = 'none'
         document.getElementById("loadingText").hidden = false
+
         setTimeout(function(){
             updateHTML()
-            document.getElementById("progressBarHP").value = player.currentProgressHP
-            document.getElementById("progressBarAttack").value = player.currentProgressAtt
-            document.getElementById("progressBarDefense").value = player.currentProgressDef
-            document.getElementById("progressBarSpeed").value = player.currentProgressSpe
             document.getElementById("trainingTab").hidden = false
             document.getElementById("battleTab").hidden = false
             document.getElementById("shopTab").hidden = false
@@ -569,6 +567,27 @@ function loadGame(){
             }
             player.equipment = []
             loadZone(1)
+            player.allocatedAtt = 0,
+            player.allocatedHP = 0,
+            player.allocatedDef = 0,
+            player.allocatedSpe = 0,
+            player.statPoints = player.maxStatPoints
+            updateStatButtonHTML()
+            document.getElementById("myprogressBarHP").style.width = player.currentProgressHP + '%'; 
+            var percentShownHP = Number(player.currentProgressHP).toFixed(2)
+            document.getElementById("currentProgressDisplayHP").innerHTML = percentShownHP + "%"
+
+            document.getElementById("myprogressBarAtt").style.width = player.currentProgressAtt + '%'; 
+            var percentShownAtt = Number(player.currentProgressAtt).toFixed(2)
+            document.getElementById("currentProgressDisplayAtt").innerHTML = percentShownAtt + "%"
+
+            document.getElementById("myprogressBarDef").style.width = player.currentProgressDef + '%'; 
+            var percentShownDef = Number(player.currentProgressDef).toFixed(2)
+            document.getElementById("currentProgressDisplayDef").innerHTML = percentShownDef + "%"
+
+            document.getElementById("myprogressBarSpe").style.width = player.currentProgressSpe + '%'; 
+            var percentShownSpe = Number(player.currentProgressSpe).toFixed(2)
+            document.getElementById("currentProgressDisplaySpe").innerHTML = percentShownSpe + "%"
         }, 1000)
     }
     else if (player.powerTrainCooldown == true){
@@ -752,7 +771,10 @@ function createEnemy(ID, name, hitPoints, attackPoints, defensePoints, speedPoin
         timesDefeated: timesDefeated,
         timesLostTo: timesLostTo,
         dropMin: dropMin,
-        dropMax: dropMax
+        dropMax: dropMax,
+        autoBattleVictories: 0,
+        autoBattleTotalGold: 0,
+        autoBattleTotalExp: 0
     }
     player.enemyList[player.enemyList.length] = enemy
     return enemy;
@@ -838,21 +860,6 @@ function createEnemyWeapon(name, ID, fire, air, earth, water, melee, light, dark
     }
     enemyWeapons[enemyWeapon.ID] = enemyWeapon
 }
-createEnemyWeapon("Snek Fangs", 0, 0, 2, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, false, false)
-createEnemyWeapon("Snek Hide", 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 3, 0, 0, 0, false, false)
-createEnemyWeapon("Venom Spit", 2, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false)
-createEnemyWeapon("Bad Breath", 3, 2, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, false, false)
-createEnemyWeapon("Sloim Cannon", 4, 0, 3, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false)
-createEnemyWeapon("Super Sloim Transform", 5, 0, 2, 0, 0, 2, 3, 0, 5, 0, 0, 0, 5, 0, 0, 0, false, false)
-createEnemyWeapon("Regenerate Sloim", 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, false, false)
-createEnemyWeapon("Expand-o-sloim", 7, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 0, 0, false, false)
-createEnemyWeapon("Coro Fangs", 8, 0, 2, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, false, false)
-createEnemyWeapon("Bat Wings", 9, 0, 0, 7, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, false, false)
-createEnemyWeapon("Neurotoxin", 10, 0, 3, 0, 0, 0, 0, 4, 0, 0, 0, 0, 8, 0, 0, 0, false, false)
-createEnemyWeapon("Eyes of Rage", 11, 4, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, false, false)
-createEnemyWeapon("Training Sword", 12, 0, 0, 0, 3, 3, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, false, false)
-createEnemyWeapon("Training Sword", 13, 0, 0, 0, 3, 3, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, false, false)
-
 
 function buyItem(ID){
     var buyItem = player.allItems[ID]
@@ -884,32 +891,6 @@ function pushInventoryDisplay(index){
     document.getElementById("inventoryGrid").appendChild(cell);  
     document.getElementById("inventory" + index).onclick = function(){setSelected(index)}
 }  
-
-
-createItem("Dank Sword", 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, "/images/weapons/Sword_02.png", 0)
-createItem("Nomad Blade", 1, 0, 4, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, "/images/weapons/Dagger_32.png", 20)
-createItem("Grim Gavel", 2, 0, 0, 0, 0, 3, 0, 4, 0, 0, 0, 0, 7, 0, 0, 0, false, false, "/images/weapons/Hammer_23.png", 60)
-createItem("Aura Spear", 3, 0, 0, 0, 5, 1, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, false, false, "/images/weapons/Spear_35.png", 40)
-createItem("Staff of the Mountain Bear", 4, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 2, false, false, "/images/weapons/staff_12.png", 100)
-createItem("Wand of Embers", 5, 5, 0, 0, 0, 0, 3, 0, 0, 0, 0, 3, 3, 0, 3, 0, false, false, "/images/weapons/staff_33.png", 100)
-createItem("Solaire Halberd", 6, 0, 0, 0, 0, 3, 7, 0, 0, 0, 0, 0, 0, 0, 3, 0, false, false, "/images/weapons/staff_34.png", 125)
-createItem("Buckler", 7, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, false, false, "/images/weapons/shield_05.png", 0)
-createItem("Silver Shield", 8, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 3, 0, 0, 0, false, false, "/images/weapons/shield_07.png", 50)
-createItem("Golden Kite", 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 2, 5, 0, false, false, "/images/weapons/shield_08.png", 100)
-createItem("It Without Implement", 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, true, true, "/images/weapons/shield_43.png", 50000)
-
-createEnemy(0, "Snek", 10, 1, 1, 1, "/images/enemies/pipo-enemy003b.png", 1, 0, 0, [enemyWeapons[0], enemyWeapons[1], enemyWeapons[2], enemyWeapons[3]], 2, 5)
-createEnemy(1, "Sloim", 10, 1, 1, 1, "/images/enemies/pipo-enemy009b.png", 3, 0, 0, [enemyWeapons[4], enemyWeapons[5], enemyWeapons[6], enemyWeapons[7]], 4, 8)
-createEnemy(2, "Coro", 25, 5, 5, 5, "/images/enemies/pipo-enemy001.png", 5, 0, 0, [enemyWeapons[8], enemyWeapons[9], enemyWeapons[10], enemyWeapons[11]], 7, 11)
-createEnemy(3, "John", 40, 15, 15, 15, "/images/enemies/pipo-enemy003b.png", 5, 0, 0, [player.allItems[2], player.allItems[5], player.allItems[0], player.allItems[3]], 15, 23)
-createEnemy(4, "Jim", 85, 20, 20, 20, "/images/enemies/pipo-enemy009b.png", 7, 0, 0, [player.allItems[1], player.allItems[7], player.allItems[4], player.allItems[6]], 20, 28)
-createEnemy(5, "Joe", 60, 35, 35, 35, "/images/enemies/pipo-enemy001.png", 10, 0, 0, [player.allItems[0], player.allItems[8], player.allItems[7]], 30, 37)
-createEnemy(6, "Johntwo", 100, 40, 40, 40, "/images/enemies/pipo-enemy003b.png", 10, 0, 0, [player.allItems[2], player.allItems[5], player.allItems[0], player.allItems[3]], 40, 54)
-createEnemy(7, "Jimtwo", 135, 45, 45, 45, "/images/enemies/pipo-enemy009b.png", 15, 0, 0, [player.allItems[1], player.allItems[7], player.allItems[4], player.allItems[6]], 50, 62)
-createEnemy(8, "Joetwo", 175, 55, 55, 55, "/images/enemies/pipo-enemy001.png", 20, 0, 0, [player.allItems[0], player.allItems[8], player.allItems[7]], 59, 100)
-createZone(0, "The Outer Forest", [player.enemyList[0], player.enemyList[1], player.enemyList[2]])
-createZone(1, "The Inner Forest", [player.enemyList[3], player.enemyList[4], player.enemyList[5]])
-createZone(2, "The Super Forest", [player.enemyList[6], player.enemyList[7], player.enemyList[8]])
 
 var options = {
     useEasing: false, 
@@ -1327,7 +1308,8 @@ var fighting = false
 function initiateBattle(fightEnemyID){
     fighting = true
     document.getElementById("outcomeButton").hidden = true
-    document.getElementById("outcomeText").hidden = true
+    document.getElementById("outcomeTextGold").hidden = true
+    document.getElementById("outcomeTextExp").hidden = true
     document.getElementById("fightButton").disabled = true
     document.getElementById("playerHealRow0").hidden = true
     document.getElementById("playerHealRow1").hidden = true
@@ -1729,10 +1711,19 @@ function fight(){
         player.enemyList[fightEnemyID].timesDefeated += 1
         var goldEarned = Math.floor(Math.random() * (enemy.dropMax - enemy.dropMin + 1) + enemy.dropMin)
         player.gold += goldEarned
-        document.getElementById("outcomeText").hidden = false
-        document.getElementById("outcomeText").innerHTML = "You earned " + goldEarned + " gold by defeating " + enemy.name + "! You now have " + player.gold + " gold!"
+        document.getElementById("outcomeTextGold").hidden = false
+        document.getElementById("outcomeTextExp").hidden = false
+        document.getElementById("outcomeTextGold").innerHTML = "You earned " + goldEarned + " gold by defeating " + enemy.name + "! You now have " + player.gold + " gold!"
+        document.getElementById("outcomeTextExp").innerHTML = "You earned " + enemy.maxHitPoints * (1 + enemy.ID) + " EXP by defeating " + enemy.name + "! You now have " + player.exp + " EXP!"
         player.zones[player.currentZone - 1].enemies[fightEnemyID % 3] = player.enemyList[fightEnemyID]
         updateEnemyDisplay(enemy)
+        if ((fightEnemyID + 1) % 3 == 0){
+            if (player.enemyList[fightEnemyID - 1].timesDefeated > 0 && player.enemyList[fightEnemyID - 2].timesDefeated > 0){
+                if (player.zoneMax == player.currentZone){
+                    player.zoneMax += 1
+                }
+            }
+        }
     }
 }
 
@@ -1769,7 +1760,7 @@ function hideAllBattleRows(){
 }
 
 function zoneUp(){
-    if (player.currentZone < 3){
+    if (player.currentZone < player.zoneMax){
         player.currentZone += 1
     }
     loadZone(player.currentZone)
@@ -1782,9 +1773,10 @@ function zoneDown(){
     loadZone(player.currentZone)
 }
 
-loadZone(1)
+
 function loadZone(zone){
     var zoneLoader = player.zones[zone - 1]
+    console.log(zoneLoader)
     for (var i = 0; i < zoneLoader.enemies.length; i++){
         updateEnemyDisplay(zoneLoader.enemies[i])
     }
@@ -1792,3 +1784,106 @@ function loadZone(zone){
     document.getElementById("zoneName").innerHTML = zoneLoader.name
 }
 updateHTML()
+
+var fightEnemyID = 0
+var goldAnimation = null
+var expAnimation = null
+function setupFight(ID){
+    fightEnemyID = ID
+    enemy = player.enemyList[ID]
+    if (goldAnimation !== null){
+        goldAnimation.reset()
+    }
+    if (expAnimation !== null){
+        expAnimation.reset()
+    }
+        document.getElementById("battleTab").style.display='none';
+        document.getElementById("fightSetupScreen").style.display='block';
+        document.getElementById("enemyFightImage").src = enemy.imagePath;
+        document.getElementById("fightScreenEnemyName").innerHTML = enemy.name;
+        document.getElementById("autoBattleVictories").innerHTML = "You've won " + enemy.autoBattleVictories + " times!"
+        document.getElementById("autoBattleGold").innerHTML = "You've earned " + enemy.autoBattleTotalGold + " gold!"
+        document.getElementById("autoBattleExp").innerHTML = "You've earned " + enemy.autoBattleTotalExp + " EXP!"
+}
+
+function autoBattle(enemy){
+    var playerTotalStats = player.attackPoints + player.defensePoints + player.maxHitPoints + player.speedPoints
+    var totalDamageIcons = 0
+    var totalDefenseIcons = 0
+    for (var i = 0; i < player.equipment.length; i++){
+        totalDamageIcons += getTotalIcons(player.equipment[i], false)
+        totalDefenseIcons += getTotalIcons(player.equipment[i], true)
+    }
+    var playerScore = playerTotalStats + (totalDamageIcons * 5) + (totalDefenseIcons * 5)
+    var enemyTotalStats = enemy.attackPoints + enemy.defensePoints + enemy.maxHitPoints + enemy.speedPoints
+    var enemyDamageIcons = 0
+    var enemyDefenseIcons = 0
+    for (var i = 0; i < enemy.equipment.length; i++){
+        enemyDamageIcons += getTotalIcons(enemy.equipment[i], false)
+        enemyDefenseIcons += getTotalIcons(enemy.equipment[i], true)
+    }
+    var enemyScore = (enemyTotalStats + (enemyDamageIcons * 5) + (enemyDefenseIcons * 5)) * 1.25
+    console.log("Player: " + playerScore + " vs. Enemy: " + enemyScore)
+    if (playerScore > enemyScore){
+        enemy.timesDefeated += 1
+        var goldEarned = Math.floor(Math.random() * (enemy.dropMax - enemy.dropMin + 1) + enemy.dropMin)
+        player.gold += goldEarned
+        var expEarned = enemy.maxHitPoints * (1 + enemy.ID)
+        player.exp += expEarned
+        updateHTML()
+        enemy.autoBattleVictories += 1
+        enemy.autoBattleTotalGold += goldEarned
+        enemy.autoBattleTotalExp += expEarned
+        if (enemy.ID == fightEnemyID){
+            document.getElementById("autoBattleVictories").innerHTML = "You've won " + enemy.autoBattleVictories + " times!"
+            goldAnimation = new CountUp("autoBattleGold", enemy.autoBattleTotalGold - goldEarned, enemy.autoBattleTotalGold, 0, 1, optionsGold);
+            expAnimation = new CountUp("autoBattleExp", enemy.autoBattleTotalExp - expEarned, enemy.autoBattleTotalExp, 0, 1, optionsExp);
+            goldAnimation.start()
+            expAnimation.start()
+        }
+        ladderIncrement(enemy)
+        updateEnemyDisplay(enemy)
+        setTimeout(function(){
+            autoBattle(enemy)
+        }, 1000)
+    }
+    else{
+        console.log("You lose!")
+    }
+}
+
+var optionsGold = {
+    useEasing: false, 
+    useGrouping: true, 
+    separator: ',', 
+    decimal: '.', 
+    prefix: "You've earned ", 
+    suffix: " gold!"
+};
+
+var optionsExp = {
+    useEasing: false, 
+    useGrouping: true, 
+    separator: ',', 
+    decimal: '.', 
+    prefix: "You've earned ",
+    suffix: " EXP!" 
+};
+
+function godMode(){
+    player.gold = 10000000
+    player.maxHitPoints = 100000
+    player.attackPoints = 10000
+    player.defensePoints = 10000
+    player.speedPoints = 10000
+    player.statPoints = 10000
+    player.maxStatPoints = 10000
+    for (var i = 0; i < player.allItems.length - 1; i++){
+        buyItem(i)
+    }
+    for (var i = 2; i < player.inventory.length; i++){
+        setSelected(i)
+    }
+    updateHTML()
+    console.log("Way to ruin the game, hotshot.")
+}
