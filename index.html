@@ -145,8 +145,8 @@
             word-wrap: break-word;
         }
         .itemImages{
-            width: 60px;
-            height: 60px;
+            width: 100px;
+            height: 100px;
         }
         .itemImagesSmaller{
             width: 30px;
@@ -203,9 +203,11 @@
         }
         .grid-container {
             display: grid;
-            grid-template-columns: auto auto auto auto auto;
+            grid-template-columns: auto auto auto auto;
             grid-gap: 10px;
             padding: 10px;
+            margin-left: 25px;
+
         }
         .grid-container > div {
             text-align: center;
@@ -431,8 +433,8 @@
             </div>
             <div id="goldShop">
                 <p id="currentGold" class="standardText">You have 0 Gold.</p>
-                <div id="goldShopGrid" class="grid-container">
-                </div>
+                <center><div id="goldShopGrid" class="grid-container">
+                </div></center>
             </div>
             </b></center>                 
         </div>
@@ -544,7 +546,7 @@
                 <button class="mainButtonLayout" style="margin-right: 5px; max-height: 50px" onclick="zoneUp()">Ascend</button>
                 <button class="mainButtonLayout" onclick="zoneDown()">Descend</button>
                 <br>
-                <div style="width: 300px; border: 1px solid #ac9444; background-color: rgb(27, 27, 41); display: inline-block">
+                <div id="enemyDiv0" style="width: 300px; border: 1px solid #ac9444; background-color: rgb(27, 27, 41); display: inline-block">
                     <center><img id="enemy0" class="enemyImage" src="" onclick="setupFight(0)"></center>
                     <table stlye="width: 300px">
                         <th colspan="2">
@@ -576,7 +578,7 @@
                         </tr>
                     </table>
                 </div>    
-                <div style="width: 300px; border: 1px solid #ac9444; background-color: rgb(27, 27, 41); display:inline-block">
+                <div id="enemyDiv1" style="width: 300px; border: 1px solid #ac9444; background-color: rgb(27, 27, 41); display:inline-block">
                     <center><img id="enemy1" class="enemyImage" src="" onclick="setupFight(1)"></center>
                     <table stlye="width: 300px">
                         <th colspan="2">
@@ -608,7 +610,7 @@
                         </tr>
                     </table>
                 </div>
-                <div style="width: 300px; border: 1px solid #ac9444; background-color: rgb(27, 27, 41); display:inline-block">
+                <div id="enemyDiv2" style="width: 300px; border: 1px solid #ac9444; background-color: rgb(27, 27, 41); display:inline-block">
                     <center><img id="enemy2" class="enemyImage" src="" onclick="setupFight(2)"></center>
                     <table stlye="width: 300px">
                         <th colspan="2">
@@ -654,9 +656,7 @@
                     <td style="vertical-align: bottom; padding-bottom: 50px; max-width: 100px;"><p class="standardText" style="text-align: center">VS</p></td>
                     <td><figure><img id="enemyFightImage" class="enemyImage" src=""><figcaption id="fightScreenEnemyName" class="standardText" style="text-align: center"></figcaption></figure></td>
                 </tr>
-                <tr>
-                    <td></td>
-                    <td>
+            </table>
                         <div class="tooltip">
                             <span class="tooltipText" id="tooltipFight" hidden>Select at least one weapon!</span>
                             <center><button class="mainButtonLayout" style="height: 100px; width: 300px; font-size: 50px" onclick="startFight(fightEnemyID)">Fight!</button>
@@ -664,13 +664,11 @@
                             <button class="mainButtonLayout" style="height: 100px; width: 300px; font-size: 40px" onclick="autoBattle(player.enemyList[fightEnemyID])">Auto Battle!</button>
                             <p id="autoBattleVictories" class="standardText">You've won 0 times!</p>
                             <p id="autoBattleGold" class="standardText">You've earned 0 gold!</p>
-                            <p id="autoBattleExp" class="standardText">You've earned 0 EXP!</p>
+                            <p id="autoBattleExp" class="standardText" style="word-wrap: normal">You've earned 0 EXP!</p>
                             </center>
                         </div>
-                    </td>
-                    <td></td>
-                </tr>
-            </table>
+
+            
             </center>
         </div>
         <div id="battleScreen" class="divBackground" style="display:none; min-height: 1000px">

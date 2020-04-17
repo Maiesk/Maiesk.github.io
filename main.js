@@ -316,7 +316,7 @@ function powerTrain(){
                 document.getElementById("battlePowerPerSecond").innerHTML = numberWithCommas(trainingPerSecondShown) + " Training Points per second for " + timeLeft + " seconds!"   
             }
         }, 1000)
-        setTimeout(function(){ 
+        setTimeout(function(){
             if (player.upgradesBought > 0){
                 player.trainingPerClick = originalTrainingPerClick * (1.5)**player.upgradesBought
             }
@@ -805,24 +805,26 @@ function createItem(name, ID, fire, air, earth, water, melee, light, dark, fireD
         imagePath: imagePath,
         itemCost: itemCost
     }
+    
     player.allItems[item.ID] = item
     var cell = document.createElement("div");
     var figure = document.createElement("figure")
     var caption = document.createElement("figcaption")
     var image = document.createElement("img")
-    cell.style = "width: 180px"
+    cell.style = "max-width: 300px; min-width: 300px; height: 250px; background-color: #335C81; border: 1px solid #ac9444; text-align: center"
     cell.id = "goldShopItem" + item.ID
     image.src = item.imagePath
     image.className = "itemImages"
+    image.style = "background-image: linear-gradient(to bottom right, rgb(50, 50, 50), rgb(20, 20, 20)); border: 1px solid white"
     caption.id = "goldShopItemCaption" + item.ID
     caption.className = "itemText"
-    caption.style = "width: 120px; align-content: center"
+    caption.style = "font-size: 25px"
     figure.appendChild(image)
     figure.appendChild(caption)
     cell.appendChild(figure)
     document.getElementById("goldShopGrid").appendChild(cell);
     document.getElementById("goldShopItem" + item.ID).onclick = function(){buyItem(item.ID)}
-    document.getElementById("goldShopItemCaption" + item.ID).innerHTML = item.name  + "<br/>" + item.itemCost + " Gold"
+    document.getElementById("goldShopItemCaption" + item.ID).innerHTML = item.name  + "<br/><br/>" + item.itemCost + " Gold"
     return item;
 }
 
@@ -867,7 +869,7 @@ function buyItem(ID){
     if (player.gold >= buyItem.itemCost){
         player.gold -= buyItem.itemCost
         document.getElementById("goldShopItem" + ID).onclick = ""
-        document.getElementById("goldShopItemCaption" + ID).innerHTML = buyItem.name  + "<br/>" + "Bought"
+        document.getElementById("goldShopItemCaption" + ID).innerHTML = buyItem.name  + "<br/></br>" + "Bought"
         player.inventory.push(buyItem)
         pushInventoryDisplay(player.inventory.length - 1)
         updateHTML()
@@ -1764,10 +1766,18 @@ function zoneUp(){
     if (player.currentZone < player.zoneMax){
         player.currentZone += 1
     }
+    if (player.currentZone == 6){
+        document.getElementById("enemyDiv1").style.display = "none"
+        document.getElementById("enemyDiv2").style.display = "none"
+    }
     loadZone(player.currentZone)
 }
 
 function zoneDown(){
+    if (player.currentZone == 6){
+        document.getElementById("enemyDiv1").style.display = "inline-block"
+        document.getElementById("enemyDiv2").style.display = "inline-block"
+    }
     if (player.currentZone > 1){
         player.currentZone -= 1
     }
@@ -1777,7 +1787,6 @@ function zoneDown(){
 
 function loadZone(zone){
     var zoneLoader = player.zones[zone - 1]
-    console.log(zoneLoader)
     for (var i = 0; i < zoneLoader.enemies.length; i++){
         updateEnemyDisplay(zoneLoader.enemies[i])
     }
@@ -1843,7 +1852,10 @@ function autoBattle(enemy){
             expAnimation.start()
         }
         ladderIncrement(enemy)
-        updateEnemyDisplay(enemy)
+        console.log(Math.floor((enemy.ID + 1) / 3))
+        if (Math.floor((enemy.ID ) / 3).toFixed(0) == player.currentZone - 1){
+            updateEnemyDisplay(enemy)
+        }
         setTimeout(function(){
             autoBattle(enemy)
         }, 1000)
@@ -1879,10 +1891,11 @@ function godMode(){
     player.speedPoints = 10000
     player.statPoints = 10000
     player.maxStatPoints = 10000
+    player.zoneMax = 6
     for (var i = 0; i < player.allItems.length - 1; i++){
         buyItem(i)
     }
-    for (var i = 2; i < player.inventory.length; i++){
+    for (var i = player.inventory.length - 8; i < player.inventory.length; i++){
         setSelected(i)
     }
     updateHTML()
