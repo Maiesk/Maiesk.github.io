@@ -21,6 +21,7 @@
         }
         function startFight(fightEnemyID){
             show('battleScreen','fightSetupScreen','navMenu')
+            postFight = false
             initiateBattle(fightEnemyID)
         }
         function returnToTraining(){
@@ -30,6 +31,8 @@
         function returnToEnemies(){
             show('navMenu','battleScreen')
             show('battleTab','shopTab','trainingTab','fightSetupScreen')
+            fighting = false
+            postFight = false
             return show('enemiesTab')
         }
     </script>
@@ -672,9 +675,11 @@
             </center>
         </div>
         <div id="battleScreen" class="divBackground" style="display:none; min-height: 1000px">
-            <button id="outcomeButton" style="margin-top: 10px" style="width: 300px" class="navMenuButton" onclick="returnToEnemies()" hidden>OUTCOME</button>
-            <p id="outcomeTextGold" style="margin-top: 10px" class="standardText" hidden>OUTCOME</button>
-            <p id="outcomeTextExp" style="margin-top: 10px" class="standardText" hidden>OUTCOME</button>
+            <p id="outcomeText" style="margin-top: 10px" style="width: 300px" class="standardText" hidden>OUTCOME</p>
+            <p id="outcomeTextGold" style="margin-top: 10px" class="standardText" hidden>OUTCOME</p>
+            <p id="outcomeTextExp" style="margin-top: 10px" class="standardText" hidden>OUTCOME</p>
+            <button id="outcomeButtonReturn" style="margin-top: 10px" style="width: 300px" class="navMenuButton" onclick="returnToEnemies()">Go Back</button>
+            <button id="outcomeButtonRestart" style="margin-top: 10px" style="width: 300px" class="navMenuButton" onclick="startFight(fightEnemyID)">Restart</button>
             <table style="border-collapse: collapse; border-spacing: 0px; padding: 0px">
                 <tr style="max-height: 20px; border-collapse: collapse; border-spacing: 0px; padding: 0px">
                     <td style="max-height: 20px"><figure><img class="enemyImage" src="/images/enemies/pipo-enemy014b.png"><figcaption id="battleScreenPlayerName" class="standardText" style="text-align: center">Player</figcaption></figure></td>
@@ -686,123 +691,131 @@
                     <td style="max-width: 100px"></td>
                     <td style="vertical-align: top"><p id="enemyCurrentHP" class="standardText" style="text-align: center"></p></td>
                 </tr>
-                <tr>
-                    <table style="width: 200px; text-align: center; display: inline-block; position: absolute">
-                        <th colspan="2" style="margin-bottom: 10px"><button id="fightButton" class="mainButtonLayout" style="min-width: 194px;" onclick="fight()">Fight!</button></th>
-                        <tr></tr>
-                        <tr>
-                            <td><img id="equippedWeapon0" class="itemImages" onclick="selectWeapon(0)"></td>
-                            <td><img id="equippedWeapon1" class="itemImages" onclick="selectWeapon(1)"></td>
-                        </tr>
-                        <tr>
-                            <td><img id="equippedWeapon2" class="itemImages" onclick="selectWeapon(2)"></td>
-                            <td><img id="equippedWeapon3" class="itemImages" onclick="selectWeapon(3)"></td>
-                        </tr>
-                        <tr>
-                            <td><img id="equippedWeapon4" class="itemImages" onclick="selectWeapon(4)"></td>
-                            <td><img id="equippedWeapon5" class="itemImages" onclick="selectWeapon(5)"></td>
-                        </tr>
-                        <tr>
-                            <td><img id="equippedWeapon6" class="itemImages" onclick="selectWeapon(6)"></td>
-                            <td><img id="equippedWeapon7" class="itemImages" onclick="selectWeapon(7)"></td>
-                        </tr>
-                        <tr></tr>
-                        <tr>
-                            <td colspan="2"><button id="stanceButtonWild" class="mainButtonLayout" style="min-width: 194px;" onclick="selectStance('Wild')">Wild</button></td>
-                        </tr>
-                        
-                        <tr>
-                            <td colspan="2"><button id="stanceButtonStrong" class="mainButtonLayout" style="min-width: 194px;" onclick="selectStance('Strong')">Strong</button></td>
-                        </tr>
-                        
-                        <tr>
-                            <td colspan="2"><button id="stanceButtonSteady" class="mainButtonLayout" style="min-width: 194px;" onclick="selectStance('Steady')">Steady</button></td>
-                        </tr>
-                        
-                        <tr>
-                            <td colspan="2"><button id="stanceButtonDefensive" class="mainButtonLayout" style="min-width: 194px;" onclick="selectStance('Defensive')">Defensive</button></td>
-                        </tr>
-                    </table>
-                    <table style="max-width: 600px; min-width: 600px; min-height: 400px; border: 1px solid grey; color: white; background-color: rgb(47, 49, 56); display: inline-block; margin-left: 220px; padding-right: 15px">
-                        <tr id="attackOrderRow">
-                            <td></td>
-                            <td><p id="attackOrder" style="text-align: center; min-width: 200px; max-width: 200px"></p></td>
-                            <td></td>
-                        </tr>
-                        <tr id="attackIconRow0" hidden>
-                            <td><p id="attackIconsLeft-2" style="min-width: 200px; max-width: 200px"></p></td>
-                            <td><p id="attackText0" style="text-align: center; min-width: 200px; max-width: 200px;"></p></td>
-                            <td><p id="attackIconsRight0" style="text-align: right; min-width: 200px; max-width: 200px;"></p></td>
-                        </tr>
-                        <tr id="attackIconRow1" hidden>
-                            <td><p id="attackIconsLeft-1"></p></td>
-                            <td><p id="attackText1" style="text-align: center"></p></td>
-                            <td><p id="attackIconsRight1" style="text-align: right; max-width: 200px;"></p></td>
-                        </tr>
-                        <tr id="enemyAttackIconRow0" hidden>
-                            <td><p id="attackIconsLeft0" style="min-width: 200px; max-width: 200px"></p></td>
-                            <td><p id="enemyAttackText0" style="text-align: center; min-width: 200px; max-width: 200px;"></p></td>
-                            <td><p id="enemyAttackIconsRight0" style="text-align: right; min-width: 200px; max-width: 200px;"></p></td>
-                        </tr>
-                        <tr id="enemyAttackIconRow1" hidden>
-                            <td><p id="attackIconsLeft1" style="min-width: 200px; max-width: 200px"></p></td>
-                            <td><p id="enemyAttackText1" style="text-align: center"></p></td>
-                            <td><p id="enemyAttackIconsRight1" style="text-align: right; max-width: 200px;"></p></td>
-                        </tr>
-                        <tr id="defenseIconRow0" hidden>
-                            <td><p id="defenseIconsLeft0" style="min-width: 200px; max-width: 200px"></p></td>
-                            <td><p id="defenseText0" style="text-align: center"></p></td>
-                            <td><p id="defenseIconsRight0" style="text-align: right; max-width: 200px;"></p></td>
-                        </tr>
-                        <tr id="defenseIconRow1" hidden>
-                            <td><p id="defenseIconsLeft1" style="min-width: 200px; max-width: 200px"></p></td>
-                            <td><p id="defenseText1" style="text-align: center"></p></td>
-                            <td><p id="defenseIconsRight1" style="text-align: right; max-width: 200px;"></p></td>
-                        </tr>
-                        <tr id="enemyDefenseIconRow0" hidden>
-                            <td><p id="enemyDefenseIconsLeft0" style="min-width: 200px; max-width: 200px"></p></td>
-                            <td><p id="enemyDefenseText0" style="text-align: center"></p></td>
-                            <td><p id="enemyDefenseIconsRight0" style="text-align: right; max-width: 200px;"></p></td>
-                        </tr>
-                        <tr id="enemyDefenseIconRow1" hidden>
-                            <td><p id="enemyDefenseIconsLeft1" style="min-width: 200px; max-width: 200px"></p></td>
-                            <td><p id="enemyDefenseText1" style="text-align: center"></p></td>
-                            <td><p id="enemyDefenseIconsRight1" style="text-align: right; max-width: 200px;"></p></td>
-                        </tr>
-                        <tr id="playerHealRow0" hidden>
-                            <td><p id="playerHealIcons0"></p></td>
-                            <td><p id="playerHealText0" style="text-align: center"></p></td>
-                            <td><p style="text-align: right; max-width: 200px;"></p></td>
-                        </tr>
-                        <tr id="playerHealRow1" hidden>
-                            <td><p id="playerHealIcons1"></p></td>
-                            <td><p id="playerHealText1" style="text-align: center"></p></td>
-                            <td><p style="text-align: right; max-width: 200px;"></p></td>
-                        </tr>
-                        <tr id="enemyHealRow0" hidden>
-                            <td><p></p></td>
-                            <td><p id="enemyHealText0" style="text-align: center"></p></td>
-                            <td><p id="enemyHealIcons0" style="text-align: right; max-width: 200px;"></p></td>
-                        </tr>
-                        <tr id="enemyHealRow1" hidden>
-                            <td><p></p></td>
-                            <td><p id="enemyHealText1" style="text-align: center"></p></td>
-                            <td><p id="enemyHealIcons1" style="text-align: right; max-width: 200px;"></p></td>
-                        </tr>
-                        <tr>
-                            <td><p hidden id="healIconsLeft">ICON + AMOUNT</p></td>
-                            <td><p hidden style="text-align: center">HEAL TEXT</p></td>
-                            <td><p hidden id="healIconsRight" style="text-align: right; max-width: 200px;">ICON + AMOUNT</p></td>
-                        </tr>
-                        <tr id="damageRow" hidden>
-                            <td><p id="damageLeft" style="min-width: 200px">0 DMG</p></td>
-                            <td><p></p></td>
-                            <td><p id="damageRight" style="text-align: right; min-width: 200px;">0 DMG</p></td>
-                        </tr>
-                    </table>
-                    <button class="navMenuButton" onclick="returnToTraining()">Return to Training</button>
-                </tr>
             </table>
+            <br>
+
+            <div style="display: inline-block">
+                    <table style="width: 200px; text-align: center">
+                            <tr>
+                                <td><img id="equippedWeapon0" class="itemImages" onclick="selectWeapon(0)"></td>
+                                <td><img id="equippedWeapon1" class="itemImages" onclick="selectWeapon(1)"></td>
+                            </tr>
+                            <tr>
+                                <td><img id="equippedWeapon2" class="itemImages" onclick="selectWeapon(2)"></td>
+                                <td><img id="equippedWeapon3" class="itemImages" onclick="selectWeapon(3)"></td>
+                            </tr>
+                            <tr>
+                                <td><img id="equippedWeapon4" class="itemImages" onclick="selectWeapon(4)"></td>
+                                <td><img id="equippedWeapon5" class="itemImages" onclick="selectWeapon(5)"></td>
+                            </tr>
+                            <tr>
+                                <td><img id="equippedWeapon6" class="itemImages" onclick="selectWeapon(6)"></td>
+                                <td><img id="equippedWeapon7" class="itemImages" onclick="selectWeapon(7)"></td>
+                            </tr>
+                            <tr></tr>
+                        </table>
+            </div>
+            <div style="display: inline-block; vertical-align: top">
+                    <button id="fightButton" class="mainButtonLayout" style="min-width: 600px; min-height: 50px" onclick="fight()">FIGHT!</button>
+                    <br>
+                    <table style="max-width: 650px; min-width: 600px; min-height: 400px; border: 1px solid grey; color: white; background-color: rgb(47, 49, 56)">
+                            <tr id="attackOrderRow">
+                                <td></td>
+                                <td><p id="attackOrder" style="text-align: center; min-width: 200px; max-width: 200px"></p></td>
+                                <td></td>
+                            </tr>
+                            <tr id="attackIconRow0" hidden>
+                                <td><p id="attackIconsLeft-2" style="min-width: 200px; max-width: 200px"></p></td>
+                                <td><p id="attackText0" style="text-align: center; min-width: 200px; max-width: 200px;"></p></td>
+                                <td><p id="attackIconsRight0" style="text-align: right; min-width: 200px; max-width: 200px;"></p></td>
+                            </tr>
+                            <tr id="attackIconRow1" hidden>
+                                <td><p id="attackIconsLeft-1"></p></td>
+                                <td><p id="attackText1" style="text-align: center"></p></td>
+                                <td><p id="attackIconsRight1" style="text-align: right; max-width: 200px;"></p></td>
+                            </tr>
+                            <tr id="enemyAttackIconRow0" hidden>
+                                <td><p id="attackIconsLeft0" style="min-width: 200px; max-width: 200px"></p></td>
+                                <td><p id="enemyAttackText0" style="text-align: center; min-width: 200px; max-width: 200px;"></p></td>
+                                <td><p id="enemyAttackIconsRight0" style="text-align: right; min-width: 200px; max-width: 200px;"></p></td>
+                            </tr>
+                            <tr id="enemyAttackIconRow1" hidden>
+                                <td><p id="attackIconsLeft1" style="min-width: 200px; max-width: 200px"></p></td>
+                                <td><p id="enemyAttackText1" style="text-align: center"></p></td>
+                                <td><p id="enemyAttackIconsRight1" style="text-align: right; max-width: 200px;"></p></td>
+                            </tr>
+                            <tr id="defenseIconRow0" hidden>
+                                <td><p id="defenseIconsLeft0" style="min-width: 200px; max-width: 200px"></p></td>
+                                <td><p id="defenseText0" style="text-align: center"></p></td>
+                                <td><p id="defenseIconsRight0" style="text-align: right; max-width: 200px;"></p></td>
+                            </tr>
+                            <tr id="defenseIconRow1" hidden>
+                                <td><p id="defenseIconsLeft1" style="min-width: 200px; max-width: 200px"></p></td>
+                                <td><p id="defenseText1" style="text-align: center"></p></td>
+                                <td><p id="defenseIconsRight1" style="text-align: right; max-width: 200px;"></p></td>
+                            </tr>
+                            <tr id="enemyDefenseIconRow0" hidden>
+                                <td><p id="enemyDefenseIconsLeft0" style="min-width: 200px; max-width: 200px"></p></td>
+                                <td><p id="enemyDefenseText0" style="text-align: center"></p></td>
+                                <td><p id="enemyDefenseIconsRight0" style="text-align: right; max-width: 200px;"></p></td>
+                            </tr>
+                            <tr id="enemyDefenseIconRow1" hidden>
+                                <td><p id="enemyDefenseIconsLeft1" style="min-width: 200px; max-width: 200px"></p></td>
+                                <td><p id="enemyDefenseText1" style="text-align: center"></p></td>
+                                <td><p id="enemyDefenseIconsRight1" style="text-align: right; max-width: 200px;"></p></td>
+                            </tr>
+                            <tr id="playerHealRow0" hidden>
+                                <td><p id="playerHealIcons0"></p></td>
+                                <td><p id="playerHealText0" style="text-align: center"></p></td>
+                                <td><p style="text-align: right; max-width: 200px;"></p></td>
+                            </tr>
+                            <tr id="playerHealRow1" hidden>
+                                <td><p id="playerHealIcons1"></p></td>
+                                <td><p id="playerHealText1" style="text-align: center"></p></td>
+                                <td><p style="text-align: right; max-width: 200px;"></p></td>
+                            </tr>
+                            <tr id="enemyHealRow0" hidden>
+                                <td><p></p></td>
+                                <td><p id="enemyHealText0" style="text-align: center"></p></td>
+                                <td><p id="enemyHealIcons0" style="text-align: right; max-width: 200px;"></p></td>
+                            </tr>
+                            <tr id="enemyHealRow1" hidden>
+                                <td><p></p></td>
+                                <td><p id="enemyHealText1" style="text-align: center"></p></td>
+                                <td><p id="enemyHealIcons1" style="text-align: right; max-width: 200px;"></p></td>
+                            </tr>
+                            <tr>
+                                <td><p hidden id="healIconsLeft">ICON + AMOUNT</p></td>
+                                <td><p hidden style="text-align: center">HEAL TEXT</p></td>
+                                <td><p hidden id="healIconsRight" style="text-align: right; max-width: 200px;">ICON + AMOUNT</p></td>
+                            </tr>
+                            <tr id="damageRow" hidden>
+                                <td><p id="damageLeft" style="min-width: 200px">0 DMG</p></td>
+                                <td><p></p></td>
+                                <td><p id="damageRight" style="text-align: right; min-width: 200px;">0 DMG</p></td>
+                            </tr>
+                        </table>
+            </div>
+            <div style="display: inline-block; vertical-align: top">
+                    <table>
+                            <tr>
+                                    <td colspan="2"><button id="stanceButtonWild" class="mainButtonLayout" style="min-width: 194px;" onclick="selectStance('Wild')">Wild</button></td>
+                                </tr>
+                                
+                                <tr>
+                                    <td colspan="2"><button id="stanceButtonStrong" class="mainButtonLayout" style="min-width: 194px;" onclick="selectStance('Strong')">Attacking</button></td>
+                                </tr>
+                                
+                                <tr>
+                                    <td colspan="2"><button id="stanceButtonSteady" class="mainButtonLayout" style="min-width: 194px;" onclick="selectStance('Steady')">Steady</button></td>
+                                </tr>
+                                
+                                <tr>
+                                    <td colspan="2"><button id="stanceButtonDefensive" class="mainButtonLayout" style="min-width: 194px;" onclick="selectStance('Defensive')">Defensive</button></td>
+                                </tr>
+                    </table>
+                
+            </div>
         </div>
     </center>
         

@@ -954,7 +954,7 @@ var selectedItems = []
 function selectWeapon(equipID){
     if (player.equipment[equipID] !== undefined && fighting == true){
         document.getElementById("fightButton").disabled = false
-        document.getElementById("fightButton").style = "min-width: 194px;"
+        document.getElementById("fightButton").style = "min-width: 600px;"
         if (selectedItems[0] == null){
             selectedItems[0] = player.equipment[equipID]
             document.getElementById("equippedWeapon" + equipID).style.border="1px solid white"
@@ -972,7 +972,7 @@ function selectWeapon(equipID){
             else{
                 selectedItems[0] = null
                 document.getElementById("fightButton").disabled = true
-                document.getElementById("fightButton").style = "background-color: #474646; color: #373636; min-width: 194px;"
+                document.getElementById("fightButton").style = "background-color: #474646; color: #373636; min-width: 600px;"
                 document.getElementById("equippedWeapon" + equipID).style.border=""
             }
         }
@@ -1306,11 +1306,66 @@ function loadAbilityIcons(actor, i, inBattle, isEnemy, first){
     }
 }
 
+
+document.addEventListener('keyup', (e) => {
+    if (fighting == true || postFight == true){       
+        if (e.keyCode === 82){
+            startFight(currentEnemy)
+        }
+        else if (e.keyCode === 90){
+            returnToEnemies()
+        }
+    }
+    if (fighting == true){
+        if (e.keyCode === 70){
+            if (selectedItems[0] !== null && player.hitPoints > 0 && enemy.hitPoints > 0){
+                fight()
+            }
+        }
+        else if (e.keyCode === 87){
+            selectStance("Wild")
+        }
+        else if (e.keyCode === 65){
+            selectStance("Strong")
+        }
+        else if (e.keyCode === 83){
+            selectStance("Steady")
+        }
+        else if (e.keyCode === 68){
+            selectStance("Defensive")
+        }
+        else if (e.keyCode === 49){
+            selectWeapon(0)
+        }
+        else if (e.keyCode === 50){
+            selectWeapon(1)
+        }
+        else if (e.keyCode === 51){
+            selectWeapon(2)
+        }
+        else if (e.keyCode === 52){
+            selectWeapon(3)
+        }
+        else if (e.keyCode === 53){
+            selectWeapon(4)
+        }
+        else if (e.keyCode === 54){
+            selectWeapon(5)
+        }
+        else if (e.keyCode === 55){
+            selectWeapon(6)
+        }
+        else if (e.keyCode === 56){
+            selectWeapon(7)
+        }
+    }
+});
 var currentEnemy = 0
+var postFight = false
 var fighting = false
 function initiateBattle(fightEnemyID){
     fighting = true
-    document.getElementById("outcomeButton").hidden = true
+    document.getElementById("outcomeText").hidden = true
     document.getElementById("outcomeTextGold").hidden = true
     document.getElementById("outcomeTextExp").hidden = true
     document.getElementById("fightButton").disabled = true
@@ -1319,7 +1374,7 @@ function initiateBattle(fightEnemyID){
     document.getElementById("enemyHealRow0").hidden = true
     document.getElementById("enemyHealRow1").hidden = true
     document.getElementById("attackOrder").innerHTML = ""
-    document.getElementById("fightButton").style = "background-color: #474646; color: #373636; min-width: 194px;"
+    document.getElementById("fightButton").style = "background-color: #474646; color: #373636; min-width: 600px;"
     var enemy = player.enemyList[fightEnemyID]
     document.getElementById("enemyBattleImage").src = enemy.imagePath
     if (player.hitPoints !== player.maxHitPoints){
@@ -1333,6 +1388,11 @@ function initiateBattle(fightEnemyID){
     createBattleOptionsPlayer()
     loadEquipmentForBattle()
     selectStance("Steady")
+    window.addEventListener('keydown', function(e) {
+        if(e.keyCode == 32 && e.target == document.body) {
+          e.preventDefault();
+        }
+    });
     document.getElementById("attackIconRow0").hidden = true
     document.getElementById("defenseIconRow0").hidden = true
     document.getElementById("attackIconRow1").hidden = true
@@ -1695,21 +1755,22 @@ function fight(){
     }
     if (player.hitPoints <= 0){
         document.getElementById("fightButton").disabled = true
-        document.getElementById("fightButton").style = "background-color: #474646; color: #373636; min-width: 194px;"
-        document.getElementById("outcomeButton").hidden = false
-        document.getElementById("outcomeButton").innerHTML = "You lose! Click here."
+        document.getElementById("fightButton").style = "background-color: #474646; color: #373636; min-width: 600px;"
+        document.getElementById("outcomeText").hidden = false
+        document.getElementById("outcomeText").innerHTML = "You have been defeated!"
         fighting = false
+        postFight = true
         player.enemyList[fightEnemyID].timesLostTo += 1
         player.zones[player.currentZone - 1].enemies[fightEnemyID % 3] = player.enemyList[fightEnemyID]
         updateEnemyDisplay(enemy)
     }
     else if (enemy.hitPoints <= 0){
         document.getElementById("fightButton").disabled = true
-        document.getElementById("fightButton").style = "background-color: #474646; color: #373636; min-width: 194px;"
+        document.getElementById("fightButton").style = "background-color: #474646; color: #373636; min-width: 600px;"
         player.exp += enemy.maxHitPoints * (1 + enemy.ID)
         ladderIncrement(player.enemyList[fightEnemyID])
-        document.getElementById("outcomeButton").hidden = false
-        document.getElementById("outcomeButton").innerHTML = "You win! Click here."
+        document.getElementById("outcomeText").hidden = false
+        document.getElementById("outcomeText").innerHTML = "You are victorious!"
         fighting = false
         player.enemyList[fightEnemyID].timesDefeated += 1
         var goldEarned = Math.floor(Math.random() * (enemy.dropMax - enemy.dropMin + 1) + enemy.dropMin)
@@ -1720,6 +1781,7 @@ function fight(){
         document.getElementById("outcomeTextExp").innerHTML = "You earned " + enemy.maxHitPoints * (1 + enemy.ID) + " EXP by defeating " + enemy.name + "! You now have " + player.exp + " EXP!"
         player.zones[player.currentZone - 1].enemies[fightEnemyID % 3] = player.enemyList[fightEnemyID]
         updateEnemyDisplay(enemy)
+        postFight = true
         if ((fightEnemyID + 1) % 3 == 0){
             if (player.enemyList[fightEnemyID - 1].timesDefeated > 0 && player.enemyList[fightEnemyID - 2].timesDefeated > 0){
                 if (player.zoneMax == player.currentZone){

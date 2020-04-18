@@ -10,7 +10,7 @@ createEnemy(7, "Mimic", 2000, 200, 1, 1, "/images/enemies/pipo-enemy032.png", 10
 createEnemy(8, "Seto, Imp of Angst", 175, 55, 55, 55, "/images/enemies/pipo-enemy040b.png", 20, 0, 0, [enemyWeapons[32], enemyWeapons[33], enemyWeapons[34], enemyWeapons[35]], 59, 100)
 createEnemy(9, "Phantom Uzoro", 175, 55, 55, 55, "/images/enemies/pipo-enemy025.png", 20, 0, 0, [enemyWeapons[36], enemyWeapons[37], enemyWeapons[38], enemyWeapons[39]], 59, 100)
 createEnemy(10, "Skulltan", 175, 55, 55, 55, "/images/enemies/pipo-enemy026.png", 20, 0, 0, [enemyWeapons[40], enemyWeapons[41], enemyWeapons[42], enemyWeapons[43]], 59, 100)
-createEnemy(11, "Seto Immanis", 175, 55, 55, 55, "/images/enemies/pipo-enemy021b.png", 20, 0, 0, [enemyWeapons[0], enemyWeapons[8], enemyWeapons[7]], 59, 100)
+createEnemy(11, "Seto Immanis", 175, 55, 55, 55, "/images/enemies/pipo-enemy021b.png", 20, 0, 0, [enemyWeapons[44], enemyWeapons[45], enemyWeapons[46], enemyWeapons[47]], 59, 100)
 createEnemy(12, "Skulltan Unbound", 3000, 500, 500, 10000, "/images/enemies/pipo-boss001.png", 500, 0, 0, [enemyWeapons[0], enemyWeapons[8], enemyWeapons[7]], 1500, 2000)
 createEnemy(13, "Uzoro", 3000, 500, 500, 10000, "/images/enemies/pipo-boss002.png", 500, 0, 0, [enemyWeapons[0], enemyWeapons[8], enemyWeapons[7]], 5000, 7000)
 createEnemy(14, "SkuSeto", 3000, 500, 500, 10000, "/images/enemies/pipo-boss004.png", 500, 0, 0, [enemyWeapons[0], enemyWeapons[8], enemyWeapons[7]], 4000, 6000)
