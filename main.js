@@ -1920,6 +1920,7 @@ function ladderIncrement(enemy){
 function updateEnemyDisplay(enemy){
     displayID = enemy.ID % 3
     document.getElementById("enemy" + displayID).onclick = function(){setupFight(enemy.ID)}
+    document.getElementById("enemy" + displayID).src = ""
     document.getElementById("enemy" + displayID).src = enemy.imagePath
     document.getElementById("enemyName" + displayID).innerHTML = enemy.name
     document.getElementById("enemyHitPoints" + displayID).innerHTML = "HP: " + enemy.maxHitPoints   
