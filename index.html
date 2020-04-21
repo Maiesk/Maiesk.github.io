@@ -110,12 +110,13 @@
             font-size: 25px; 
             border-color: #474646;
             background-color: #474646; 
-            color: #ac9444;
+            color: rgb(50, 50, 50);
             font-weight: normal;
             max-width: 60px;
             min-width: 60px;
             min-height: 40px;
             max-height: 40px;
+            font-family: Fredoka One;
             text-align: center;
         }
         .navMenuButton{
@@ -724,6 +725,16 @@
                                 <td><p id="attackOrder" style="text-align: center; min-width: 200px; max-width: 200px"></p></td>
                                 <td></td>
                             </tr>
+                            <tr id="playerFreezeRow" hidden>
+                                <td></td>
+                                <td><p id="playerFreezeText" style="text-align: center"></p></td>
+                                <td></td>
+                            </tr>
+                            <tr id="enemyFreezeRow" hidden>
+                                <td></td>
+                                <td><p id="enemyFreezeText" style="text-align: center"></p></td>
+                                <td></td>
+                            </tr>
                             <tr id="attackIconRow0" hidden>
                                 <td><p id="attackIconsLeft-2" style="min-width: 200px; max-width: 200px"></p></td>
                                 <td><p id="attackText0" style="text-align: center; min-width: 200px; max-width: 200px;"></p></td>
@@ -783,11 +794,6 @@
                                 <td><p></p></td>
                                 <td><p id="enemyHealText1" style="text-align: center"></p></td>
                                 <td><p id="enemyHealIcons1" style="text-align: right; max-width: 200px;"></p></td>
-                            </tr>
-                            <tr>
-                                <td><p hidden id="healIconsLeft">ICON + AMOUNT</p></td>
-                                <td><p hidden style="text-align: center">HEAL TEXT</p></td>
-                                <td><p hidden id="healIconsRight" style="text-align: right; max-width: 200px;">ICON + AMOUNT</p></td>
                             </tr>
                             <tr id="damageRow" hidden>
                                 <td><p id="damageLeft" style="min-width: 200px">0 DMG</p></td>

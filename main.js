@@ -87,6 +87,7 @@ function updateHPBar() {
                     elementHP.style = "background: linear-gradient(to right, #94b0da, #ac9444 200px);"
                 }
                 player.maxHitPoints += 1
+                player.allItems[14].heal = Math.round(player.maxHitPoints / 20)
                 player.currentMaxHP = 100 * (1.05**Math.sqrt(player.maxHitPoints - 10)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/20)))
                 updateHTML()
             } 
@@ -775,13 +776,14 @@ function createEnemy(ID, name, hitPoints, attackPoints, defensePoints, speedPoin
         dropMax: dropMax,
         autoBattleVictories: 0,
         autoBattleTotalGold: 0,
-        autoBattleTotalExp: 0
+        autoBattleTotalExp: 0,
+        frozen: false
     }
     player.enemyList[player.enemyList.length] = enemy
     return enemy;
 }
 
-function createItem(name, ID, fire, air, earth, water, melee, light, dark, fireDef, airDef, earthDef, waterDef, meleeDef, lightDef, darkDef, heal, oncePerBattle, freeze, imagePath, itemCost){
+function createItem(name, ID, fire, air, earth, water, melee, light, dark, fireDef, airDef, earthDef, waterDef, meleeDef, lightDef, darkDef, heal, oncePerBattle, freeze, imagePath, itemCost, level){
     var item = {
         name: name,
         ID: ID,
@@ -803,7 +805,8 @@ function createItem(name, ID, fire, air, earth, water, melee, light, dark, fireD
         oncePerBattle: oncePerBattle,
         freeze: freeze,
         imagePath: imagePath,
-        itemCost: itemCost
+        itemCost: itemCost,
+        level: level
     }
     
     player.allItems[item.ID] = item
@@ -873,6 +876,40 @@ function buyItem(ID){
         player.inventory.push(buyItem)
         pushInventoryDisplay(player.inventory.length - 1)
         updateHTML()
+    }
+}
+
+function itemLevelUp(item){
+    item.level += 1
+    var iconTotal = getTotalIcons(item)
+    var divider = iconTotal / 5
+    if (item.fire > 0){
+        var percentageFire = item.fire / iconTotal
+        item.fire += Math.round(divider * percentageFire)
+    }
+    if (item.air > 0){
+        var percentageAir = item.air / iconTotal
+        item.air += Math.round(divider * percentageAir)
+    }
+    if (item.earth > 0){
+        var percentageEarth = item.earth / iconTotal
+        item.earth += Math.round(divider * percentageEarth)
+    }
+    if (item.water > 0){
+        var percentageWater = item.water / iconTotal
+        item.water += Math.round(divider * percentageWater)
+    }
+    if (item.melee > 0){
+        var percentageMelee = item.melee / iconTotal
+        item.melee += Math.round(divider * percentageMelee)
+    }
+    if (item.light > 0){
+        var percentageLight = item.light / iconTotal
+        item.light += Math.round(divider * percentageLight)
+    }
+    if (item.dark > 0){
+        var percentageDark = item.dark / iconTotal
+        item.dark += Math.round(divider * percentageDark)
     }
 }
 
@@ -1383,6 +1420,8 @@ function initiateBattle(fightEnemyID){
     if (enemy.hitPoints !== enemy.maxHitPoints){
         enemy.hitPoints = enemy.maxHitPoints
     }
+    enemy.frozen = false
+    player.frozen = false
     updateHP(enemy)
     createBattleOptions(enemy)
     createBattleOptionsPlayer()
@@ -1393,15 +1432,7 @@ function initiateBattle(fightEnemyID){
           e.preventDefault();
         }
     });
-    document.getElementById("attackIconRow0").hidden = true
-    document.getElementById("defenseIconRow0").hidden = true
-    document.getElementById("attackIconRow1").hidden = true
-    document.getElementById("defenseIconRow1").hidden = true
-    document.getElementById("enemyAttackIconRow0").hidden = true
-    document.getElementById("enemyDefenseIconRow0").hidden = true
-    document.getElementById("enemyAttackIconRow1").hidden = true
-    document.getElementById("enemyDefenseIconRow1").hidden = true
-    document.getElementById("damageRow").hidden = true
+    hideAllBattleRows()
     currentEnemy = fightEnemyID
     for (var i = 0; i < player.equipment.length; i++){
         document.getElementById("equippedWeapon" + i).style.border=""
@@ -1518,7 +1549,19 @@ function preventNegative(damage){
     return damage
 }
 
+var enemyFreeze = false
 function attack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex2){
+    var enemyItem1 = enemy.equipment[enemyItemIndex1]
+    var enemyItem2 = enemy.equipment[enemyItemIndex2]
+    if (enemy.frozen){
+        enemyItem1 = enemyWeapons[64]
+        enemyItem2 = enemyWeapons[64]
+    }
+    if (player.frozen){
+        playerItem1 = enemyWeapons[64]
+        playerItem2 = enemyWeapons[64]
+    }
+    enemyFreeze = false
     if (!player.frozen){
         var playerStrength = determineTier(player.attackPoints);
         var enemyDefense = determineTier(enemy.defensePoints);
@@ -1526,8 +1569,6 @@ function attack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex
         var enemyDefenseModifier = determineModifier(enemyStance);
         var totalHeal = 0;
         var totalDamage = 0;
-        var enemyItem1 = enemy.equipment[enemyItemIndex1]
-        var enemyItem2 = enemy.equipment[enemyItemIndex2]
         var playerItemIndex1 = player.equipment.indexOf(playerItem1)
         var playerItemIndex2 = player.equipment.indexOf(playerItem2)
         if (playerItem1 !== null && playerItem2 !== null){
@@ -1563,6 +1604,30 @@ function attack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex
         var hpAnimationEnemy = new CountUp("battleScreenEnemyName", enemy.hitPoints, difference, 0, 0.5, optionsBattle);
         hpAnimationEnemy.start()
         enemy.hitPoints = enemy.hitPoints - totalDamage
+        if (playerItem2 !== null){
+            if (playerItem2.freeze == true){
+                if (player.speedPoints > enemy.speedPoints){
+                    enemyFreeze = true
+                }
+                else{
+                    enemy.frozen = true
+                }
+                document.getElementById("attackIconRow1").hidden = false
+                loadAttackIcons("attackIconsRight1", playerItemIndex2, false)
+                document.getElementById("attackText1").innerHTML = "You froze " + enemy.name + " with " + playerItem2.name + "!"
+            }
+        }
+        if (playerItem1.freeze == true){
+            if (player.speedPoints > enemy.speedPoints){
+                enemyFreeze = true
+            }
+            else{
+                enemy.frozen = true
+            }
+            document.getElementById("attackIconRow0").hidden = false
+            loadAttackIcons("attackIconsRight0", playerItemIndex1, false)
+            document.getElementById("attackText0").innerHTML = "You froze " + enemy.name + " with " + playerItem1.name + "!"
+        }
         if (player.hitPoints + totalHeal > player.maxHitPoints){
             player.hitPoints = player.maxHitPoints;
         }
@@ -1605,16 +1670,27 @@ function attack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex
                 document.getElementById("defenseText1").innerHTML = "You defended with " + playerItem2.name + "!"
             }
         }
+        if (playerFreeze == true){
+            player.frozen = true
+        }
+        updateHP(enemy)
+        document.getElementById("damageRow").hidden = false
     }
-    else{
-        player.frozen = false
+    else if (player.frozen == true){
+        document.getElementById("playerFreezeRow").hidden = false
+        document.getElementById("playerFreezeText").innerHTML = "You are frozen! You cannot attack this turn!"
+        if (enemyItem1.freeze !== true && enemyItem2.freeze !== true){
+            player.frozen = false
+        }   
+        updateHP(enemy)
+        document.getElementById("damageRow").hidden = false
     }
-    updateHP(enemy)
-    document.getElementById("damageRow").hidden = false
 }
 
+var playerFreeze = false
 function enemyAttack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex2){
-    if (!enemy.frozen){
+    playerFreeze = false
+    if (enemy.frozen == false){
         var enemyStrength = determineTier(enemy.attackPoints);
         var playerDefense = determineTier(player.defensePoints);
         var attackModifier = determineModifier(enemyStance);
@@ -1623,6 +1699,9 @@ function enemyAttack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItem
         var totalDamage = 0;
         var enemyItem1 = enemy.equipment[enemyItemIndex1]
         var enemyItem2 = enemy.equipment[enemyItemIndex2]
+        if (playerItem1 == null){
+            playerItem1 = enemyWeapons[64]
+        }
         if (playerItem1 !== null && playerItem2 !== null){
             physDamage = preventNegative((enemyItem1.melee*enemyStrength + enemyItem2.melee*enemyStrength) - (playerItem1.meleeDef*playerDefense + playerItem2.meleeDef*playerDefense));
             fireDamage = preventNegative((enemyItem1.fire*enemyStrength + enemyItem2.fire*enemyStrength) - (playerItem1.fireDef*playerDefense + playerItem2.fireDef*playerDefense));
@@ -1656,6 +1735,24 @@ function enemyAttack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItem
         var hpAnimation = new CountUp("battleScreenPlayerName", player.hitPoints, difference, 0, 0.5, optionsBattlePlayer);
         hpAnimation.start()
         player.hitPoints = player.hitPoints - totalDamage
+        if (enemyItem1.freeze == true || enemyItem2.freeze == true){
+            if (enemy.speedPoints > player.speedPoints){
+                playerFreeze = true
+            }
+            else{
+                player.frozen = true
+            }
+            if (enemyItem1.freeze == true){
+                document.getElementById("enemyAttackIconRow0").hidden = false
+                loadAttackIcons("attackIconsLeft0", enemyItemIndex1, true)
+                document.getElementById("enemyAttackText0").innerHTML = enemy.name + " froze you with " + enemyItem1.name + "!"
+            }
+            else if (enemyItem2.freeze == true){
+                document.getElementById("enemyAttackIconRow1").hidden = false
+                loadAttackIcons("attackIconsLeft1", enemyItemIndex2, true)
+                document.getElementById("enemyAttackText1").innerHTML = enemy.name + " froze you with " + enemyItem2.name + "!"
+            }
+        }
         if (enemy.hitPoints + totalHeal > enemy.maxHitPoints){
             enemy.hitPoints = enemy.maxHitPoints;
         }
@@ -1696,12 +1793,29 @@ function enemyAttack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItem
                 document.getElementById("enemyDefenseText1").innerHTML = enemy.name + " defended with " + enemyItem2.name + "!"
             }
         }
+        if (enemyFreeze == true){
+            enemy.frozen = true
+        }
+        updateHP(enemy)
+        document.getElementById("damageRow").hidden = false
     }
-    else{
-        player.frozen = false
+    else if (enemy.frozen == true){
+        document.getElementById("enemyFreezeRow").hidden = false
+        document.getElementById("enemyFreezeText").innerHTML = enemy.name + " is frozen! They cannot attack this turn!"
+        enemy.frozen = false
+        if (playerItem1 !== null){
+            if (playerItem1.freeze == true){
+                enemy.frozen = true
+            }
+            else if (playerItem2 !== null){
+                if (playerItem2.freeze == true){
+                    enemy.frozen = true
+                }
+            }
+        }
+        updateHP(enemy)
+        document.getElementById("damageRow").hidden = false
     }
-    updateHP(enemy)
-    document.getElementById("damageRow").hidden = false
 }
 
 var enemyStanceArr = ["Wild", "Strong", "Steady", "Defensive"]
@@ -1721,6 +1835,10 @@ function fight(){
     }
     while (enemyWeaponIndexOne == enemyWeaponIndexTwo){
         enemyWeaponIndexTwo = Math.floor(Math.random() * enemy.equipment.length)
+    }
+    if (player.frozen){
+        playerItem1 = null
+        playerItem2 = null
     }
     if (player.speedPoints > enemy.speedPoints){
         document.getElementById("attackOrder").innerHTML = "You have the edge! You attack first!"
@@ -1768,7 +1886,6 @@ function fight(){
         document.getElementById("fightButton").disabled = true
         document.getElementById("fightButton").style = "background-color: #474646; color: #373636; min-width: 600px;"
         player.exp += enemy.maxHitPoints * (1 + enemy.ID)
-        ladderIncrement(player.enemyList[fightEnemyID])
         document.getElementById("outcomeText").hidden = false
         document.getElementById("outcomeText").innerHTML = "You are victorious!"
         fighting = false
@@ -1779,6 +1896,7 @@ function fight(){
         document.getElementById("outcomeTextExp").hidden = false
         document.getElementById("outcomeTextGold").innerHTML = "You earned " + goldEarned + " gold by defeating " + enemy.name + "! You now have " + player.gold + " gold!"
         document.getElementById("outcomeTextExp").innerHTML = "You earned " + enemy.maxHitPoints * (1 + enemy.ID) + " EXP by defeating " + enemy.name + "! You now have " + player.exp + " EXP!"
+        ladderIncrement(player.enemyList[fightEnemyID])
         player.zones[player.currentZone - 1].enemies[fightEnemyID % 3] = player.enemyList[fightEnemyID]
         updateEnemyDisplay(enemy)
         postFight = true
@@ -1813,6 +1931,8 @@ function updateEnemyDisplay(enemy){
 }
 
 function hideAllBattleRows(){
+    document.getElementById("playerFreezeRow").hidden = true
+    document.getElementById("enemyFreezeRow").hidden = true
     document.getElementById("attackIconRow0").hidden = true
     document.getElementById("attackIconRow1").hidden = true
     document.getElementById("enemyAttackIconRow0").hidden = true
@@ -1821,8 +1941,13 @@ function hideAllBattleRows(){
     document.getElementById("defenseIconRow1").hidden = true
     document.getElementById("enemyDefenseIconRow0").hidden = true
     document.getElementById("enemyDefenseIconRow1").hidden = true
+    document.getElementById("playerHealRow0").hidden = true
+    document.getElementById("playerHealRow1").hidden = true
+    document.getElementById("enemyHealRow0").hidden = true
+    document.getElementById("enemyHealRow1").hidden = true
     document.getElementById("damageRow").hidden = true
 }
+
 
 function zoneUp(){
     if (player.currentZone < player.zoneMax){
@@ -1945,21 +2070,29 @@ var optionsExp = {
     suffix: " EXP!" 
 };
 
+var overpowered = false
 function godMode(){
-    player.gold = 10000000
-    player.maxHitPoints = 100000
-    player.attackPoints = 10000
-    player.defensePoints = 10000
-    player.speedPoints = 10000
-    player.statPoints = 10000
-    player.maxStatPoints = 10000
-    player.zoneMax = 6
-    for (var i = 0; i < player.allItems.length - 1; i++){
-        buyItem(i)
+    if (!overpowered){
+        player.gold = 10000000
+        player.maxHitPoints = 100000
+        player.attackPoints = 10000
+        player.defensePoints = 10000
+        player.speedPoints = 10000
+        player.statPoints = 10000
+        player.maxStatPoints = 10000
+        player.zoneMax = 6
+        player.allItems[14].heal = Math.round(player.maxHitPoints / 20)
+        for (var i = 0; i < player.allItems.length; i++){
+            buyItem(i)
+        }
+        for (var i = player.inventory.length - 8; i < player.inventory.length; i++){
+            setSelected(i)
+        }
+        updateHTML()
+        overpowered = true
+        console.log("Way to ruin the game, hotshot.")
     }
-    for (var i = player.inventory.length - 8; i < player.inventory.length; i++){
-        setSelected(i)
+    else{
+        console.log("Aren't you overpowered enough?")
     }
-    updateHTML()
-    console.log("Way to ruin the game, hotshot.")
 }
