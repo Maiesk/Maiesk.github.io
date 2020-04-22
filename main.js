@@ -1031,6 +1031,9 @@ function selectWeapon(equipID){
             }
         }
     }
+    else if (player.equipment[equipID] == undefined && fighting == true){
+        document.getElementById("equippedWeapon" + equipID).style.border = "2px solid red"
+    }
 }
 
 function reloadEquipmentDisplay(){
@@ -1449,10 +1452,11 @@ function updateHP(enemy){
 function loadEquipmentForBattle(){
     for (var i = 0; i < 8; i++){
         if (player.equipment[i]){
+            document.getElementById("equippedWeapon" + i).style.opacity = "100%"
             document.getElementById("equippedWeapon" + i).src = player.equipment[i].imagePath
         }
         else{
-            document.getElementById("equippedWeapon" + i).src = " "
+            document.getElementById("equippedWeapon" + i).style.opacity = "0%"
         }
     }
 }
@@ -1606,7 +1610,7 @@ function attack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex
         enemy.hitPoints = enemy.hitPoints - totalDamage
         if (playerItem2 !== null){
             if (playerItem2.freeze == true){
-                if (player.speedPoints > enemy.speedPoints){
+                if (firstAttack == "player"){
                     enemyFreeze = true
                 }
                 else{
@@ -1673,6 +1677,14 @@ function attack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex
         if (playerFreeze == true){
             player.frozen = true
         }
+        if (playerItem1.oncePerBattle == true){
+            breakItemForBattle(playerItem1)
+        }
+        if (playerItem2 !== null){
+            if (playerItem2.oncePerBattle == true){
+                breakItemForBattle(playerItem2)
+            }
+        }
         updateHP(enemy)
         document.getElementById("damageRow").hidden = false
     }
@@ -1682,12 +1694,19 @@ function attack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex
         if (enemyItem1.freeze !== true && enemyItem2.freeze !== true){
             player.frozen = false
         }   
+        if (firstAttack == "enemy"){
+            if (enemyWasFrozen == true){
+                player.frozen = false
+                enemyWasFrozen == false
+            }
+        }
         updateHP(enemy)
         document.getElementById("damageRow").hidden = false
     }
 }
 
 var playerFreeze = false
+var enemyWasFrozen = false
 function enemyAttack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex2){
     playerFreeze = false
     if (enemy.frozen == false){
@@ -1736,7 +1755,7 @@ function enemyAttack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItem
         hpAnimation.start()
         player.hitPoints = player.hitPoints - totalDamage
         if (enemyItem1.freeze == true || enemyItem2.freeze == true){
-            if (enemy.speedPoints > player.speedPoints){
+            if (firstAttack == "enemy"){
                 playerFreeze = true
             }
             else{
@@ -1796,6 +1815,12 @@ function enemyAttack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItem
         if (enemyFreeze == true){
             enemy.frozen = true
         }
+        if (enemyItem1.oncePerBattle == true){
+            breakItemForBattle(enemyItem1, true)
+        }
+        if (enemyItem2.oncePerBattle == true){
+            breakItemForBattle(enemyItem2, true)
+        }
         updateHP(enemy)
         document.getElementById("damageRow").hidden = false
     }
@@ -1803,6 +1828,7 @@ function enemyAttack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItem
         document.getElementById("enemyFreezeRow").hidden = false
         document.getElementById("enemyFreezeText").innerHTML = enemy.name + " is frozen! They cannot attack this turn!"
         enemy.frozen = false
+        enemyWasFrozen = true
         if (playerItem1 !== null){
             if (playerItem1.freeze == true){
                 enemy.frozen = true
@@ -1820,6 +1846,8 @@ function enemyAttack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItem
 
 var enemyStanceArr = ["Wild", "Strong", "Steady", "Defensive"]
 var enemyStance = "Steady"
+var firstAttack = null
+var secondAttack = null
 function fight(){
     hideAllBattleRows()
     document.getElementById("damageLeft").innerHTML = "0 DMG"
@@ -1841,6 +1869,8 @@ function fight(){
         playerItem2 = null
     }
     if (player.speedPoints > enemy.speedPoints){
+        firstAttack = "player"
+        secondAttack = "enemy"
         document.getElementById("attackOrder").innerHTML = "You have the edge! You attack first!"
         attack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
         if (enemy.hitPoints > 0){
@@ -1848,6 +1878,8 @@ function fight(){
         }
     }
     else if (player.speedPoints < enemy.speedPoints){
+        firstAttack = "enemy"
+        secondAttack = "player"
         document.getElementById("attackOrder").innerHTML = enemy.name + " has the edge! " + enemy.name + " attacks first!"
         enemyAttack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
         if (player.hitPoints > 0){
@@ -1856,14 +1888,18 @@ function fight(){
     }
     else{
         var coinFlip = Math.floor(Math.random() * 2);
-        if (coinFlip == 0){        
+        if (coinFlip == 0){       
+            firstAttack = "enemy"
+            secondAttack = "player" 
             document.getElementById("attackOrder").innerHTML = enemy.name + " has the edge! " + enemy.name + " attacks first!"
             enemyAttack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
             if (player.hitPoints > 0){
                 attack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
             }
         }
-        else{        
+        else{   
+            firstAttack = "player"
+            secondAttack = "enemy"     
             document.getElementById("attackOrder").innerHTML = "You have the edge! You attack first!"
             attack(enemy, playerItem1, playerItem2, enemyWeaponIndexOne, enemyWeaponIndexTwo, "Berserk", "Berserk")
             if (enemy.hitPoints > 0){
@@ -1880,6 +1916,7 @@ function fight(){
         postFight = true
         player.enemyList[fightEnemyID].timesLostTo += 1
         player.zones[player.currentZone - 1].enemies[fightEnemyID % 3] = player.enemyList[fightEnemyID]
+        returnBrokenItems()
         updateEnemyDisplay(enemy)
     }
     else if (enemy.hitPoints <= 0){
@@ -1898,6 +1935,8 @@ function fight(){
         document.getElementById("outcomeTextExp").innerHTML = "You earned " + enemy.maxHitPoints * (1 + enemy.ID) + " EXP by defeating " + enemy.name + "! You now have " + player.exp + " EXP!"
         ladderIncrement(player.enemyList[fightEnemyID])
         player.zones[player.currentZone - 1].enemies[fightEnemyID % 3] = player.enemyList[fightEnemyID]
+        returnBrokenItems()
+        returnEnemyBrokenItems(enemy)
         updateEnemyDisplay(enemy)
         postFight = true
         if ((fightEnemyID + 1) % 3 == 0){
@@ -1908,6 +1947,38 @@ function fight(){
             }
         }
     }
+}
+
+var brokenItemStorage = []
+var enemyItemStorage = []
+function breakItemForBattle(item, isEnemy){
+    if (!isEnemy){
+        var index = player.equipment.indexOf(item)
+        brokenItemStorage.push(item)
+        selectWeapon(index)
+        player.equipment.splice(index, 1)
+        document.getElementById("equippedWeapon" + index).style.border = ""
+        loadEquipmentForBattle()
+    }
+    else{
+        var index = enemy.equipment.indexOf(item)
+        enemyItemStorage.push(item)
+        enemy.equipment.splice(index, 1)
+    }
+}
+
+function returnBrokenItems(){
+    for (var i = 0; i < brokenItemStorage.length; i++){
+        player.equipment[player.equipment.length] = brokenItemStorage[i]
+    }
+    brokenItemStorage = []
+}
+
+function returnEnemyBrokenItems(enemy){
+    for (var i = 0; i < enemyItemStorage.length; i++){
+        enemy.equipment[enemy.equipment.length] = enemyItemStorage[i]
+    }
+    enemyItemStorage = []
 }
 
 function ladderIncrement(enemy){
