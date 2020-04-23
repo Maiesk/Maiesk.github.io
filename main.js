@@ -13,7 +13,7 @@ var player = {
     updateSpeed: 100,
     availableAP: 0,
     totalAP: 0,
-    gold: 0,
+    gold: 2,
     exp: 0,
     level: 1,
     buyAPCost: 50000,
@@ -808,7 +808,6 @@ function createItem(name, ID, fire, air, earth, water, melee, light, dark, fireD
         itemCost: itemCost,
         level: level
     }
-    
     player.allItems[item.ID] = item
     var cell = document.createElement("div");
     var figure = document.createElement("figure")
@@ -879,55 +878,108 @@ function buyItem(ID){
     }
 }
 
-function itemLevelUp(item){
-    item.level += 1
-    var iconTotal = getTotalIcons(item)
-    var divider = iconTotal / 5
-    if (item.fire > 0){
-        var percentageFire = item.fire / iconTotal
-        item.fire += Math.round(divider * percentageFire)
-    }
-    if (item.air > 0){
-        var percentageAir = item.air / iconTotal
-        item.air += Math.round(divider * percentageAir)
-    }
-    if (item.earth > 0){
-        var percentageEarth = item.earth / iconTotal
-        item.earth += Math.round(divider * percentageEarth)
-    }
-    if (item.water > 0){
-        var percentageWater = item.water / iconTotal
-        item.water += Math.round(divider * percentageWater)
-    }
-    if (item.melee > 0){
-        var percentageMelee = item.melee / iconTotal
-        item.melee += Math.round(divider * percentageMelee)
-    }
-    if (item.light > 0){
-        var percentageLight = item.light / iconTotal
-        item.light += Math.round(divider * percentageLight)
-    }
-    if (item.dark > 0){
-        var percentageDark = item.dark / iconTotal
-        item.dark += Math.round(divider * percentageDark)
+function itemLevelUp(index){
+    item = player.inventory[index]
+    var itemLevelCost = item.itemCost * 5 **(item.level + 1)
+    if (player.gold >= itemLevelCost){
+        item.level += 1
+        player.gold -= itemLevelCost
+        var attackIconTotal = getTotalIcons(item, false)
+        var defenseIconTotal = getTotalIcons(item, true)
+        var attackDivider = attackIconTotal / 4
+        var defenseDivider = defenseIconTotal / 4
+        if (item.fire > 0){
+            var percentageFire = item.fire / attackIconTotal
+            item.fire += attackDivider * percentageFire
+        }
+        if (item.air > 0){
+            var percentageAir = item.air / attackIconTotal
+            item.air += attackDivider * percentageAir
+        }
+        if (item.earth > 0){
+            var percentageEarth = item.earth / attackIconTotal
+            item.earth += attackDivider * percentageEarth
+        }
+        if (item.water > 0){
+            var percentageWater = item.water / attackIconTotal
+            item.water += attackDivider * percentageWater
+        }
+        if (item.melee > 0){
+            var percentageMelee = item.melee / attackIconTotal
+            item.melee += attackDivider * percentageMelee
+        }
+        if (item.light > 0){
+            var percentageLight = item.light / attackIconTotal
+            item.light += attackDivider * percentageLight
+        }
+        if (item.dark > 0){
+            var percentageDark = item.dark / attackIconTotal
+            item.dark += attackDivider * percentageDark
+        }
+        if (item.fireDef > 0){
+            var percentageFireDef = item.fireDef / defenseIconTotal
+            item.fireDef += defenseDivider * percentageFireDef
+        }
+        if (item.airDef > 0){
+            var percentageAirDef = item.airDef / defenseIconTotal
+            item.airDef += defenseDivider * percentageAirDef
+        }
+        if (item.earthDef > 0){
+            var percentageEarthDef = item.earthDef / defenseIconTotal
+            item.earthDef += defenseDivider * percentageEarthDef
+        }
+        if (item.waterDef > 0){
+            var percentageWaterDef = item.waterDef / defenseIconTotal
+            item.waterDef += defenseDivider * percentageWaterDef
+        }
+        if (item.meleeDef > 0){
+            var percentageMeleeDef = item.meleeDef / defenseIconTotal
+            item.meleeDef += defenseDivider * percentageMeleeDef
+        }
+        if (item.lightDef > 0){
+            var percentageLightDef = item.lightDef / defenseIconTotal
+            item.lightDef += defenseDivider * percentageLightDef
+        }
+        if (item.darkDef > 0){
+            var percentageDarkDef = item.darkDef / defenseIconTotal
+            item.darkDef += defenseDivider * percentageDarkDef
+        }
+        if (item.level < 4){
+            document.getElementById("inventoryButton" + index).innerHTML = "Lvl Up Weapon<br/>" + itemLevelCost * 5 + " Gold"
+            document.getElementById("inventoryCaption" + index).innerHTML = player.inventory[index].name + "<br/>Level: " + (player.inventory[index].level + 1)
+        }
+        else{
+            document.getElementById("inventoryButton" + index).innerHTML = "Lvl MAX"
+            document.getElementById("inventoryButton" + index).disabled = true
+            document.getElementById("inventoryCaption" + index).innerHTML = player.inventory[index].name + "<br/>Level: " + (player.inventory[index].level + 1)
+        }
     }
 }
-
+    
 function pushInventoryDisplay(index){ 
     var cell = document.createElement("div");
     var figure = document.createElement("figure")
     var caption = document.createElement("figcaption")
     var image = document.createElement("img")
-    cell.style = "width: 180px"
+    var levelButton = document.createElement("button")
+    cell.style = "max-width: 300px; min-width: 300px; min-height: 300px; background-color: #335C81; border: 1px solid #ac9444; text-align: center"
     cell.id = "inventory" + index
+    figure.id = "inventoryFig" + index
     image.src = player.inventory[index].imagePath
     image.className = "itemImages"
-    caption.innerHTML = player.innerHTML = player.inventory[index].name  
+    image.style = "background-image: linear-gradient(to bottom right, rgb(50, 50, 50), rgb(20, 20, 20)); border: 1px solid white"
+    caption.id = "inventoryCaption" + index
+    caption.innerHTML = player.inventory[index].name + "<br/>Level: " + (player.inventory[index].level + 1)
     caption.className = "itemText"
-    caption.style = "width: 100px; align-content: center"
+    caption.style = "font-size: 25px"
+    levelButton.className = "mainButtonLayout"
+    levelButton.id = "inventoryButton" + index    
+    levelButton.innerHTML = "Lvl Up Weapon<br/>" + player.inventory[index].itemCost*5 + " Gold"
+    levelButton.onclick = function(){itemLevelUp(index), setSelected(index)}
     figure.appendChild(image)
     figure.appendChild(caption)
     cell.appendChild(figure)
+    cell.appendChild(levelButton)
     document.getElementById("inventoryGrid").appendChild(cell);  
     document.getElementById("inventory" + index).onclick = function(){setSelected(index)}
 }  
@@ -976,12 +1028,12 @@ function setSelected(i){
         isEquipped = true
         var equipIndex = player.equipment.indexOf(player.inventory[i])
         player.equipment.splice(equipIndex, 1)
-        document.getElementById("inventory" + i).style.border=""
+        document.getElementById("inventory" + i).style.border="1px solid #ac9444"
     }
     if (!isEquipped){
         if (player.equipment.length < 8){  
             player.equipment.push(player.inventory[i])
-            document.getElementById("inventory" + i).style.border="1px solid white"
+            document.getElementById("inventory" + i).style.border="2px solid white"
         }
     }
     reloadEquipmentDisplay()
@@ -1571,6 +1623,14 @@ function attack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex
         var enemyDefense = determineTier(enemy.defensePoints);
         var attackModifier = determineModifier(player.currentStance);
         var enemyDefenseModifier = determineModifier(enemyStance);
+        var iconAtkModifier = playerStrength / enemyDefense
+        if (iconAtkModifier > 1){
+            iconAtkModifier = 1
+        }
+        var iconDefModifier = enemyDefense / playerStrength
+        if (iconDefModifier > 1){
+            iconDefModifier = 1
+        }
         var totalHeal = 0;
         var totalDamage = 0;
         var playerItemIndex1 = player.equipment.indexOf(playerItem1)
@@ -1656,10 +1716,15 @@ function attack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex
                 loadAttackIcons("attackIconsRight0", playerItemIndex1, false)
                 document.getElementById("attackText0").innerHTML = "You attacked with " + playerItem1.name + "!"
             }
-            if (getTotalIcons(playerItem1, true) > 0){
-                document.getElementById("defenseIconRow0").hidden = false
-                loadDefenseIcons("defenseIconsLeft0", playerItemIndex1, false)
-                document.getElementById("defenseText0").innerHTML = "You defended with " + playerItem1.name + "!"
+            if (getTotalIcons(enemyItem1, true) > 0){
+                document.getElementById("enemyDefenseIconRow0").hidden = false
+                loadDefenseIcons("enemyDefenseIconsRight0", enemyItemIndex1, true)
+                document.getElementById("enemyDefenseText0").innerHTML = enemy.name + " defended with " + enemyItem1.name + "!"
+            }
+            if (getTotalIcons(enemyItem2, true) > 0){
+                document.getElementById("enemyDefenseIconRow1").hidden = false
+                loadDefenseIcons("enemyDefenseIconsRight1", enemyItemIndex2, true)
+                document.getElementById("enemyDefenseText1").innerHTML = enemy.name + " defended with " + enemyItem2.name + "!"
             }
         }
         if (playerItem2 !== null){
@@ -1667,11 +1732,6 @@ function attack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex
                 document.getElementById("attackIconRow1").hidden = false
                 loadAttackIcons("attackIconsRight1", playerItemIndex2, false)
                 document.getElementById("attackText1").innerHTML = "You attacked with " + playerItem2.name + "!"
-            }
-            if (getTotalIcons(playerItem2, true) > 0){
-                document.getElementById("defenseIconRow1").hidden = false
-                loadDefenseIcons("defenseIconsLeft1", playerItemIndex2, false)
-                document.getElementById("defenseText1").innerHTML = "You defended with " + playerItem2.name + "!"
             }
         }
         if (playerFreeze == true){
@@ -1714,6 +1774,14 @@ function enemyAttack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItem
         var playerDefense = determineTier(player.defensePoints);
         var attackModifier = determineModifier(enemyStance);
         var playerDefenseModifier = determineModifier(player.currentStance);
+        var iconAtkModifier = enemyStrength / playerDefense
+        if (iconAtkModifier > 1){
+            iconAtkModifier = 1
+        }
+        var iconDefModifier = playerDefense / enemyStrength
+        if (iconDefModifier > 1){
+            iconDefModifier = 1
+        }
         var totalHeal = 0;
         var totalDamage = 0;
         var enemyItem1 = enemy.equipment[enemyItemIndex1]
@@ -1794,22 +1862,22 @@ function enemyAttack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItem
                 loadAttackIcons("attackIconsLeft0", enemyItemIndex1, true)
                 document.getElementById("enemyAttackText0").innerHTML = enemy.name + " attacked with " + enemyItem1.name + "!"
             }
-            if (getTotalIcons(enemyItem1, true) > 0){
-                document.getElementById("enemyDefenseIconRow0").hidden = false
-                loadDefenseIcons("enemyDefenseIconsRight0", enemyItemIndex1, true)
-                document.getElementById("enemyDefenseText0").innerHTML = enemy.name + " defended with " + enemyItem1.name + "!"
-            }
-        }
-        if (enemyItem2 !== null){
             if (getTotalIcons(enemyItem2, false) > 0){
                 document.getElementById("enemyAttackIconRow1").hidden = false
                 loadAttackIcons("attackIconsLeft1", enemyItemIndex2, true)
                 document.getElementById("enemyAttackText1").innerHTML = enemy.name + " attacked with " + enemyItem2.name + "!"
             }
-            if (getTotalIcons(enemyItem2, true) > 0){
-                document.getElementById("enemyDefenseIconRow1").hidden = false
-                loadDefenseIcons("enemyDefenseIconsRight1", enemyItemIndex2, true)
-                document.getElementById("enemyDefenseText1").innerHTML = enemy.name + " defended with " + enemyItem2.name + "!"
+            if (getTotalIcons(playerItem1, true) > 0){
+                document.getElementById("defenseIconRow0").hidden = false
+                loadDefenseIcons("defenseIconsLeft0", playerItemIndex1, false)
+                document.getElementById("defenseText0").innerHTML = "You defended with " + playerItem1.name + "!"
+            }
+        }
+        if (playerItem2 !== null){
+            if (getTotalIcons(playerItem2, true) > 0){
+                document.getElementById("defenseIconRow1").hidden = false
+                loadDefenseIcons("defenseIconsLeft1", playerItemIndex2, false)
+                document.getElementById("defenseText1").innerHTML = "You defended with " + playerItem2.name + "!"
             }
         }
         if (enemyFreeze == true){

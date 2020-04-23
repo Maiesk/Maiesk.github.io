@@ -2,7 +2,7 @@
 createEnemy(0, "Snek", 10, 1, 1, 1, "/images/enemies/pipo-enemy003b.png", 1, 0, 0, [enemyWeapons[0], enemyWeapons[1], enemyWeapons[2], enemyWeapons[3]], 2, 5)
 createEnemy(1, "Sloim", 10, 1, 1, 1, "/images/enemies/pipo-enemy009b.png", 3, 0, 0, [enemyWeapons[4], enemyWeapons[5], enemyWeapons[6], enemyWeapons[7]], 4, 8)
 createEnemy(2, "Coro", 25, 5, 5, 5, "/images/enemies/pipo-enemy001.png", 5, 0, 0, [enemyWeapons[8], enemyWeapons[9], enemyWeapons[10], enemyWeapons[11]], 7, 11)
-createEnemy(3, "Mr. Pain, Bodyguard", 40, 15, 15, 15, "/images/enemies/pipo-enemy014b.png", 5, 0, 0, [enemyWeapons[12], enemyWeapons[13], enemyWeapons[14], enemyWeapons[15]], 15, 23)
+createEnemy(3, "Iron Fox", 40, 15, 15, 15, "/images/enemies/pipo-enemy014b.png", 5, 0, 0, [enemyWeapons[12], enemyWeapons[13], enemyWeapons[14], enemyWeapons[15]], 15, 23)
 createEnemy(4, "Wallfiend", 100, 20, 100, 1, "/images/enemies/pipo-enemy033.png", 10, 0, 0, [enemyWeapons[16], enemyWeapons[17], enemyWeapons[18], enemyWeapons[19]], 20, 28)
 createEnemy(5, "Bizarro Seto", 60, 35, 35, 35, "/images/enemies/pipo-enemy030b.png", 10, 0, 0, [enemyWeapons[20], enemyWeapons[21], enemyWeapons[22], enemyWeapons[23]], 30, 37)
 createEnemy(6, "Fodder Knight", 100, 40, 40, 40, "/images/enemies/pipo-enemy018a.png", 10, 0, 0, [enemyWeapons[24], enemyWeapons[25], enemyWeapons[26], enemyWeapons[27]], 40, 54)
