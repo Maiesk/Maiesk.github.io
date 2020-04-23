@@ -1786,6 +1786,8 @@ function enemyAttack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItem
         var totalDamage = 0;
         var enemyItem1 = enemy.equipment[enemyItemIndex1]
         var enemyItem2 = enemy.equipment[enemyItemIndex2]
+        var playerItemIndex1 = player.equipment.indexOf(playerItem1)
+        var playerItemIndex2 = player.equipment.indexOf(playerItem2)
         if (playerItem1 == null){
             playerItem1 = enemyWeapons[64]
         }
