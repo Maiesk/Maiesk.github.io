@@ -86,7 +86,7 @@ function updateHPBar() {
                 else{
                     elementHP.style = "background: linear-gradient(to right, #94b0da, #ac9444 200px);"
                 }
-                player.maxHitPoints += 1 * player.statPointUpgradeMultiplier
+                player.maxHitPoints += player.statPointUpgradeMultiplier
                 player.allItems[14].heal = Math.round(player.maxHitPoints / 20)
                 player.currentMaxHP = 100 * (1.05**Math.sqrt(player.maxHitPoints - 10)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/20)))
                 updateHTML()
@@ -130,7 +130,7 @@ function updateAttBar() {
                 else{
                     elementAtt.style = "background: linear-gradient(to right, #94b0da, #ac9444 200px);"
                 }
-                player.attackPoints += 1 * player.statPointUpgradeMultiplier
+                player.attackPoints += player.statPointUpgradeMultiplier
                 if (player.level == player.attackPoints / 10){
                     elementAtt.style.width = 100
                 }
@@ -174,7 +174,7 @@ function updateDefBar() {
                 else{
                     elementDef.style = "background: linear-gradient(to right, #94b0da, #ac9444 200px);"
                 }
-                player.defensePoints += 1 * player.statPointUpgradeMultiplier
+                player.defensePoints += player.statPointUpgradeMultiplier
                 player.currentMaxDef = 100 * (1.05**Math.sqrt(player.defensePoints)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/20)))
                 updateHTML()
             } 
@@ -215,7 +215,7 @@ function updateSpeBar() {
                 else{
                     elementSpe.style = "background: linear-gradient(to right, #94b0da, #ac9444 200px);"
                 }
-                player.speedPoints += 1 * player.statPointUpgradeMultiplier
+                player.speedPoints += player.statPointUpgradeMultiplier
                 player.currentMaxSpe = 100 * (1.05**Math.sqrt(player.speedPoints)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/20)))
                 updateHTML()
             } 
