@@ -665,6 +665,18 @@
                             <center><button class="mainButtonLayout" style="height: 100px; width: 300px; font-size: 50px" onclick="startFight(fightEnemyID)">Fight!</button>
                                 <br>
                             <button class="mainButtonLayout" style="height: 100px; width: 300px; font-size: 40px" onclick="autoBattle(player.enemyList[fightEnemyID])">Auto Battle!</button>
+                            <table>
+                                <tr>
+                                    <td class="standardText" style="text-align: left; padding: 10px">Player Score</td>
+                                    <td class="standardText"></td>
+                                    <td class="standardText" style="text-align: left; padding: 10px">Enemy Score</td>
+                                </tr>
+                                <tr></tr>
+                                    <td id="autoBattlePlayerScore" class="standardText" style="text-align: center">Player Score</td>
+                                    <td class="standardText">vs</td>
+                                    <td id="autoBattleEnemyScore" class="standardText" style="text-align: center">Enemy Score</td>
+                                </tr>
+                            </table>
                             <p id="autoBattleVictories" class="standardText">You've won 0 times!</p>
                             <p id="autoBattleGold" class="standardText">You've earned 0 gold!</p>
                             <p id="autoBattleExp" class="standardText" style="word-wrap: normal">You've earned 0 EXP!</p>

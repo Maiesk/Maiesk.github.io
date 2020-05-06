@@ -2140,28 +2140,41 @@ function setupFight(ID){
         document.getElementById("fightSetupScreen").style.display='block';
         document.getElementById("enemyFightImage").src = enemy.imagePath;
         document.getElementById("fightScreenEnemyName").innerHTML = enemy.name;
+        document.getElementById("autoBattlePlayerScore").innerHTML = getPlayerAutoBattleScore()
+        document.getElementById("autoBattleEnemyScore").innerHTML = getEnemyAutoBattleScore(enemy)
         document.getElementById("autoBattleVictories").innerHTML = "You've won " + enemy.autoBattleVictories + " times!"
         document.getElementById("autoBattleGold").innerHTML = "You've earned " + enemy.autoBattleTotalGold + " gold!"
         document.getElementById("autoBattleExp").innerHTML = "You've earned " + enemy.autoBattleTotalExp + " EXP!"
+
 }
 
-function autoBattle(enemy){
-    var playerTotalStats = player.attackPoints + player.defensePoints + player.maxHitPoints + player.speedPoints
-    var totalDamageIcons = 0
-    var totalDefenseIcons = 0
-    for (var i = 0; i < player.equipment.length; i++){
-        totalDamageIcons += getTotalIcons(player.equipment[i], false)
-        totalDefenseIcons += getTotalIcons(player.equipment[i], true)
-    }
-    var playerScore = playerTotalStats + (totalDamageIcons * 5) + (totalDefenseIcons * 5)
-    var enemyTotalStats = enemy.attackPoints + enemy.defensePoints + enemy.maxHitPoints + enemy.speedPoints
+function getEnemyAutoBattleScore(enemy){
     var enemyDamageIcons = 0
     var enemyDefenseIcons = 0
     for (var i = 0; i < enemy.equipment.length; i++){
         enemyDamageIcons += getTotalIcons(enemy.equipment[i], false)
         enemyDefenseIcons += getTotalIcons(enemy.equipment[i], true)
     }
-    var enemyScore = (enemyTotalStats + (enemyDamageIcons * 5) + (enemyDefenseIcons * 5)) * 1.25
+    var enemyTotalStats = enemy.attackPoints + enemy.defensePoints + enemy.maxHitPoints + enemy.speedPoints
+    var enemyScore = enemyTotalStats + (enemyDamageIcons * 5) + (enemyDefenseIcons * 5)
+    return enemyScore
+}
+
+function getPlayerAutoBattleScore(){
+    var totalDamageIcons = 0
+    var totalDefenseIcons = 0
+    for (var i = 0; i < player.equipment.length; i++){
+        totalDamageIcons += getTotalIcons(player.equipment[i], false)
+        totalDefenseIcons += getTotalIcons(player.equipment[i], true)
+    }
+    var playerTotalStats = player.attackPoints + player.defensePoints + player.maxHitPoints + player.speedPoints
+    var playerScore = playerTotalStats + (totalDamageIcons * 5) + (totalDefenseIcons * 5)
+    return playerScore
+}
+
+function autoBattle(enemy){
+    var playerScore = getPlayerAutoBattleScore()
+    var enemyScore = getEnemyAutoBattleScore(enemy)
     console.log("Player: " + playerScore + " vs. Enemy: " + enemyScore)
     if (playerScore > enemyScore){
         enemy.timesDefeated += 1
