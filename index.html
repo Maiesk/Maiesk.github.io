@@ -73,7 +73,19 @@
             border-radius: 5px;
             border-width: 3px;
             font-family: Fredoka One;
-            
+            -webkit-text-stroke-width: 1px;
+            -webkit-text-stroke-color: rgb(0, 0, 0);
+        }
+        .mainButtonLayoutDisabled{
+            background-color: #474646; 
+            color: #373636;
+            opacity: 1;
+            font-size: 25px; 
+            border-color: #474646;
+            font-weight: 100;
+            border-radius: 5px;
+            border-width: 3px;
+            font-family: Fredoka One;
             -webkit-text-stroke-width: 1px;
             -webkit-text-stroke-color: rgb(0, 0, 0);
         }
@@ -452,6 +464,7 @@
             <div id="inventoryTab">
                 <font style="font-family: Fredoka One; font-weight: bold">
                 <p class="apPageText" >Inventory</p>
+                <p class="standardText" id="inventoryPageGold">You have 0 Gold.</p>
                 <div id="inventoryGrid" class="grid-container">
 
                 </div>
@@ -664,7 +677,7 @@
                             <span class="tooltipText" id="tooltipFight" hidden>Select at least one weapon!</span>
                             <center><button class="mainButtonLayout" style="height: 100px; width: 300px; font-size: 50px" onclick="startFight(fightEnemyID)">Fight!</button>
                                 <br>
-                            <button class="mainButtonLayout" style="height: 100px; width: 300px; font-size: 40px" onclick="autoBattle(player.enemyList[fightEnemyID])">Auto Battle!</button>
+                            <button id="autoBattleButton" class="mainButtonLayout" style="height: 100px; width: 300px; font-size: 40px" onclick="autoBattle(enemyList[fightEnemyID])">Auto Battle!</button>
                             <table>
                                 <tr>
                                     <td class="standardText" style="text-align: left; padding: 10px">Player Score</td>

@@ -45,12 +45,15 @@ var player = {
     autoPurchaseStatPoints: false,
     frozen: false,
     currentStance: "Steady",
-    enemyList: [],
+    enemySaveList: [],
     allItems: [],
     currentZone: 1,
     zoneMax: 1,
     zones: []
 }
+
+var enemyList = []
+var defaultEnemyList = []
 
 function update(){
     var numberAnimation = new CountUp("currentTrainingPoints", player.training, player.training + player.trainingPerClick, 0, (player.updateSpeed / 1000), options);
@@ -299,11 +302,11 @@ function powerTrain(){
         document.getElementById("powerTrainButton").disabled = true
         document.getElementById("powerTrainButton").style = "background-color: #474646; color: #373636; height: 75px; width: 300px; font-size: 40px"
         document.getElementById("buyAPButton").disabled = true
-        document.getElementById("buyAPButton").style = "background-color: #474646; color: #373636"
+        document.getElementById("buyAPButton").className = "mainButtonLayoutDisabled"
         document.getElementById("saveButton").disabled = true
-        document.getElementById("saveButton").style = "background-color: #474646; color: #373636"   
+        document.getElementById("saveButton").className = "mainButtonLayoutDisabled"   
         document.getElementById("loadButton").disabled = true
-        document.getElementById("loadButton").style = "background-color: #474646; color: #373636"
+        document.getElementById("loadButton").className = "mainButtonLayoutDisabled"
         var trainingPerSecondShown = Number(player.trainingPerClick * 1000 / player.updateSpeed * player.idleUpgradeMultiplier).toFixed(0)
         var timeLeft = 5
         document.getElementById("battlePowerPerSecond").innerHTML = numberWithCommas(trainingPerSecondShown) + " Training Points per second for " + timeLeft + " seconds!"   
@@ -536,7 +539,7 @@ function loadGame(){
         document.getElementById("battleTab").style.display = 'none'
         document.getElementById("shopTab").style.display = 'none'
         document.getElementById("loadingText").hidden = false
-
+        isLoading = true
         setTimeout(function(){
             updateHTML()
             document.getElementById("trainingTab").hidden = false
@@ -566,8 +569,19 @@ function loadGame(){
                     document.getElementById("goldShopItem" + ID).onclick = ""
                     document.getElementById("goldShopItemCaption" + ID).innerHTML = itemCheck.name  + "<br/>" + "Bought"
                 }
+                var itemLevelCost = itemCheck.itemCost * 5 **(itemCheck.level + 1)
+                if (player.inventory[i].level < 4){
+                    document.getElementById("inventoryButton" + i).innerHTML = "Lvl Up Weapon<br/>" + itemLevelCost * 5 + " Gold"
+                    document.getElementById("inventoryCaption" + i).innerHTML = player.inventory[i].name + "<br/>Level: " + (player.inventory[i].level + 1)
+                }
+                else if (player.inventory[i].level == 4){
+                    document.getElementById("inventoryButton" + i).innerHTML = "Lvl MAX"
+                    document.getElementById("inventoryButton" + i).disabled = true
+                    document.getElementById("inventoryCaption" + i).innerHTML = player.inventory[i].name + "<br/>Level: " + (player.inventory[i].level + 1)
+                }
             }
             player.equipment = []
+            loadLadderFromWinLoss()
             loadZone(1)
             player.allocatedAtt = 0,
             player.allocatedHP = 0,
@@ -590,6 +604,7 @@ function loadGame(){
             document.getElementById("myprogressBarSpe").style.width = player.currentProgressSpe + '%'; 
             var percentShownSpe = Number(player.currentProgressSpe).toFixed(2)
             document.getElementById("currentProgressDisplaySpe").innerHTML = percentShownSpe + "%"
+            isLoading = false
         }, 1000)
     }
     else if (player.powerTrainCooldown == true){
@@ -644,6 +659,7 @@ function updateHTML(){
     document.getElementById("currentDefenseStat").innerHTML = player.defensePoints + " Defense"
     document.getElementById("currentSpeedStat").innerHTML = player.speedPoints + " Speed"
     document.getElementById("currentGold").innerHTML = "You have " + numberWithCommas(goldShown) + " Gold."
+    document.getElementById("inventoryPageGold").innerHTML = "You have " + numberWithCommas(goldShown) + " Gold."
 }
 
 function updateStatButtonHTML(){
@@ -779,7 +795,15 @@ function createEnemy(ID, name, hitPoints, attackPoints, defensePoints, speedPoin
         autoBattleTotalExp: 0,
         frozen: false
     }
-    player.enemyList[player.enemyList.length] = enemy
+    var enemySaveStats = {
+        timesDefeated: timesDefeated,
+        timesLostTo: timesLostTo
+    }
+    enemyList[enemyList.length] = enemy
+    defaultEnemyList[defaultEnemyList.length] = enemy
+    if (player.enemySaveList.length < 16){
+        player.enemySaveList[player.enemySaveList.length] = enemySaveStats
+    }
     return enemy;
 }
 
@@ -883,7 +907,10 @@ function itemLevelUp(index){
     var itemLevelCost = item.itemCost * 5 **(item.level + 1)
     if (player.gold >= itemLevelCost){
         item.level += 1
-        player.gold -= itemLevelCost
+        player.gold -= itemLevelCost    
+        var goldShown = Number(player.gold).toFixed(0)
+        document.getElementById("currentGold").innerHTML = "You have " + numberWithCommas(goldShown) + " Gold."
+        document.getElementById("inventoryPageGold").innerHTML = "You have " + numberWithCommas(goldShown) + " Gold."
         var attackIconTotal = getTotalIcons(item, false)
         var defenseIconTotal = getTotalIcons(item, true)
         var attackDivider = attackIconTotal / 4
@@ -1467,7 +1494,7 @@ function initiateBattle(fightEnemyID){
     document.getElementById("enemyHealRow1").hidden = true
     document.getElementById("attackOrder").innerHTML = ""
     document.getElementById("fightButton").style = "background-color: #474646; color: #373636; min-width: 600px;"
-    var enemy = player.enemyList[fightEnemyID]
+    var enemy = enemyList[fightEnemyID]
     document.getElementById("enemyBattleImage").src = enemy.imagePath
     if (player.hitPoints !== player.maxHitPoints){
         player.hitPoints = player.maxHitPoints
@@ -1922,7 +1949,7 @@ function fight(){
     hideAllBattleRows()
     document.getElementById("damageLeft").innerHTML = "0 DMG"
     document.getElementById("damageRight").innerHTML = "0 DMG"
-    enemy = player.enemyList[fightEnemyID]
+    enemy = enemyList[fightEnemyID]
     var enemyWeaponIndexOne = Math.floor(Math.random() * enemy.equipment.length)
     var enemyWeaponIndexTwo = Math.floor(Math.random() * enemy.equipment.length)
     var playerItem1 = selectedItems[0]
@@ -1984,8 +2011,9 @@ function fight(){
         document.getElementById("outcomeText").innerHTML = "You have been defeated!"
         fighting = false
         postFight = true
-        player.enemyList[fightEnemyID].timesLostTo += 1
-        player.zones[player.currentZone - 1].enemies[fightEnemyID % 3] = player.enemyList[fightEnemyID]
+        enemyList[fightEnemyID].timesLostTo += 1
+        player.enemySaveList[fightEnemyID].timesLostTo += 1
+        player.zones[player.currentZone - 1].enemies[fightEnemyID % 3] = enemyList[fightEnemyID]
         returnBrokenItems()
         updateEnemyDisplay(enemy)
     }
@@ -1996,21 +2024,22 @@ function fight(){
         document.getElementById("outcomeText").hidden = false
         document.getElementById("outcomeText").innerHTML = "You are victorious!"
         fighting = false
-        player.enemyList[fightEnemyID].timesDefeated += 1
+        enemyList[fightEnemyID].timesDefeated += 1
+        player.enemySaveList[fightEnemyID].timesDefeated += 1
         var goldEarned = Math.floor(Math.random() * (enemy.dropMax - enemy.dropMin + 1) + enemy.dropMin)
         player.gold += goldEarned
         document.getElementById("outcomeTextGold").hidden = false
         document.getElementById("outcomeTextExp").hidden = false
         document.getElementById("outcomeTextGold").innerHTML = "You earned " + goldEarned + " gold by defeating " + enemy.name + "! You now have " + player.gold + " gold!"
         document.getElementById("outcomeTextExp").innerHTML = "You earned " + enemy.maxHitPoints * (1 + enemy.ID) + " EXP by defeating " + enemy.name + "! You now have " + player.exp + " EXP!"
-        ladderIncrement(player.enemyList[fightEnemyID])
-        player.zones[player.currentZone - 1].enemies[fightEnemyID % 3] = player.enemyList[fightEnemyID]
+        ladderIncrement(enemyList[fightEnemyID])
+        player.zones[player.currentZone - 1].enemies[fightEnemyID % 3] = enemyList[fightEnemyID]
         returnBrokenItems()
         returnEnemyBrokenItems(enemy)
         updateEnemyDisplay(enemy)
         postFight = true
         if ((fightEnemyID + 1) % 3 == 0){
-            if (player.enemyList[fightEnemyID - 1].timesDefeated > 0 && player.enemyList[fightEnemyID - 2].timesDefeated > 0){
+            if (enemyList[fightEnemyID - 1].timesDefeated > 0 && enemyList[fightEnemyID - 2].timesDefeated > 0){
                 if (player.zoneMax == player.currentZone){
                     player.zoneMax += 1
                 }
@@ -2056,6 +2085,25 @@ function ladderIncrement(enemy){
     enemy.attackPoints += enemy.ladderValue
     enemy.defensePoints += enemy.ladderValue
     enemy.speedPoints += enemy.ladderValue
+}
+
+
+var tempEnemyList = []
+function loadLadderFromWinLoss(){    
+    tempEnemyList.length = 0
+    for (var i = 0; i < player.enemySaveList.length; i++){
+        tempEnemyList.push(enemyList[i])
+    }
+    clearEnemyList()
+    createEnemyList()
+    for (var j = 0; j < player.enemySaveList.length; j++){
+        enemyList[j].timesDefeated = player.enemySaveList[j].timesDefeated
+        enemyList[j].timesLostTo = player.enemySaveList[j].timesLostTo
+        enemyList[j].maxHitPoints += (enemyList[j].timesDefeated * enemyList[j].ladderValue)
+        enemyList[j].attackPoints += (enemyList[j].timesDefeated * enemyList[j].ladderValue)
+        enemyList[j].defensePoints += (enemyList[j].timesDefeated * enemyList[j].ladderValue)
+        enemyList[j].speedPoints += (enemyList[j].timesDefeated * enemyList[j].ladderValue)
+    }
 }
 
 function updateEnemyDisplay(enemy){
@@ -2129,7 +2177,7 @@ var goldAnimation = null
 var expAnimation = null
 function setupFight(ID){
     fightEnemyID = ID
-    enemy = player.enemyList[ID]
+    enemy = enemyList[ID]
     if (goldAnimation !== null){
         goldAnimation.reset()
     }
@@ -2140,6 +2188,14 @@ function setupFight(ID){
         document.getElementById("fightSetupScreen").style.display='block';
         document.getElementById("enemyFightImage").src = enemy.imagePath;
         document.getElementById("fightScreenEnemyName").innerHTML = enemy.name;
+        if (getEnemyAutoBattleScore(enemy) > getPlayerAutoBattleScore()){
+            document.getElementById("autoBattleButton").disabled = true
+            document.getElementById("autoBattleButton").className = "mainButtonLayoutDisabled"
+        }
+        else{
+            document.getElementById("autoBattleButton").disabled = false
+            document.getElementById("autoBattleButton").className = "mainButtonLayout"
+        }
         document.getElementById("autoBattlePlayerScore").innerHTML = getPlayerAutoBattleScore()
         document.getElementById("autoBattleEnemyScore").innerHTML = getEnemyAutoBattleScore(enemy)
         document.getElementById("autoBattleVictories").innerHTML = "You've won " + enemy.autoBattleVictories + " times!"
@@ -2172,12 +2228,14 @@ function getPlayerAutoBattleScore(){
     return playerScore
 }
 
+var isLoading = false
 function autoBattle(enemy){
     var playerScore = getPlayerAutoBattleScore()
     var enemyScore = getEnemyAutoBattleScore(enemy)
     console.log("Player: " + playerScore + " vs. Enemy: " + enemyScore)
-    if (playerScore > enemyScore){
+    if (playerScore > enemyScore && isLoading == false){
         enemy.timesDefeated += 1
+        player.enemySaveList[enemy.ID].timesDefeated += 1
         var goldEarned = Math.floor(Math.random() * (enemy.dropMax - enemy.dropMin + 1) + enemy.dropMin)
         player.gold += goldEarned
         var expEarned = enemy.maxHitPoints * (1 + enemy.ID)
@@ -2198,7 +2256,12 @@ function autoBattle(enemy){
         if (Math.floor((enemy.ID ) / 3).toFixed(0) == player.currentZone - 1){
             updateEnemyDisplay(enemy)
         }
+        player.zones[Math.floor(enemy.ID / 3)].enemies[enemy.ID % 3] = enemyList[enemy.ID]
         setTimeout(function(){
+            if (getEnemyAutoBattleScore(enemy) > getPlayerAutoBattleScore()){
+                document.getElementById("autoBattleButton").disabled = true
+                document.getElementById("autoBattleButton").className = "mainButtonLayoutDisabled"
+            }
             autoBattle(enemy)
         }, 1000)
     }
