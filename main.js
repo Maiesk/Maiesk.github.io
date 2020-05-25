@@ -341,14 +341,14 @@ function powerTrain(){
             player.goldGeneratorLevel /= 2
             player.upgradesBought = 0
             document.getElementById("buyAPButton").disabled = false
-            document.getElementById("buyAPButton").style = "color: #ac9444; background-color: #335C81"
+            document.getElementById("buyAPButton").className = "mainButtonLayout"
             document.getElementById("powerTrainButton").innerHTML = "Power Train"
             document.getElementById("powerTrainButton").disabled = false
             document.getElementById("powerTrainButton").style = "color: #ac9444; background-color: #335C81; height: 75px; width: 300px; font-size: 40px"    
             document.getElementById("saveButton").disabled = false
-            document.getElementById("saveButton").style = "color: #ac9444; background-color: #335C81"
+            document.getElementById("saveButton").className = "mainButtonLayout"
             document.getElementById("loadButton").disabled = false
-            document.getElementById("loadButton").style = "color: #ac9444; background-color: #335C81"
+            document.getElementById("loadButton").className = "mainButtonLayout"
             updateHTML()
         }, 5000)
     }
