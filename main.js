@@ -47,6 +47,8 @@ var player = {
     currentStance: "Steady",
     enemySaveList: [],
     allItems: [],
+    goldGeneratorLevel: 0,
+    goldGeneratorUpgradeCost: 1,
     currentZone: 1,
     zoneMax: 1,
     zones: []
@@ -55,6 +57,7 @@ var player = {
 var enemyList = []
 var defaultEnemyList = []
 
+var goldGeneratorTicks = 0
 function update(){
     var numberAnimation = new CountUp("currentTrainingPoints", player.training, player.training + player.trainingPerClick, 0, (player.updateSpeed / 1000), options);
     numberAnimation.start()
@@ -72,6 +75,12 @@ function update(){
     updateAttBar()
     updateDefBar()
     updateSpeBar()
+    goldGeneratorTicks += (player.goldGeneratorLevel)
+    if (goldGeneratorTicks >= 30){
+        goldGeneratorTicks = 0
+        player.gold += 1
+        displayGold()
+    }
 }
 
 function updateHPBar() {
@@ -297,6 +306,7 @@ function powerTrain(){
     if (powerTrainCooldown == false){
         var originalTrainingPerClick = player.trainingPerClick
         player.trainingPerClick *= 2
+        player.goldGeneratorLevel *= 2
         powerTrainCooldown = true
         updateHTML()
         document.getElementById("powerTrainButton").disabled = true
@@ -328,6 +338,7 @@ function powerTrain(){
                 player.trainingPerClick = originalTrainingPerClick
             }
             powerTrainCooldown = false
+            player.goldGeneratorLevel /= 2
             player.upgradesBought = 0
             document.getElementById("buyAPButton").disabled = false
             document.getElementById("buyAPButton").style = "color: #ac9444; background-color: #335C81"
@@ -504,8 +515,8 @@ function buyStatPointBoost(){
 function buyTrainingPointBoost(){
     if (player.availableAP >= player.trainingPointBoostCost){   
         player.availableAP -= player.trainingPointBoostCost
-        player.trainingPointBoostCost *= 2
         player.idleUpgradeMultiplier += 1
+        player.trainingPointBoostCost = fibonacci(player.idleUpgradeMultiplier)
         document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(player.availableAP)
         document.getElementById("trainingPointBoostCurrent").innerHTML = "Current Training Point Multiplier: " + numberWithCommas(player.idleUpgradeMultiplier)
         document.getElementById("buyTrainingPointBoostButton").innerHTML = "+1x Training Point Speed: " + player.trainingPointBoostCost + " AP"
@@ -635,6 +646,7 @@ function updateHTML(){
     var trainingPerSecondShown = Number(player.trainingPerClick * player.idleUpgradeMultiplier * 1000 / player.updateSpeed).toFixed(0)
     var costOfAPShown = Number(player.buyAPCost).toFixed(0)
     var statPointCostShown = Number(player.statPointCost).toFixed(0)
+    var goldGeneratorCostShown = Number(player.goldGeneratorUpgradeCost).toFixed(0)
     var goldShown = Number(player.gold).toFixed(0)
     if (!powerTrainCooldown){
         document.getElementById("battlePowerPerSecond").innerHTML = numberWithCommas(trainingPerSecondShown) + " Training Points per second!"   
@@ -652,6 +664,8 @@ function updateHTML(){
     document.getElementById("buyStatPointButton").innerHTML = "Buy Stat Point<br/>" + numberWithCommas(statPointCostShown) + " Training Points"
     document.getElementById("perClickUpgrade").innerHTML = "Increase Training Level<br/>" + numberWithCommas(player.trainingPerClickCost) + " Training Points"
     document.getElementById("buyLevelUpButton").innerHTML = "EXP Level Up<br/>" + numberWithCommas(player.levelUpCost) + " EXP"
+    document.getElementById("goldGeneratorLevelCurrent").innerHTML = "Current Gold Generator Level: " + numberWithCommas(player.goldGeneratorLevel)
+    document.getElementById("upgradeGoldGeneratorButton").innerHTML = "+1 Gold Generator Level: " + numberWithCommas(goldGeneratorCostShown) + " AP"
     document.getElementById("currentEXP").innerHTML = "EXP<br/><br/>" + player.exp + "/" + player.levelUpCost
     document.getElementById("currentLevel").innerHTML = "Level<br/><br/>" + player.level
     document.getElementById("currentHPStat").innerHTML = player.maxHitPoints + " HP"
@@ -902,15 +916,20 @@ function buyItem(ID){
     }
 }
 
+function displayGold(){
+    var goldShown = Number(player.gold).toFixed(0)
+    document.getElementById("currentGold").innerHTML = "You have " + numberWithCommas(goldShown) + " Gold."
+    document.getElementById("inventoryPageGold").innerHTML = "You have " + numberWithCommas(goldShown) + " Gold."
+    document.getElementById("goldDisplay").innerHTML = "Gold<br/><br/>" + player.gold
+}
+
 function itemLevelUp(index){
     item = player.inventory[index]
     var itemLevelCost = item.itemCost * 5 **(item.level + 1)
     if (player.gold >= itemLevelCost){
         item.level += 1
         player.gold -= itemLevelCost    
-        var goldShown = Number(player.gold).toFixed(0)
-        document.getElementById("currentGold").innerHTML = "You have " + numberWithCommas(goldShown) + " Gold."
-        document.getElementById("inventoryPageGold").innerHTML = "You have " + numberWithCommas(goldShown) + " Gold."
+        displayGold()
         var attackIconTotal = getTotalIcons(item, false)
         var defenseIconTotal = getTotalIcons(item, true)
         var attackDivider = attackIconTotal / 4
@@ -1764,14 +1783,6 @@ function attack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex
         if (playerFreeze == true){
             player.frozen = true
         }
-        if (playerItem1.oncePerBattle == true){
-            breakItemForBattle(playerItem1)
-        }
-        if (playerItem2 !== null){
-            if (playerItem2.oncePerBattle == true){
-                breakItemForBattle(playerItem2)
-            }
-        }
         updateHP(enemy)
         document.getElementById("damageRow").hidden = false
     }
@@ -1912,12 +1923,6 @@ function enemyAttack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItem
         if (enemyFreeze == true){
             enemy.frozen = true
         }
-        if (enemyItem1.oncePerBattle == true){
-            breakItemForBattle(enemyItem1, true)
-        }
-        if (enemyItem2.oncePerBattle == true){
-            breakItemForBattle(enemyItem2, true)
-        }
         updateHP(enemy)
         document.getElementById("damageRow").hidden = false
     }
@@ -2004,6 +2009,8 @@ function fight(){
             }
         }
     }
+    checkIfBreakableItems(playerItem1, playerItem2, enemy.equipment[enemyWeaponIndexOne], enemy.equipment[enemyWeaponIndexTwo])
+    console.log(enemy.equipment)
     if (player.hitPoints <= 0){
         document.getElementById("fightButton").disabled = true
         document.getElementById("fightButton").style = "background-color: #474646; color: #373636; min-width: 600px;"
@@ -2028,6 +2035,7 @@ function fight(){
         player.enemySaveList[fightEnemyID].timesDefeated += 1
         var goldEarned = Math.floor(Math.random() * (enemy.dropMax - enemy.dropMin + 1) + enemy.dropMin)
         player.gold += goldEarned
+        displayGold()
         document.getElementById("outcomeTextGold").hidden = false
         document.getElementById("outcomeTextExp").hidden = false
         document.getElementById("outcomeTextGold").innerHTML = "You earned " + goldEarned + " gold by defeating " + enemy.name + "! You now have " + player.gold + " gold!"
@@ -2045,6 +2053,25 @@ function fight(){
                 }
             }
         }
+    }
+}
+
+function checkIfBreakableItems(item1, item2, enemyItem1, enemyItem2){
+    if (item1 !== null){
+        if (item1.oncePerBattle == true){
+            breakItemForBattle(item1, false)
+        }
+    }
+    if (item2 !== null){
+        if (item2.oncePerBattle == true){
+            breakItemForBattle(item2, false)
+        }
+    }
+    if (enemyItem1.oncePerBattle == true){
+        breakItemForBattle(enemyItem1, true)
+    }
+    if (enemyItem2.oncePerBattle == true){
+        breakItemForBattle(enemyItem2, true)
     }
 }
 
@@ -2238,6 +2265,7 @@ function autoBattle(enemy){
         player.enemySaveList[enemy.ID].timesDefeated += 1
         var goldEarned = Math.floor(Math.random() * (enemy.dropMax - enemy.dropMin + 1) + enemy.dropMin)
         player.gold += goldEarned
+        displayGold()
         var expEarned = enemy.maxHitPoints * (1 + enemy.ID)
         player.exp += expEarned
         updateHTML()
@@ -2287,6 +2315,17 @@ var optionsExp = {
     prefix: "You've earned ",
     suffix: " EXP!" 
 };
+
+function upgradeGoldGenerator(){
+    if (player.availableAP >= player.goldGeneratorUpgradeCost && powerTrainCooldown == false){   
+        player.availableAP -= player.goldGeneratorUpgradeCost
+        player.goldGeneratorUpgradeCost += 1
+        player.goldGeneratorLevel += 1
+        document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(player.availableAP)
+        document.getElementById("goldGeneratorLevelCurrent").innerHTML = "Current Gold Generator Level: " + numberWithCommas(player.goldGeneratorLevel)
+        document.getElementById("upgradeGoldGeneratorButton").innerHTML = "+1 Gold Generator Level: " + player.goldGeneratorUpgradeCost + " AP"
+    }
+}
 
 var overpowered = false
 function godMode(){
