@@ -597,7 +597,7 @@ function loadGame(){
                 }
                 var itemLevelCost = itemCheck.itemCost * 5 **(itemCheck.level + 1)
                 if (player.inventory[i].level < 4){
-                    document.getElementById("inventoryButton" + i).innerHTML = "Lvl Up Weapon<br/>" + itemLevelCost * 5 + " Gold"
+                    document.getElementById("inventoryButton" + i).innerHTML = "Lvl Up Weapon<br/>" + itemLevelCost + " Gold"
                     document.getElementById("inventoryCaption" + i).innerHTML = player.inventory[i].name + "<br/>Level: " + (player.inventory[i].level + 1)
                 }
                 else if (player.inventory[i].level == 4){
@@ -2244,7 +2244,7 @@ function setupFight(ID){
         expAnimation.reset()
     }
         document.getElementById("battleTab").style.display='none'
-        document.getElementById("fightSetupScreen").style.display='block'
+        document.getElementById("fightSetupScreen").style.display='block'    
         document.getElementById("enemyFightImage").src = enemy.imagePath
         document.getElementById("fightScreenEnemyName").innerHTML = enemy.name
         if (getEnemyAutoBattleScore(enemy) > getPlayerAutoBattleScore() || enemy.timesDefeated == 0){
