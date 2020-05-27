@@ -76,8 +76,8 @@ function update(){
     updateAttBar()
     updateDefBar()
     updateSpeBar()
-    goldGeneratorTicks += (player.goldGeneratorLevel)
-    if (goldGeneratorTicks >= 30){
+    goldGeneratorTicks += (player.goldGeneratorLevel) * 5
+    if (goldGeneratorTicks >= 100){
         goldGeneratorTicks = 0
         player.gold += 1
         displayGold()
@@ -406,7 +406,7 @@ function buyAP(){
             player.training -= player.buyAPCost
             player.availableAP += 1
             player.totalAP += 1
-            player.buyAPCost *= 1.6
+            player.buyAPCost *= 1.3
             player.boughtFirstAP = true
         }
         else{
@@ -414,7 +414,7 @@ function buyAP(){
                 player.training -= player.buyAPCost
                 player.availableAP += 1
                 player.totalAP += 1
-                player.buyAPCost *= 1.6
+                player.buyAPCost *= 1.3
             }
         }
         player.updateSpeed = 100
@@ -812,7 +812,7 @@ function updateBuyAPButton(){
             costOfAPShown = Number(runningTotal).toFixed(0)
         }
         counter += 1
-        runningTotal += player.buyAPCost * 1.6**counter
+        runningTotal += player.buyAPCost * 1.3**counter
     }
     if (counter == 0){
         counter = 1
@@ -2243,10 +2243,10 @@ function setupFight(ID){
     if (expAnimation !== null){
         expAnimation.reset()
     }
-        document.getElementById("battleTab").style.display='none';
-        document.getElementById("fightSetupScreen").style.display='block';
-        document.getElementById("enemyFightImage").src = enemy.imagePath;
-        document.getElementById("fightScreenEnemyName").innerHTML = enemy.name;
+        document.getElementById("battleTab").style.display='none'
+        document.getElementById("fightSetupScreen").style.display='block'
+        document.getElementById("enemyFightImage").src = enemy.imagePath
+        document.getElementById("fightScreenEnemyName").innerHTML = enemy.name
         if (getEnemyAutoBattleScore(enemy) > getPlayerAutoBattleScore() || enemy.timesDefeated == 0){
             document.getElementById("autoBattleButton").disabled = true
             document.getElementById("autoBattleButton").className = "mainButtonLayoutDisabled"
@@ -2255,7 +2255,7 @@ function setupFight(ID){
             document.getElementById("autoBattleButton").disabled = false
             document.getElementById("autoBattleButton").className = "mainButtonLayout"
         }
-        document.getElementById("autoBattlePlayerScore").innerHTML = getPlayerAutoBattleScore()
+        document.getElementById("autoBattlePlayerScore").innerHTML = Number(getPlayerAutoBattleScore()).toFixed(0)
         document.getElementById("autoBattleEnemyScore").innerHTML = getEnemyAutoBattleScore(enemy)
         document.getElementById("autoBattleVictories").innerHTML = "You've won " + enemy.autoBattleVictories + " times!"
         document.getElementById("autoBattleGold").innerHTML = "You've earned " + enemy.autoBattleTotalGold + " gold!"
@@ -2291,7 +2291,6 @@ var isLoading = false
 function autoBattle(enemy){
     var playerScore = getPlayerAutoBattleScore()
     var enemyScore = getEnemyAutoBattleScore(enemy)
-    console.log("Player: " + playerScore + " vs. Enemy: " + enemyScore)
     if (playerScore > enemyScore && isLoading == false){
         enemy.timesDefeated += 1
         player.enemySaveList[enemy.ID].timesDefeated += 1
@@ -2304,15 +2303,15 @@ function autoBattle(enemy){
         enemy.autoBattleVictories += 1
         enemy.autoBattleTotalGold += goldEarned
         enemy.autoBattleTotalExp += expEarned
+        ladderIncrement(enemy)
         if (enemy.ID == fightEnemyID){
             document.getElementById("autoBattleVictories").innerHTML = "You've won " + enemy.autoBattleVictories + " times!"
             goldAnimation = new CountUp("autoBattleGold", enemy.autoBattleTotalGold - goldEarned, enemy.autoBattleTotalGold, 0, 1, optionsGold);
             expAnimation = new CountUp("autoBattleExp", enemy.autoBattleTotalExp - expEarned, enemy.autoBattleTotalExp, 0, 1, optionsExp);
             goldAnimation.start()
             expAnimation.start()
+            document.getElementById("autoBattleEnemyScore").innerHTML = getEnemyAutoBattleScore(enemy)
         }
-        ladderIncrement(enemy)
-        console.log(Math.floor((enemy.ID + 1) / 3))
         if (Math.floor((enemy.ID ) / 3).toFixed(0) == player.currentZone - 1){
             updateEnemyDisplay(enemy)
         }
