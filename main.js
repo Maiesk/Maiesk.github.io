@@ -81,7 +81,7 @@ function update(){
     goldGeneratorTicks += (player.goldGeneratorLevel) * 5
     if (goldGeneratorTicks >= 100){
         goldGeneratorTicks = 0
-        player.gold += 1
+        player.gold += 1 * player.goldGeneratorMulti
         displayGold()
     }
     if (player.boughtFirstAP){
