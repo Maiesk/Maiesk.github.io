@@ -51,7 +51,8 @@ var player = {
     goldGeneratorUpgradeCost: 1,
     currentZone: 1,
     zoneMax: 1,
-    zones: []
+    zones: [],
+    boughtFirstAP: false
 }
 
 var enemyList = []
@@ -80,6 +81,9 @@ function update(){
         goldGeneratorTicks = 0
         player.gold += 1
         displayGold()
+    }
+    if (player.boughtFirstAP){
+        updateBuyAPButton()
     }
 }
 
@@ -398,10 +402,21 @@ function buyStatPoint(){
 
 function buyAP(){
     if (player.training >= player.buyAPCost && powerTrainCooldown == false){
-        player.training -= player.buyAPCost
-        player.availableAP += 1
-        player.totalAP += 1
-        player.buyAPCost *= 1.2
+        if (!player.boughtFirstAP){
+            player.training -= player.buyAPCost
+            player.availableAP += 1
+            player.totalAP += 1
+            player.buyAPCost *= 1.6
+            player.boughtFirstAP = true
+        }
+        else{
+            while (player.training > player.buyAPCost){
+                player.training -= player.buyAPCost
+                player.availableAP += 1
+                player.totalAP += 1
+                player.buyAPCost *= 1.6
+            }
+        }
         player.updateSpeed = 100
         player.updateSpeedCost = 1000
         if (player.idle == true && player.idleUpgradeMultiplier > 1){
@@ -644,7 +659,6 @@ function numberWithCommas(x){
 function updateHTML(){
     var trainingShown = Number(player.training).toFixed(0)
     var trainingPerSecondShown = Number(player.trainingPerClick * player.idleUpgradeMultiplier * 1000 / player.updateSpeed).toFixed(0)
-    var costOfAPShown = Number(player.buyAPCost).toFixed(0)
     var statPointCostShown = Number(player.statPointCost).toFixed(0)
     var goldGeneratorCostShown = Number(player.goldGeneratorUpgradeCost).toFixed(0)
     var goldShown = Number(player.gold).toFixed(0)
@@ -660,8 +674,9 @@ function updateHTML(){
     document.getElementById("currentTrainingPoints").innerHTML = "Training Points<br/><br/>" + numberWithCommas(trainingShown)
     document.getElementById("textAPTotal").innerHTML = "AP Total: " + numberWithCommas(player.totalAP)
     document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(player.availableAP)
-    document.getElementById("buyAPButton").innerHTML = "Prestige to get 1 AP<br/>" + numberWithCommas(costOfAPShown) + " Training Points" 
-    document.getElementById("buyStatPointButton").innerHTML = "Buy Stat Point<br/>" + numberWithCommas(statPointCostShown) + " Training Points"
+    if (player.maxStatPoints !== 0){
+        document.getElementById("buyStatPointButton").innerHTML = "Buy Stat Point<br/>" + numberWithCommas(statPointCostShown) + " Training Points"
+    }
     document.getElementById("perClickUpgrade").innerHTML = "Increase Training Level<br/>" + numberWithCommas(player.trainingPerClickCost) + " Training Points"
     document.getElementById("buyLevelUpButton").innerHTML = "EXP Level Up<br/>" + numberWithCommas(player.levelUpCost) + " EXP"
     document.getElementById("goldGeneratorLevelCurrent").innerHTML = "Current Gold Generator Level: " + numberWithCommas(player.goldGeneratorLevel)
@@ -786,6 +801,23 @@ function updateStatButtonHTML(){
         document.getElementById("minusTenSpeedButton").className = "greyedOutStatButton"
         document.getElementById("minusTenSpeedButton").disabled = true
     }
+}
+
+function updateBuyAPButton(){
+    var runningTotal = player.buyAPCost
+    var counter = 0
+    var costOfAPShown = Number(player.buyAPCost).toFixed(0)
+    while (player.training > runningTotal){
+        if (player.training > runningTotal){
+            costOfAPShown = Number(runningTotal).toFixed(0)
+        }
+        counter += 1
+        runningTotal += player.buyAPCost * 1.6**counter
+    }
+    if (counter == 0){
+        counter = 1
+    }
+    document.getElementById("buyAPButton").innerHTML = "Reset Training for " + counter + " AP<br/>" + numberWithCommas(costOfAPShown) + " Training Points" 
 }
 
 function createEnemy(ID, name, hitPoints, attackPoints, defensePoints, speedPoints, imagePath, ladderValue, timesDefeated, timesLostTo, equipment, dropMin, dropMax) {
@@ -2215,7 +2247,7 @@ function setupFight(ID){
         document.getElementById("fightSetupScreen").style.display='block';
         document.getElementById("enemyFightImage").src = enemy.imagePath;
         document.getElementById("fightScreenEnemyName").innerHTML = enemy.name;
-        if (getEnemyAutoBattleScore(enemy) > getPlayerAutoBattleScore()){
+        if (getEnemyAutoBattleScore(enemy) > getPlayerAutoBattleScore() || enemy.timesDefeated == 0){
             document.getElementById("autoBattleButton").disabled = true
             document.getElementById("autoBattleButton").className = "mainButtonLayoutDisabled"
         }
