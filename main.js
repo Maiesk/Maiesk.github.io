@@ -52,7 +52,9 @@ var player = {
     currentZone: 1,
     zoneMax: 1,
     zones: [],
-    boughtFirstAP: false
+    boughtFirstAP: false,
+    goldGeneratorMulti: 1,
+    goldGeneratorMultiUpgradeCost: 5
 }
 
 var enemyList = []
@@ -595,7 +597,7 @@ function loadGame(){
                     document.getElementById("goldShopItem" + ID).onclick = ""
                     document.getElementById("goldShopItemCaption" + ID).innerHTML = itemCheck.name  + "<br/>" + "Bought"
                 }
-                var itemLevelCost = itemCheck.itemCost * 5 **(itemCheck.level + 1)
+                var itemLevelCost = itemCheck.itemCost * 3 **(itemCheck.level + 1)
                 if (player.inventory[i].level < 4){
                     document.getElementById("inventoryButton" + i).innerHTML = "Lvl Up Weapon<br/>" + itemLevelCost + " Gold"
                     document.getElementById("inventoryCaption" + i).innerHTML = player.inventory[i].name + "<br/>Level: " + (player.inventory[i].level + 1)
@@ -957,7 +959,7 @@ function displayGold(){
 
 function itemLevelUp(index){
     item = player.inventory[index]
-    var itemLevelCost = item.itemCost * 5 **(item.level + 1)
+    var itemLevelCost = item.itemCost * 3 **(item.level + 1)
     if (player.gold >= itemLevelCost){
         item.level += 1
         player.gold -= itemLevelCost    
@@ -1023,7 +1025,7 @@ function itemLevelUp(index){
             item.darkDef += defenseDivider * percentageDarkDef
         }
         if (item.level < 4){
-            document.getElementById("inventoryButton" + index).innerHTML = "Lvl Up Weapon<br/>" + itemLevelCost * 5 + " Gold"
+            document.getElementById("inventoryButton" + index).innerHTML = "Lvl Up Weapon<br/>" + itemLevelCost * 3 + " Gold"
             document.getElementById("inventoryCaption" + index).innerHTML = player.inventory[index].name + "<br/>Level: " + (player.inventory[index].level + 1)
         }
         else{
@@ -1047,12 +1049,18 @@ function pushInventoryDisplay(index){
     image.className = "itemImages"
     image.style = "background-image: linear-gradient(to bottom right, rgb(50, 50, 50), rgb(20, 20, 20)); border: 1px solid white"
     caption.id = "inventoryCaption" + index
-    caption.innerHTML = player.inventory[index].name + "<br/>Level: " + (player.inventory[index].level + 1)
+    if (player.inventory[index].level < 5){
+        caption.innerHTML = player.inventory[index].name + "<br/>Level: " + (player.inventory[index].level + 1)
+        levelButton.innerHTML = "Lvl Up Weapon<br/>" + player.inventory[index].itemCost*3 + " Gold"
+    }
+    else{
+        caption.innerHTML = player.inventory[index].name + "<br/>Level: 5"
+        levelButton.innerHTML = "Lvl MAX"
+    }
     caption.className = "itemText"
     caption.style = "font-size: 25px"
     levelButton.className = "mainButtonLayout"
     levelButton.id = "inventoryButton" + index    
-    levelButton.innerHTML = "Lvl Up Weapon<br/>" + player.inventory[index].itemCost*5 + " Gold"
     levelButton.onclick = function(){itemLevelUp(index), setSelected(index)}
     figure.appendChild(image)
     figure.appendChild(caption)
@@ -1687,9 +1695,10 @@ var enemyFreeze = false
 function attack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex2){
     var enemyItem1 = enemy.equipment[enemyItemIndex1]
     var enemyItem2 = enemy.equipment[enemyItemIndex2]
-    if (enemy.frozen){
+    if (enemyWasFrozen == true){
         enemyItem1 = enemyWeapons[64]
         enemyItem2 = enemyWeapons[64]
+        enemyWasFrozen = false
     }
     if (player.frozen){
         playerItem1 = enemyWeapons[64]
@@ -2085,6 +2094,20 @@ function fight(){
                 }
             }
         }
+        else if ((fightEnemyID + 1) % 3 == 2){
+            if (enemyList[fightEnemyID - 1].timesDefeated > 0 && enemyList[fightEnemyID + 1].timesDefeated > 0){
+                if (player.zoneMax == player.currentZone){
+                    player.zoneMax += 1
+                }
+            }
+        }
+        else if ((fightEnemyID + 1) % 3 == 1){
+            if (enemyList[fightEnemyID + 1].timesDefeated > 0 && enemyList[fightEnemyID + 2].timesDefeated > 0){
+                if (player.zoneMax == player.currentZone){
+                    player.zoneMax += 1
+                }
+            }
+        }
     }
 }
 
@@ -2355,6 +2378,17 @@ function upgradeGoldGenerator(){
         document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(player.availableAP)
         document.getElementById("goldGeneratorLevelCurrent").innerHTML = "Current Gold Generator Level: " + numberWithCommas(player.goldGeneratorLevel)
         document.getElementById("upgradeGoldGeneratorButton").innerHTML = "+1 Gold Generator Level: " + player.goldGeneratorUpgradeCost + " AP"
+    }
+}
+
+function upgradeGoldGeneratorMulti(){
+    if (player.availableAP >= player.goldGeneratorMultiUpgradeCost && powerTrainCooldown == false){   
+        player.availableAP -= player.goldGeneratorMultiUpgradeCost
+        player.goldGeneratorMultiUpgradeCost *= 2
+        player.goldGeneratorMulti += 1
+        document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(player.availableAP)
+        document.getElementById("goldGeneratorMultiCurrent").innerHTML = "Current Gold Multiplier: " + numberWithCommas(player.goldGeneratorMulti)
+        document.getElementById("upgradeGoldGeneratorMultiButton").innerHTML = "+1x Gold Generator Multiplier: " + player.goldGeneratorMultiUpgradeCost + " AP"
     }
 }
 

@@ -12,7 +12,7 @@ function createEnemyList(){
     createEnemy(10, "Skulltan", 350, 100, 100, 100, "/images/enemies/pipo-enemy026.png", 35, 0, 0, [enemyWeapons[40], enemyWeapons[41], enemyWeapons[42], enemyWeapons[43]], 59, 100)
     createEnemy(11, "Seto Immanis", 500, 125, 125, 75, "/images/enemies/pipo-enemy021b.png", 50, 0, 0, [enemyWeapons[44], enemyWeapons[45], enemyWeapons[46], enemyWeapons[47]], 59, 100)
     createEnemy(12, "Skulltan Unbound", 800, 250, 250, 250, "/images/enemies/pipo-boss001.png", 70, 0, 0, [enemyWeapons[48], enemyWeapons[49], enemyWeapons[50], enemyWeapons[51]], 1500, 2000)
-    createEnemy(13, "Uzoro", 1750, 300, 500, 10000, "/images/enemies/pipo-boss002.png", 100, 0, 0, [enemyWeapons[52], enemyWeapons[53], enemyWeapons[54], enemyWeapons[55]], 5000, 7000)
+    createEnemy(13, "Uzoro", 1750, 300, 500, 1250, "/images/enemies/pipo-boss002.png", 100, 0, 0, [enemyWeapons[52], enemyWeapons[53], enemyWeapons[54], enemyWeapons[55]], 5000, 7000)
     createEnemy(14, "Seto Skull Fused", 3000, 700, 700, 100, "/images/enemies/pipo-boss004.png", 125, 0, 0, [enemyWeapons[56], enemyWeapons[57], enemyWeapons[58], enemyWeapons[59]], 4000, 6000)
     createEnemy(15, "Uzoro's Will", 10000, 1000, 1000, 100000, "/images/enemies/pipo-boss003.png", 2400, 0, 0, [enemyWeapons[60], enemyWeapons[61], enemyWeapons[62], enemyWeapons[63]], 10000, 10000)
 }
