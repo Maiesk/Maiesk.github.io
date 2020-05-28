@@ -1,5 +1,6 @@
 var player = {
-    name: "",
+    name: "Player",
+    imagePath: "/images/enemies/pipo-player001.png",
     attackPoints: 1,
     defensePoints: 1,
     hitPoints: 11,
@@ -59,6 +60,20 @@ var player = {
 
 var enemyList = []
 var defaultEnemyList = []
+
+function setName(name){
+    if (name.length < 20){
+        player.name = name
+    }
+}
+
+var playerImages = {
+    paths: ["/images/enemies/pipo-player001.png","/images/enemies/pipo-player002.png"]
+}
+
+function setPlayerImage(index){
+    player.imagePath = playerImages.paths(index)
+}
 
 var goldGeneratorTicks = 0
 function update(){
@@ -1097,7 +1112,7 @@ function createBattleOptionsPlayer(){
         useGrouping: true, 
         separator: ',', 
         decimal: '.', 
-        prefix: "Player<br/>",
+        prefix: player.name + "<br/>",
         suffix: "/" + player.maxHitPoints
     };
 }
@@ -1555,6 +1570,7 @@ function initiateBattle(fightEnemyID){
     document.getElementById("fightButton").style = "background-color: #474646; color: #373636; min-width: 600px;"
     var enemy = enemyList[fightEnemyID]
     document.getElementById("enemyBattleImage").src = enemy.imagePath
+    document.getElementById("playerBattleImage").src = player.imagePath
     if (player.hitPoints !== player.maxHitPoints){
         player.hitPoints = player.maxHitPoints
     }
@@ -1584,7 +1600,7 @@ function initiateBattle(fightEnemyID){
 
 function updateHP(enemy){    
     document.getElementById("battleScreenEnemyName").innerHTML = enemy.name + "<br/>" + enemy.hitPoints + "/" + enemy.maxHitPoints
-    document.getElementById("battleScreenPlayerName").innerHTML = "Player <br/>" + player.hitPoints + "/" + player.maxHitPoints
+    document.getElementById("battleScreenPlayerName").innerHTML = player.name + "<br/>" + player.hitPoints + "/" + player.maxHitPoints
 }
 
 function loadEquipmentForBattle(){
@@ -2269,7 +2285,9 @@ function setupFight(ID){
         document.getElementById("battleTab").style.display='none'
         document.getElementById("fightSetupScreen").style.display='block'    
         document.getElementById("enemyFightImage").src = enemy.imagePath
+        document.getElementById("playerFightImage").src = player.imagePath
         document.getElementById("fightScreenEnemyName").innerHTML = enemy.name
+        document.getElementById("fightScreenPlayerName").innerHTML = player.name
         if (getEnemyAutoBattleScore(enemy) > getPlayerAutoBattleScore() || enemy.timesDefeated == 0){
             document.getElementById("autoBattleButton").disabled = true
             document.getElementById("autoBattleButton").className = "mainButtonLayoutDisabled"

@@ -6,7 +6,7 @@
     <link href='https://fonts.googleapis.com/css?family=Fredoka One' rel='stylesheet'>
     <title>Idle Battle Test Version</title>
     <script>
-        function show(shown, hidden0, hidden1, hidden2) {
+        function show(shown, hidden0, hidden1, hidden2, hidden3) {
             document.getElementById(shown).style.display='block';
             if (hidden0 != null){
                 document.getElementById(hidden0).style.display='none';
@@ -16,6 +16,9 @@
             }
             if (hidden2 != null){
                 document.getElementById(hidden2).style.display='none';
+            }
+            if (hidden3 != null){
+                document.getElementById(hidden3).style.display='none';
             }
             return false;
         }
@@ -339,9 +342,10 @@
         <button id="loadButton" class="mainButtonLayout" onclick="loadGame()">Load</button>
         <br>
         <br>
-        <button class="navMenuButton" onclick="return show('trainingTab','shopTab','battleTab','fightSetupScreen')">Training</button>
-        <button class="navMenuButton" onclick="return show('battleTab','trainingTab','shopTab','fightSetupScreen')">Battle</button>
-        <button class="navMenuButton" onclick="return show('shopTab','trainingTab','battleTab','fightSetupScreen')">Shop</button>
+        <button class="navMenuButton" onclick="return show('trainingTab','shopTab','battleTab','fightSetupScreen','settingsTab')">Training</button>
+        <button class="navMenuButton" onclick="return show('battleTab','trainingTab','shopTab','fightSetupScreen','settingsTab')">Battle</button>
+        <button class="navMenuButton" onclick="return show('shopTab','trainingTab','battleTab','fightSetupScreen','settingsTab')">Shop</button>
+        <button class="navMenuButton" onclick="return show('settingsTab','shopTab','trainingTab','battleTab','fightSetupScreen')">Settings</button>
         <br>
         <p id="loadingText" hidden class="standardText" style="font-size: 50px">Loading...</p>
         <br>
@@ -671,7 +675,7 @@
             <center>
             <table>
                 <tr>
-                    <td><figure><img class="enemyImage" src="/images/enemies/pipo-enemy014b.png"><figcaption class="standardText" style="text-align: center">Player</figcaption></figure></td>
+                    <td><figure><img id="playerFightImage" class="enemyImage" src=""><figcaption id="fightScreenPlayerName" class="standardText" style="text-align: center"></figcaption></figure></td>
                     <td style="vertical-align: bottom; padding-bottom: 50px; max-width: 100px;"><p class="standardText" style="text-align: center">VS</p></td>
                     <td><figure><img id="enemyFightImage" class="enemyImage" src=""><figcaption id="fightScreenEnemyName" class="standardText" style="text-align: center"></figcaption></figure></td>
                 </tr>
@@ -710,7 +714,7 @@
             <button id="outcomeButtonRestart" style="margin-top: 10px" style="width: 300px" class="navMenuButton" onclick="startFight(fightEnemyID)">Restart</button>
             <table style="border-collapse: collapse; border-spacing: 0px; padding: 0px">
                 <tr style="max-height: 20px; border-collapse: collapse; border-spacing: 0px; padding: 0px">
-                    <td style="max-height: 20px"><figure><img class="enemyImage" src="/images/enemies/pipo-enemy014b.png"><figcaption id="battleScreenPlayerName" class="standardText" style="text-align: center">Player</figcaption></figure></td>
+                    <td style="max-height: 20px"><figure><img id="playerBattleImage" class="enemyImage" src=""><figcaption id="battleScreenPlayerName" class="standardText" style="text-align: center"></figcaption></figure></td>
                     <td style="max-width: 100px; max-height: 20px"></td>
                     <td style="max-height: 20px"><figure><img id="enemyBattleImage" class="enemyImage" src=""><figcaption id="battleScreenEnemyName" class="standardText" style="text-align: center"></figcaption></figure></td>
                 </tr>
@@ -849,6 +853,9 @@
                     </table>
                 
             </div>
+        </div>
+        <div id="settingsTab" class="divBackground" style="min-height: 800px">
+
         </div>
     </center>
         
