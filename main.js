@@ -2147,7 +2147,7 @@ function fight(){
             ladderIncrement(secretEnemyList[fightEnemyID - 90])
         }
         else{
-            enemyList[fightEnemyID].timesLostTo += 1
+            enemyList[fightEnemyID].timesDefeated += 1
             player.enemySaveList[fightEnemyID].timesDefeated += 1
             ladderIncrement(enemyList[fightEnemyID])
             player.zones[player.currentZone - 1].enemies[fightEnemyID % 3] = enemyList[fightEnemyID]
