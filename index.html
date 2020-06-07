@@ -6,7 +6,7 @@
     <link href='https://fonts.googleapis.com/css?family=Fredoka One' rel='stylesheet'>
     <title>Idle Battle Test Version</title>
     <script>
-        function show(shown, hidden0, hidden1, hidden2, hidden3) {
+        function show(shown, hidden0, hidden1, hidden2, hidden3, hidden4) {
             document.getElementById(shown).style.display='block';
             if (hidden0 != null){
                 document.getElementById(hidden0).style.display='none';
@@ -20,6 +20,18 @@
             if (hidden3 != null){
                 document.getElementById(hidden3).style.display='none';
             }
+            if (hidden4 != null){
+                document.getElementById(hidden4).style.display='none';
+            }
+            if (shown == "mapTab"){
+                enableMove()
+            }
+            else if (shown !== "mapTab"){
+                onMap = false
+            }
+            if (shown == "playerTab"){
+                updateAvatarGrid()
+            }
             return false;
         }
         function startFight(fightEnemyID){
@@ -32,16 +44,33 @@
             return show('trainingTab','shopTab','battleTab','fightSetupScreen')
         }
         function returnToEnemies(){
-            show('navMenu','battleScreen')
+            show('navMenu','battleScreen','inventoryTab')
             show('battleTab','shopTab','trainingTab','fightSetupScreen')
             fighting = false
             postFight = false
             return show('enemiesTab')
         }
+        function returnToMap(){
+            show('navMenu','battleScreen','inventoryTab')
+            show('mapTab','shopTab','trainingTab','fightSetupScreen')
+            fighting = false
+            postFight = false
+            return show('mapTab')
+        }
+        function switchAvatarDisplay(){
+            if (document.getElementById('avatarGridPageTwo').style.display == 'none'){
+                document.getElementById('avatarGridPageOne').style.display = 'none'
+                document.getElementById('avatarGridPageTwo').style.display = ''
+                document.getElementById('avatarPageSwitchButton').innerHTML = "Previous Page"
+            }
+            else{
+                document.getElementById('avatarGridPageTwo').style.display = 'none'
+                document.getElementById('avatarGridPageOne').style.display = ''
+                document.getElementById('avatarPageSwitchButton').innerHTML = "Next Page"
+            }
+        }
     </script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/countup.js/1.8.2/countUp.min.js'></script>
-    <link rel="stylesheet" type="text/css" href="https://loadingio.github.io/loading-bar/dist/loading-bar.css" />
-    <script src="https://loadingio.github.io/loading-bar/dist/loading-bar.js"></script>
     <style>
         .standardText{
             opacity: 1;
@@ -153,6 +182,8 @@
             -webkit-text-stroke-color: black;
             color: #ac9444;
             font-size: 30px;
+            font-family: Fredoka One; 
+            font-weight: bold;
         }
         .itemText{
             opacity: 1;
@@ -258,6 +289,55 @@
             font-family: Fredoka One; 
             width: 400px;
         }
+        .mapGrid {
+            display: grid;
+            grid-template-columns: auto auto auto auto auto auto auto auto auto auto;
+            grid-template-rows: auto auto auto auto auto auto;
+            grid-gap: 0px;
+            height: 360px;
+            width: 600px;
+        }
+        .mapGrid > div {
+            width: 60px;
+            height: 60px;
+            background-color: green;
+        }
+        .zoneUpGrid {
+            display: grid;
+            grid-template-columns: auto auto auto auto auto auto auto auto auto auto;
+            grid-template-rows: auto;
+            grid-gap: 0px;
+            height: 60px;
+            width: 600px;
+        }
+        .zoneUpGrid > div {
+            width: 60px;
+            height: 60px;
+        }
+        .zoneDownGrid {
+            display: grid;
+            grid-template-columns: auto auto auto auto auto auto auto auto auto auto;
+            grid-template-rows: auto;
+            grid-gap: 0px;
+            height: 60px;
+            width: 600px;
+        }
+        .zoneDownGrid > div {
+            width: 60px;
+            height: 60px;
+        }
+        .avatarGrid {
+            display: grid;
+            grid-template-columns: auto auto auto auto auto;
+            grid-template-rows: auto auto auto;
+            grid-gap: 10px;
+            height: 250px;
+            width: 415px;
+        }
+        .avatarGrid > div {
+            width: 75px;
+            height: 75px;
+        }
         .ldBar path.mainline {
             stroke-width: 5;
             stroke: #ac9444;
@@ -291,7 +371,7 @@
             width: 0%; 
             height: 50px; 
             background: linear-gradient(to right, #ac9444, #94b0da 200px);
-            border-radius: 5px
+            border-radius: 5px;
         } 
         #Progress_StatusAtt { 
             border: 1px solid #94b0da;
@@ -342,10 +422,11 @@
         <button id="loadButton" class="mainButtonLayout" onclick="loadGame()">Load</button>
         <br>
         <br>
-        <button class="navMenuButton" onclick="return show('trainingTab','shopTab','battleTab','fightSetupScreen','settingsTab')">Training</button>
-        <button class="navMenuButton" onclick="return show('battleTab','trainingTab','shopTab','fightSetupScreen','settingsTab')">Battle</button>
-        <button class="navMenuButton" onclick="return show('shopTab','trainingTab','battleTab','fightSetupScreen','settingsTab')">Shop</button>
-        <button class="navMenuButton" onclick="return show('settingsTab','shopTab','trainingTab','battleTab','fightSetupScreen')">Settings</button>
+        <button class="navMenuButton" onclick="return show('trainingTab','shopTab','battleTab','fightSetupScreen','mapTab','playerTab')">Training</button>
+        <button class="navMenuButton" onclick="return show('mapTab','shopTab','trainingTab','battleTab','fightSetupScreen','playerTab')">Map</button>
+        <button class="navMenuButton" onclick="return show('battleTab','trainingTab','shopTab','fightSetupScreen','mapTab','playerTab')">Battle</button>
+        <button class="navMenuButton" onclick="return show('shopTab','trainingTab','battleTab','fightSetupScreen','mapTab','playerTab')">Shop</button>
+        <button class="navMenuButton" onclick="return show('playerTab','mapTab','shopTab','trainingTab','battleTab','fightSetupScreen')">Player</button>
         <br>
         <p id="loadingText" hidden class="standardText" style="font-size: 50px">Loading...</p>
         <br>
@@ -566,8 +647,8 @@
                 <font style="font-family: Fredoka One; font-weight: bold">
                 <p class="apPageText" style="display: inline-block; margin-right: 20px" id="zoneNumber">Zone 1 :</p>
                 <p class="apPageText" style="display: inline-block; margin-right: 20px" id="zoneName">The Forest Outskirts</p>
-                <button class="mainButtonLayout" style="margin-right: 5px; max-height: 50px" onclick="zoneUp()">Ascend</button>
-                <button class="mainButtonLayout" onclick="zoneDown()">Descend</button>
+                <button id="ascendButton" class="mainButtonLayout" style="margin-right: 5px; max-height: 50px" onclick="zoneUp()">Ascend</button>
+                <button id="descendButton" class="mainButtonLayout" onclick="zoneDown()">Descend</button>
                 <br>
                 <div id="enemyDiv0" style="width: 300px; border: 1px solid #ac9444; background-color: rgb(27, 27, 41); display: inline-block">
                     <center><img id="enemy0" class="enemyImage" src="" onclick="setupFight(0)"></center>
@@ -633,7 +714,7 @@
                         </tr>
                     </table>
                 </div>
-                <div id="enemyDiv2" style="width: 300px; border: 1px solid #ac9444; background-color: rgb(27, 27, 41); display:inline-block">
+                <div id="enemyDiv2" style="width: 300px; border: 1px solid #ac9444; background-color: rgb(27, 27, 41); display:inline-block"> 
                     <center><img id="enemy2" class="enemyImage" src="" onclick="setupFight(2)"></center>
                     <table stlye="width: 300px">
                         <th colspan="2">
@@ -665,7 +746,7 @@
                         </tr>
                     </table>
                 </div> 
-                               
+                <p class="apPageText" id="enemyScreenHelpText" hidden>Click on an enemy to battle!<br/>Defeat all enemies to progress!</p> 
             </font>
             </div>
             </center>
@@ -710,8 +791,10 @@
             <p id="outcomeText" style="margin-top: 10px" style="width: 300px" class="standardText" hidden>OUTCOME</p>
             <p id="outcomeTextGold" style="margin-top: 10px" class="standardText" hidden>OUTCOME</p>
             <p id="outcomeTextExp" style="margin-top: 10px" class="standardText" hidden>OUTCOME</p>
-            <button id="outcomeButtonReturn" style="margin-top: 10px" style="width: 300px" class="navMenuButton" onclick="returnToEnemies()">Go Back</button>
             <button id="outcomeButtonRestart" style="margin-top: 10px" style="width: 300px" class="navMenuButton" onclick="startFight(fightEnemyID)">Restart</button>
+            <a style="padding: 10px" class="apPageText">Return to: </a>
+            <button id="outcomeButtonEnemies" style="margin-top: 10px" style="width: 300px" class="navMenuButton" onclick="returnToEnemies()">Enemies</button>
+            <button id="outcomeButtonMap" style="margin-top: 10px" style="width: 300px" class="navMenuButton" onclick="returnToMap()">Map</button>
             <table style="border-collapse: collapse; border-spacing: 0px; padding: 0px">
                 <tr style="max-height: 20px; border-collapse: collapse; border-spacing: 0px; padding: 0px">
                     <td style="max-height: 20px"><figure><img id="playerBattleImage" class="enemyImage" src=""><figcaption id="battleScreenPlayerName" class="standardText" style="text-align: center"></figcaption></figure></td>
@@ -836,26 +919,61 @@
             <div style="display: inline-block; vertical-align: top">
                     <table>
                             <tr>
-                                    <td colspan="2"><button id="stanceButtonWild" class="mainButtonLayout" style="min-width: 194px;" onclick="selectStance('Wild')">Wild</button></td>
-                                </tr>
-                                
-                                <tr>
-                                    <td colspan="2"><button id="stanceButtonStrong" class="mainButtonLayout" style="min-width: 194px;" onclick="selectStance('Strong')">Attacking</button></td>
-                                </tr>
-                                
-                                <tr>
-                                    <td colspan="2"><button id="stanceButtonSteady" class="mainButtonLayout" style="min-width: 194px;" onclick="selectStance('Steady')">Steady</button></td>
-                                </tr>
-                                
-                                <tr>
-                                    <td colspan="2"><button id="stanceButtonDefensive" class="mainButtonLayout" style="min-width: 194px;" onclick="selectStance('Defensive')">Defensive</button></td>
-                                </tr>
+                                <td colspan="2"><button id="stanceButtonWild" class="mainButtonLayout" style="min-width: 194px;" onclick="selectStance('Wild')">Wild</button></td>
+                            </tr>            
+                            <tr>
+                                <td colspan="2"><button id="stanceButtonStrong" class="mainButtonLayout" style="min-width: 194px;" onclick="selectStance('Strong')">Attacking</button></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><button id="stanceButtonSteady" class="mainButtonLayout" style="min-width: 194px;" onclick="selectStance('Steady')">Steady</button></td>
+                            </tr>                           
+                            <tr>
+                                <td colspan="2"><button id="stanceButtonDefensive" class="mainButtonLayout" style="min-width: 194px;" onclick="selectStance('Defensive')">Defensive</button></td>
+                            </tr>
                     </table>
                 
             </div>
         </div>
-        <div id="settingsTab" class="divBackground" style="min-height: 800px">
+        <div id="playerTab" class="divBackground" style="height: 700px; display: none">
+            <p class="apPageText">Set your name and avatar.<br/>Unlock more avatars by defeating enemies.</p>
+            <div style="display: inline-block">
+                <figure>
+                    <img id="playerImage" src="/images/enemies/pipo-player001.png" style="height: 400px; width: 400px">
+                    <figcaption id="playerNameDisplay" class="apPageText">Player</figcaption>
+                </figure>
+            </div>
+            <div style="display: inline-block; text-align: center">
+                <button id="avatarPageSwitchButton" class="mainButtonLayout" onclick="switchAvatarDisplay()">Next Page</button>
+                <div id="avatarGridPageOne" class="avatarGrid">
 
+                </div>
+                <div id="avatarGridPageTwo" class="avatarGrid" style="display: none">
+
+                </div>
+                <br>
+                <textarea id="playerNameBox" class="apPageText" style="margin-bottom: 20px; background-color: black; text-align: center">Player</textarea>
+                <br>
+                <button class="mainButtonLayout" onclick="setName()">Change Name</button>
+            </div>
+        </div>
+        <div id="mapTab" class="divBackground" style="display: none">
+            <p class="apPageText" style="display: inline-block; margin-right: 20px" id="zoneNumberMap">Zone 1 :</p>
+            <p class="apPageText" style="display: inline-block; margin-right: 20px" id="zoneNameMap">The Forest Outskirts</p>
+            <br>
+            <div id="zoneUpGrid" class="zoneUpGrid">
+
+            </div>
+            <div id="mapGrid" class="mapGrid">
+            
+            </div>
+            
+            <div id="zoneDownGrid" class="zoneDownGrid">
+
+            </div>
+            <br>
+            <button class="mainButtonLayout" onclick="respawnEnemies()" hidden>Respawn Enemies</button>
+            <p class="apPageText">W - Up  |  A - Left  |  S - Down  |  D - Right</p>
+            <p class="apPageText">Defeat all non-secret enemies to progress!<br/>Secret enemies will appear at random.</p>
         </div>
     </center>
         

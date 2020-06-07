@@ -60,19 +60,49 @@ var player = {
 
 var enemyList = []
 var defaultEnemyList = []
+var secretEnemyList = []
 
-function setName(name){
+function setName(){
+    var name = document.getElementById("playerNameBox").value
     if (name.length < 20){
         player.name = name
     }
+    document.getElementById("playerNameDisplay").innerHTML = player.name
 }
 
 var playerImages = {
     paths: ["/images/enemies/pipo-player001.png","/images/enemies/pipo-player002.png"]
 }
 
+function updateAvatarGrid(){
+    document.getElementById("avatarGridPageOne").innerHTML = ""
+    document.getElementById("avatarGridPageTwo").innerHTML = ""
+    for (var i = 0; i < playerImages.paths.length; i++){
+        var cell = document.createElement("div")
+        var image = document.createElement("img")
+        cell.style = "width: 75px; height: 75px"
+        image.src = playerImages.paths[i]
+        image.id = "avatarImage" + i
+        image.style = "width: 75px; height: 75px"
+        cell.appendChild(image)
+        if (i < 15){
+            document.getElementById("avatarGridPageOne").appendChild(cell)
+        }
+        else{
+            document.getElementById("avatarGridPageTwo").appendChild(cell)
+        }
+        setAvatarClickable(i)
+    }
+}
+
+function setAvatarClickable(index){
+    document.getElementById("avatarImage" + index).onclick = function(){setPlayerImage(index)}
+}
+
 function setPlayerImage(index){
-    player.imagePath = playerImages.paths(index)
+    player.imagePath = playerImages.paths[index]
+    document.getElementById("playerImage").src = player.imagePath
+    placeOnGrid()
 }
 
 var goldGeneratorTicks = 0
@@ -120,7 +150,7 @@ function updateHPBar() {
                     elementHP.style = "background: linear-gradient(to right, #94b0da, #ac9444 200px);"
                 }
                 player.maxHitPoints += player.statPointUpgradeMultiplier
-                player.allItems[14].heal = Math.round(player.maxHitPoints / 20)
+                player.allItems[14].heal = Math.round(player.maxHitPoints / 10)
                 player.currentMaxHP = 100 * (1.05**Math.sqrt(player.maxHitPoints - 10)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/20)))
                 updateHTML()
             } 
@@ -837,7 +867,7 @@ function updateBuyAPButton(){
     document.getElementById("buyAPButton").innerHTML = "Reset Training for " + counter + " AP<br/>" + numberWithCommas(costOfAPShown) + " Training Points" 
 }
 
-function createEnemy(ID, name, hitPoints, attackPoints, defensePoints, speedPoints, imagePath, ladderValue, timesDefeated, timesLostTo, equipment, dropMin, dropMax) {
+function createEnemy(ID, name, hitPoints, attackPoints, defensePoints, speedPoints, imagePath, ladderValue, timesDefeated, timesLostTo, equipment, dropMin, dropMax, rarity, moveSpeed) {
     var enemy = {
         ID: ID,
         name: name,
@@ -856,16 +886,24 @@ function createEnemy(ID, name, hitPoints, attackPoints, defensePoints, speedPoin
         autoBattleVictories: 0,
         autoBattleTotalGold: 0,
         autoBattleTotalExp: 0,
-        frozen: false
+        frozen: false,
+        discovered: false,
+        rarity: rarity,
+        moveSpeed: moveSpeed
     }
     var enemySaveStats = {
         timesDefeated: timesDefeated,
         timesLostTo: timesLostTo
     }
-    enemyList[enemyList.length] = enemy
-    defaultEnemyList[defaultEnemyList.length] = enemy
-    if (player.enemySaveList.length < 16){
-        player.enemySaveList[player.enemySaveList.length] = enemySaveStats
+    if (ID >= 90){
+        secretEnemyList[secretEnemyList.length] = enemy
+    }
+    else{
+        enemyList[enemyList.length] = enemy
+        defaultEnemyList[defaultEnemyList.length] = enemy
+        if (player.enemySaveList.length < 16){
+            player.enemySaveList[player.enemySaveList.length] = enemySaveStats
+        }
     }
     return enemy;
 }
@@ -917,10 +955,11 @@ function createItem(name, ID, fire, air, earth, water, melee, light, dark, fireD
     return item;
 }
 
-function createZone(ID, name, enemies){
+function createZone(ID, name, color, enemies){
     var zone = {
         ID: ID,
         name: name,
+        color: color,
         enemies: enemies
     }
     player.zones.push(zone)
@@ -1568,7 +1607,12 @@ function initiateBattle(fightEnemyID){
     document.getElementById("enemyHealRow1").hidden = true
     document.getElementById("attackOrder").innerHTML = ""
     document.getElementById("fightButton").style = "background-color: #474646; color: #373636; min-width: 600px;"
-    var enemy = enemyList[fightEnemyID]
+    if (fightEnemyID > 89){
+        var enemy = secretEnemyList[fightEnemyID - 90]
+    }
+    else {
+        var enemy = enemyList[fightEnemyID]
+    }
     document.getElementById("enemyBattleImage").src = enemy.imagePath
     document.getElementById("playerBattleImage").src = player.imagePath
     if (player.hitPoints !== player.maxHitPoints){
@@ -2011,7 +2055,12 @@ function fight(){
     hideAllBattleRows()
     document.getElementById("damageLeft").innerHTML = "0 DMG"
     document.getElementById("damageRight").innerHTML = "0 DMG"
-    enemy = enemyList[fightEnemyID]
+    if (fightEnemyID > 89){
+        enemy = secretEnemyList[fightEnemyID - 90]
+    }
+    else {
+        enemy = enemyList[fightEnemyID]
+    }
     var enemyWeaponIndexOne = Math.floor(Math.random() * enemy.equipment.length)
     var enemyWeaponIndexTwo = Math.floor(Math.random() * enemy.equipment.length)
     var playerItem1 = selectedItems[0]
@@ -2075,9 +2124,14 @@ function fight(){
         document.getElementById("outcomeText").innerHTML = "You have been defeated!"
         fighting = false
         postFight = true
-        enemyList[fightEnemyID].timesLostTo += 1
-        player.enemySaveList[fightEnemyID].timesLostTo += 1
-        player.zones[player.currentZone - 1].enemies[fightEnemyID % 3] = enemyList[fightEnemyID]
+        if (fightEnemyID > 89){
+            secretEnemyList[fightEnemyID - 90].timesLostTo += 1
+        }
+        else{
+            enemyList[fightEnemyID].timesLostTo += 1
+            player.enemySaveList[fightEnemyID].timesLostTo += 1
+            player.zones[player.currentZone - 1].enemies[fightEnemyID % 3] = enemyList[fightEnemyID]
+        }
         returnBrokenItems()
         updateEnemyDisplay(enemy)
     }
@@ -2088,8 +2142,16 @@ function fight(){
         document.getElementById("outcomeText").hidden = false
         document.getElementById("outcomeText").innerHTML = "You are victorious!"
         fighting = false
-        enemyList[fightEnemyID].timesDefeated += 1
-        player.enemySaveList[fightEnemyID].timesDefeated += 1
+        if (fightEnemyID > 89){
+            secretEnemyList[fightEnemyID - 90].timesDefeated += 1
+            ladderIncrement(secretEnemyList[fightEnemyID - 90])
+        }
+        else{
+            enemyList[fightEnemyID].timesLostTo += 1
+            player.enemySaveList[fightEnemyID].timesDefeated += 1
+            ladderIncrement(enemyList[fightEnemyID])
+            player.zones[player.currentZone - 1].enemies[fightEnemyID % 3] = enemyList[fightEnemyID]
+        }
         var goldEarned = Math.floor(Math.random() * (enemy.dropMax - enemy.dropMin + 1) + enemy.dropMin)
         player.gold += goldEarned
         displayGold()
@@ -2097,30 +2159,36 @@ function fight(){
         document.getElementById("outcomeTextExp").hidden = false
         document.getElementById("outcomeTextGold").innerHTML = "You earned " + goldEarned + " gold by defeating " + enemy.name + "! You now have " + player.gold + " gold!"
         document.getElementById("outcomeTextExp").innerHTML = "You earned " + enemy.maxHitPoints * (1 + enemy.ID) + " EXP by defeating " + enemy.name + "! You now have " + player.exp + " EXP!"
-        ladderIncrement(enemyList[fightEnemyID])
-        player.zones[player.currentZone - 1].enemies[fightEnemyID % 3] = enemyList[fightEnemyID]
         returnBrokenItems()
         returnEnemyBrokenItems(enemy)
         updateEnemyDisplay(enemy)
+        zoneButtonChecker()
+        if (enemy.timesDefeated == 1){
+            playerImages.paths.push(enemy.imagePath)
+        }
         postFight = true
-        if ((fightEnemyID + 1) % 3 == 0){
-            if (enemyList[fightEnemyID - 1].timesDefeated > 0 && enemyList[fightEnemyID - 2].timesDefeated > 0){
-                if (player.zoneMax == player.currentZone){
-                    player.zoneMax += 1
+        if (fightEnemyID < 90){
+            if ((fightEnemyID + 1) % 3 == 0){
+                if (enemyList[fightEnemyID - 1].timesDefeated > 0 && enemyList[fightEnemyID - 2].timesDefeated > 0){
+                    if (player.zoneMax == player.currentZone){
+                        player.zoneMax += 1
+                    }
                 }
             }
-        }
-        else if ((fightEnemyID + 1) % 3 == 2){
-            if (enemyList[fightEnemyID - 1].timesDefeated > 0 && enemyList[fightEnemyID + 1].timesDefeated > 0){
-                if (player.zoneMax == player.currentZone){
-                    player.zoneMax += 1
+            else if ((fightEnemyID + 1) % 3 == 2){
+                if (enemyList[fightEnemyID - 1].timesDefeated > 0 && enemyList[fightEnemyID + 1].timesDefeated > 0){
+                    if (player.zoneMax == player.currentZone){
+                        player.zoneMax += 1
+                    }
                 }
             }
-        }
-        else if ((fightEnemyID + 1) % 3 == 1){
-            if (enemyList[fightEnemyID + 1].timesDefeated > 0 && enemyList[fightEnemyID + 2].timesDefeated > 0){
-                if (player.zoneMax == player.currentZone){
-                    player.zoneMax += 1
+            else if ((fightEnemyID + 1) % 3 == 1){
+                if (player.currentZone !== 6){
+                    if (enemyList[fightEnemyID + 1].timesDefeated > 0 && enemyList[fightEnemyID + 2].timesDefeated > 0){
+                        if (player.zoneMax == player.currentZone){
+                            player.zoneMax += 1
+                        }
+                    }
                 }
             }
         }
@@ -2206,6 +2274,13 @@ function loadLadderFromWinLoss(){
 
 function updateEnemyDisplay(enemy){
     displayID = enemy.ID % 3
+    if (enemy.discovered == false){
+        document.getElementById("enemyDiv" + displayID).style.display = "none"
+    }
+    else {
+        document.getElementById("enemyDiv" + displayID).style.display = "inline-block"
+        document.getElementById("enemyScreenHelpText").hidden = false
+    }
     document.getElementById("enemy" + displayID).onclick = function(){setupFight(enemy.ID)}
     document.getElementById("enemy" + displayID).src = ""
     document.getElementById("enemy" + displayID).src = enemy.imagePath
@@ -2246,6 +2321,22 @@ function zoneUp(){
         document.getElementById("enemyDiv2").style.display = "none"
     }
     loadZone(player.currentZone)
+    animateZoneChange()
+    var zoneChecker = false
+    for (var i = 0; i < 3; i++){
+        if (enemyList[(player.currentZone - 1) * 3 + i] !== undefined){
+            if (enemyList[(player.currentZone - 1) * 3 + i].discovered == true){
+                zoneChecker = true
+            }
+        }
+    }
+    if (zoneChecker == true){
+        document.getElementById("enemyScreenHelpText").hidden = false
+    }
+    else {
+        document.getElementById("enemyScreenHelpText").hidden = true
+    }
+    console.log(zoneChecker)
 }
 
 function zoneDown(){
@@ -2257,6 +2348,7 @@ function zoneDown(){
         player.currentZone -= 1
     }
     loadZone(player.currentZone)
+    animateZoneChange()
 }
 
 
@@ -2267,7 +2359,31 @@ function loadZone(zone){
     }
     document.getElementById("zoneNumber").innerHTML = "Zone " + (zoneLoader.ID + 1)     
     document.getElementById("zoneName").innerHTML = zoneLoader.name
+    document.getElementById("zoneNumberMap").innerHTML = "Zone " + (zoneLoader.ID + 1)     
+    document.getElementById("zoneNameMap").innerHTML = zoneLoader.name
+    zoneButtonChecker()
 }
+
+function zoneButtonChecker(){
+    if (player.currentZone == player.zoneMax){
+        document.getElementById("ascendButton").className = "mainButtonLayoutDisabled"
+        document.getElementById("ascendButton").disabled = true
+    }
+    else{
+        document.getElementById("ascendButton").className = "mainButtonLayout"
+        document.getElementById("ascendButton").disabled = false
+    }
+    if (player.currentZone == 1){
+        document.getElementById("descendButton").className = "mainButtonLayoutDisabled"
+        document.getElementById("descendButton").disabled = true
+
+    }
+    else{
+        document.getElementById("descendButton").className = "mainButtonLayout"
+        document.getElementById("descendButton").disabled = false
+    }
+}
+
 updateHTML()
 
 var fightEnemyID = 0
@@ -2275,7 +2391,12 @@ var goldAnimation = null
 var expAnimation = null
 function setupFight(ID){
     fightEnemyID = ID
-    enemy = enemyList[ID]
+    if (ID > 89){
+        enemy = secretEnemyList[ID - 90]
+    }
+    else {
+        enemy = enemyList[ID]
+    }
     if (goldAnimation !== null){
         goldAnimation.reset()
     }
@@ -2283,6 +2404,7 @@ function setupFight(ID){
         expAnimation.reset()
     }
         document.getElementById("battleTab").style.display='none'
+        document.getElementById("mapTab").style.display='none'
         document.getElementById("fightSetupScreen").style.display='block'    
         document.getElementById("enemyFightImage").src = enemy.imagePath
         document.getElementById("playerFightImage").src = player.imagePath
@@ -2435,4 +2557,358 @@ function godMode(){
     else{
         console.log("Aren't you overpowered enough?")
     }
+}
+
+function populateMapGrid(){
+    for (var i = 0; i < 60; i++){
+        var cell = document.createElement("div");
+        cell.style = "background-color: green"
+        cell.src = ""
+        cell.id = "mapGrid" + i
+        if (i % 10 == 0 || i % 10 == 9){
+            if (i !== 20 && i !== 30 && i !== 29 && i !== 39){
+                cell.style = "background-image: linear-gradient(to bottom right, grey, black"
+            }
+        }
+        var image = document.createElement("img");
+        image.id = "imageGrid" + i
+        image.style = "width: 60px; height: 60px"
+        image.src = "/images/icons/transparent.png"
+        cell.appendChild(image)
+        document.getElementById("mapGrid").appendChild(cell)
+    }
+    for (var j = 0; j < 10; j++){
+        var cellUp = document.createElement("div");
+        cellUp.style = "background-image: linear-gradient(to bottom right, grey, black"
+        cellUp.id = "zoneUpGrid" + j
+        document.getElementById("zoneUpGrid").appendChild(cellUp)
+        var cellDown = document.createElement("div");
+        cellDown.style = "background-image: linear-gradient(to bottom right, grey, black"
+        cellDown.id = "zoneDownGrid" + j
+        document.getElementById("zoneDownGrid").appendChild(cellDown)
+    }
+}
+populateMapGrid()
+
+var currentX = 1
+var currentY = 0
+var leftFacing = false
+function placeOnGrid(){
+    if (leftFacing == true){
+        document.getElementById("imageGrid" + ((5 - currentY) * 10 + currentX)).style = "width: 60px; height: 60px; -webkit-transform: scaleX(-1); transform: scaleX(-1);"
+    }
+    else{
+        document.getElementById("imageGrid" + ((5 - currentY) * 10 + currentX)).style = "width: 60px; height: 60px;"
+    }
+    document.getElementById("imageGrid" + ((5 - currentY) * 10 + currentX)).src = player.imagePath
+}
+placeOnGrid()
+
+function clearCurrentGridSpace(){
+    document.getElementById("imageGrid" + ((5 - currentY) * 10 + currentX)).src = "/images/icons/transparent.png"
+}
+
+var onMap = false
+function enableMove(){
+    onMap = true
+    if (player.currentZone < player.zoneMax){
+        document.getElementById("zoneUpGrid4").style = player.zones[player.currentZone - 1].color
+        document.getElementById("zoneUpGrid5").style = player.zones[player.currentZone - 1].color
+    }
+}
+
+function move(direction){
+    if (direction == "up"){
+        if (player.currentZone < player.zoneMax && currentY == 5 && (currentX == 4 || currentX == 5)){
+            clearCurrentGridSpace()
+            currentY = 0
+            zoneUp()
+        }
+        else if (currentY < 5){
+            clearCurrentGridSpace()
+            currentY += 1
+            placeOnGrid()
+        }
+    }
+    if (direction == "left"){
+        if (currentX == 1){
+            if (currentY == 2 || currentY == 3){
+                clearCurrentGridSpace()
+                currentX = 8
+                animateZoneChange()
+            }
+        }
+        else if (currentX > 1){      
+            clearCurrentGridSpace()
+            currentX -= 1
+            leftFacing = true
+            placeOnGrid() 
+        }
+    }
+    if (direction == "down"){
+        if (player.currentZone > 1 && currentY == 0 && (currentX == 4 || currentX == 5)){
+            clearCurrentGridSpace()
+            currentY = 5
+            zoneDown()
+        }
+        else if (currentY > 0){
+            clearCurrentGridSpace()
+            currentY -= 1
+            placeOnGrid()
+        }
+    }
+    if (direction == "right"){
+        if (currentX == 8){
+            if (currentY == 2 || currentY == 3){
+                clearCurrentGridSpace()
+                currentX = 1
+                animateZoneChange()
+            }
+        }
+        else if (currentX < 8){
+            clearCurrentGridSpace()
+            currentX += 1
+            leftFacing = false
+            placeOnGrid()
+        }
+    }
+    for (var i = 0; i < mapEnemies.length; i++){
+        if (((5 - currentY) * 10 + currentX) == mapEnemies[i].location){
+            setupFight(mapEnemies[i].ID)
+            if (mapEnemies[i].ID < 90){
+                enemyList[mapEnemies[i].ID].discovered = true
+                updateEnemyDisplay(enemyList[mapEnemies[i].ID])
+            }
+            mapEnemies.splice(i, 1)
+            if (mapEnemies.length == 0){
+                respawnEnemies()
+            }
+            onMap = false
+        }
+    }
+}
+
+var mapEnemies = []
+function addMapEnemyData(location, ID){
+    var mapEnemyData = {
+        location: location,
+        ID: ID
+    }
+    mapEnemies.push(mapEnemyData)
+}
+
+function spawnEnemy(enemy){
+    var startingX = Math.floor(Math.random() * 8) + 1
+    var startingY = Math.floor(Math.random() * 6) 
+    while (startingX == currentX && startingY == currentY){
+        startingX = Math.floor(Math.random() * 8) + 1
+        startingY = Math.floor(Math.random() * 6) 
+    }
+    var location = (5-startingY) * 10 + startingX
+    if (mapEnemies[0] !== undefined && mapEnemies[1] == undefined){
+        while (mapEnemies[0].location == location){
+            startingX = Math.floor(Math.random() * 8) + 1
+            startingY = Math.floor(Math.random() * 6)   
+            location = (5-startingY) * 10 + startingX
+        }
+    }
+    else if (mapEnemies[0] !== undefined && mapEnemies[1] !== undefined){
+        while (mapEnemies[0].location == location || mapEnemies[1].location == location){
+            startingX = Math.floor(Math.random() * 8) + 1
+            startingY = Math.floor(Math.random() * 6)    
+            location = (5-startingY) * 10 + startingX
+        }
+    }
+    document.getElementById("imageGrid" + location).src = enemy.imagePath
+    addMapEnemyData(location, enemy.ID)
+}
+
+function despawnEnemies(){
+    mapEnemies.length = 0
+    for (var i = 0; i < 10; i++){
+        for (var j = 0; j < 6; j++){
+            if ((5-j) * 10 + i !== (5-currentY) * 10 + currentX){
+                document.getElementById("imageGrid" + ((5 - j) * 10 + i)).src = "/images/icons/transparent.png"
+            }
+        }
+    }
+}
+
+function respawnEnemies(){
+    despawnEnemies()
+    for (var i = 0; i < player.zones[player.currentZone - 1].enemies.length; i++){
+        enemy = player.zones[player.currentZone - 1].enemies[i]
+        spawnEnemy(enemy)
+    }
+}
+
+function spawnRandom(){
+    enemyOne = secretEnemyList[2 * player.currentZone - 1]
+    enemyTwo = secretEnemyList[2 * player.currentZone - 2]
+    if (Math.floor(Math.random() * (1 * enemyOne.rarity)) == 0){
+        spawnEnemy(enemyOne)
+    }
+    if (Math.floor(Math.random() * (1 * enemyTwo.rarity)) == 0){
+        spawnEnemy(enemyTwo)
+    }
+    if (player.currentZone == 6 && enemyOne.timesDefeated > 0 && enemyTwo.timesDefeated > 0){
+        enemyThree = secretEnemyList[2 * player.currentZone]
+        if (Math.floor(Math.random() * (1 * enemyThree.rarity)) == 0){
+            spawnEnemy(enemyThree)
+        }
+    }
+}
+
+document.addEventListener('keyup', (e) => {
+    if (onMap == true){
+        if (e.keyCode === 87){
+            move("up")
+        }
+        else if (e.keyCode === 65){
+            move("left")
+        }
+        else if (e.keyCode === 83){
+            move("down")
+        }
+        else if (e.keyCode === 68){
+            move("right")
+        }
+    }
+})
+
+function animateZoneChange(){
+    if (player.currentZone == player.zoneMax){
+        document.getElementById("zoneUpGrid4").style = "background-image: linear-gradient(to bottom right, grey, black"
+        document.getElementById("zoneUpGrid5").style = "background-image: linear-gradient(to bottom right, grey, black"
+    }
+    else if (player.currentZone == 1){
+        document.getElementById("zoneDownGrid4").style = "background-image: linear-gradient(to bottom right, grey, black"
+        document.getElementById("zoneDownGrid5").style = "background-image: linear-gradient(to bottom right, grey, black"
+    }
+    onMap = false
+    despawnEnemies()
+    setTimeout(function(){
+        for (var j = 0; j < 10; j++){
+            document.getElementById("zoneUpGrid" + j).style = "background-color: black"
+        }
+    }, 25)
+    setTimeout(function(){
+        for (var i = 0; i < 10; i++){
+            document.getElementById("mapGrid" + i).style = "background-color: black"
+        }
+    }, 50)
+    setTimeout(function(){
+        for (var i = 10; i < 20; i++){
+            document.getElementById("mapGrid" + i).style = "background-color: black"
+        }
+    }, 75)
+    setTimeout(function(){
+        for (var i = 20; i < 30; i++){
+            document.getElementById("mapGrid" + i).style = "background-color: black"
+        }
+    }, 100)
+    setTimeout(function(){
+        for (var i = 30; i < 40; i++){
+            document.getElementById("mapGrid" + i).style = "background-color: black"
+        }
+    }, 125)
+    setTimeout(function(){
+        for (var i = 40; i < 50; i++){
+            document.getElementById("mapGrid" + i).style = "background-color: black"
+        }
+    }, 150)
+    setTimeout(function(){
+        for (var i = 50; i < 60; i++){
+            document.getElementById("mapGrid" + i).style = "background-color: black"
+        }
+    }, 175)
+    setTimeout(function(){
+        for (var j = 0; j < 10; j++){
+            document.getElementById("zoneDownGrid" + j).style = "background-color: black"
+        }
+    }, 200)
+    setTimeout(function(){
+        for (var j = 0; j < 10; j++){
+            document.getElementById("zoneUpGrid" + j).style = "background-image: linear-gradient(to bottom right, grey, black"
+        }
+        if (player.currentZone !== player.zoneMax){
+            document.getElementById("zoneUpGrid4").style = player.zones[player.currentZone - 1].color
+            document.getElementById("zoneUpGrid5").style = player.zones[player.currentZone - 1].color
+        }
+    }, 225)
+    setTimeout(function(){
+        for (var i = 0; i < 10; i++){
+            if (i == 0 || i == 9){
+                document.getElementById("mapGrid" + i).style = "background-image: linear-gradient(to bottom right, grey, black"
+            }
+            else{
+                document.getElementById("mapGrid" + i).style = player.zones[player.currentZone - 1].color
+            }
+        }
+    }, 250)
+    setTimeout(function(){
+        for (var i = 10; i < 20; i++){
+            if (i == 10 || i == 19){
+                document.getElementById("mapGrid" + i).style = "background-image: linear-gradient(to bottom right, grey, black"
+            }
+            else{
+                document.getElementById("mapGrid" + i).style = player.zones[player.currentZone - 1].color
+            }
+        }
+    }, 275)
+    setTimeout(function(){
+        for (var i = 20; i < 30; i++){
+            if (i == 20 || i == 29){
+                document.getElementById("mapGrid" + i).style = "background-image: linear-gradient(to bottom right, grey, black"
+            }
+            document.getElementById("mapGrid" + i).style = player.zones[player.currentZone - 1].color
+        }
+    }, 300)
+    setTimeout(function(){
+        for (var i = 30; i < 40; i++){
+            if (i == 30 || i == 39){
+                document.getElementById("mapGrid" + i).style = "background-image: linear-gradient(to bottom right, grey, black"
+            }
+            document.getElementById("mapGrid" + i).style = player.zones[player.currentZone - 1].color
+        }
+    }, 325)
+    setTimeout(function(){
+        for (var i = 40; i < 50; i++){
+            if (i == 40 || i == 49){
+                document.getElementById("mapGrid" + i).style = "background-image: linear-gradient(to bottom right, grey, black"
+            }
+            else{
+                document.getElementById("mapGrid" + i).style = player.zones[player.currentZone - 1].color
+            }
+        }
+    }, 350)
+    setTimeout(function(){
+        for (var i = 50; i < 60; i++){
+            if (i == 50 || i == 59){
+                document.getElementById("mapGrid" + i).style = "background-image: linear-gradient(to bottom right, grey, black"
+            }
+            else{
+                document.getElementById("mapGrid" + i).style = player.zones[player.currentZone - 1].color
+            }
+        }
+    }, 375)
+    setTimeout(function(){
+        for (var i = 30
+            ; i < 36; i++){
+            document.getElementById("mapGrid" + i).style = player.zones[player.currentZone - 1].color
+        }
+    }, 400)
+    setTimeout(function(){
+        for (var j = 0; j < 10; j++){
+            document.getElementById("zoneDownGrid" + j).style = "background-image: linear-gradient(to bottom right, grey, black"
+        }
+        if (player.currentZone !== 1){
+            document.getElementById("zoneDownGrid4").style = player.zones[player.currentZone - 1].color
+            document.getElementById("zoneDownGrid5").style = player.zones[player.currentZone - 1].color
+        }
+        placeOnGrid()
+        onMap = true        
+        respawnEnemies()
+        spawnRandom()
+    }, 425)
 }
