@@ -33,7 +33,7 @@ var player = {
     currentMaxHP: 100,
     currentMaxAtt: 100,
     currentMaxDef: 100,
-    currentMaxSpe: 100,
+    currentMaxSpe: 100, 
     progressDivider: 1,
     upgradesBought: 0,
     powerTrainUpgradeMultiplier: 1,
