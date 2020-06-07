@@ -2133,6 +2133,7 @@ function fight(){
             player.zones[player.currentZone - 1].enemies[fightEnemyID % 3] = enemyList[fightEnemyID]
         }
         returnBrokenItems()
+        returnEnemyBrokenItems(enemy)
         updateEnemyDisplay(enemy)
     }
     else if (enemy.hitPoints <= 0){
@@ -2432,6 +2433,8 @@ function getEnemyAutoBattleScore(enemy){
     for (var i = 0; i < enemy.equipment.length; i++){
         enemyDamageIcons += getTotalIcons(enemy.equipment[i], false)
         enemyDefenseIcons += getTotalIcons(enemy.equipment[i], true)
+        console.log(enemyDamageIcons)
+        console.log(enemyDefenseIcons)
     }
     var enemyTotalStats = enemy.attackPoints + enemy.defensePoints + enemy.maxHitPoints + enemy.speedPoints
     var enemyScore = enemyTotalStats + (enemyDamageIcons * 5) + (enemyDefenseIcons * 5)
