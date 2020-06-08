@@ -18,25 +18,26 @@ function createEnemyList(){
     createEnemy(15, "Uzoro's Will", 5000, 1000, 300, 1000, "/images/enemies/pipo-boss003.png", 200, 0, 0, [enemyWeapons[60], enemyWeapons[61], enemyWeapons[62], enemyWeapons[63]], 10000, 10000, 0, 0)
     
     //Secret enemies
-    createEnemy(90, "Encroaching Roots", 50, 10, 10, 1, "/images/enemies/secret/pipo-enemy006.png", 10, 0, 0, [enemyWeapons[100],enemyWeapons[101],enemyWeapons[102],enemyWeapons[103]], 75, 100, 5, 0)
-    createEnemy(91, "The Mushman", 30, 10, 10, 10, "/images/enemies/secret/pipo-enemy008.png", 10, 0, 0, [enemyWeapons[104],enemyWeapons[105],enemyWeapons[106],enemyWeapons[107]], 75, 100, 5, 0)
-    createEnemy(92, "Enraged Wallfiend", 100, 50, 50, 50, "/images/enemies/secret/pipo-enemy033b.png", 10, 0, 0, [enemyWeapons[108],enemyWeapons[109],enemyWeapons[110],enemyWeapons[111]], 100, 150, 6, 0)
-    createEnemy(93, "Faded Ghost", 1, 1, 1, 1, "/images/enemies/secret/pipo-enemy010.png", 1, 0, 0, [enemyWeapons[112],enemyWeapons[113],enemyWeapons[114],enemyWeapons[115]], 500, 500, 6, 0)
-    createEnemy(94, "Dark Fodder Knight", 100, 40, 40, 40, "/images/enemies/secret/pipo-enemy018b.png", 10, 0, 0, [enemyWeapons[116],enemyWeapons[117],enemyWeapons[118],enemyWeapons[119]], 150, 200, 7, 0)
-    createEnemy(95, "Persistent Weed", 200, 85, 20, 20, "/images/enemies/secret/pipo-enemy007b.png", 10, 0, 0, [enemyWeapons[120],enemyWeapons[121],enemyWeapons[122],enemyWeapons[123]], 150, 200, 7, 0)
-    createEnemy(96, "Oojara", 220, 85, 85, 200, "/images/enemies/secret/pipo-enemy025b.png", 50, 0, 0, [enemyWeapons[124],enemyWeapons[125],enemyWeapons[126],enemyWeapons[127]], 200, 300, 8, 0)
-    createEnemy(97, "Gleaming Ghost", 1, 1, 1, 1, "/images/enemies/secret/pipo-enemy010b.png", 1, 0, 0, [enemyWeapons[128],enemyWeapons[129],enemyWeapons[130],enemyWeapons[131]], 1000, 1000, 8, 0)
-    createEnemy(98, "Fawkes of Ra", 500, 500, 500, 500, "/images/enemies/secret/pipo-enemy022a.png", 500, 0, 0, [enemyWeapons[132],enemyWeapons[133],enemyWeapons[134],enemyWeapons[135]], 1000, 1000, 9, 0)
-    createEnemy(99, "Jester", 1000, 800, 0, 0, "/images/enemies/secret/pipo-enemy017.png", 0, 0, 0, [enemyWeapons[136],enemyWeapons[137],enemyWeapons[138],enemyWeapons[139]], 1000, 1000, 9, 0)
-    createEnemy(100, "Arcafford", 2500, 1000, 250, 1250, "/images/enemies/secret/pipo-enemy023.png", 250, 0, 0, [enemyWeapons[140],enemyWeapons[141],enemyWeapons[142],enemyWeapons[143]], 10000, 10000, 10, 0)
-    createEnemy(101, "Xenrir", 3000, 750, 500, 1250, "/images/enemies/secret/pipo-enemy023a.png", 250, 0, 0, [enemyWeapons[144],enemyWeapons[145],enemyWeapons[146],enemyWeapons[147]], 20000, 20000, 10, 0)
-    createEnemy(102, "Cirrurberus", 7200, 1200, 1200, 1200, "/images/enemies/secret/pipo-enemy023b.png", 1200, 0, 0, [enemyWeapons[148],enemyWeapons[149],enemyWeapons[150],enemyWeapons[151]], 50000, 50000, 0, 0)
+    createEnemy(100, "Encroaching Roots", 50, 10, 10, 1, "/images/enemies/secret/pipo-enemy006.png", 10, 0, 0, [enemyWeapons[100],enemyWeapons[101],enemyWeapons[102],enemyWeapons[103]], 250, 300, 5, 0)
+    createEnemy(101, "The Mushman", 30, 10, 10, 10, "/images/enemies/secret/pipo-enemy008.png", 10, 0, 0, [enemyWeapons[104],enemyWeapons[105],enemyWeapons[106],enemyWeapons[107]], 350, 400, 5, 0)
+    createEnemy(102, "Enraged Wallfiend", 100, 50, 50, 50, "/images/enemies/secret/pipo-enemy033b.png", 10, 0, 0, [enemyWeapons[108],enemyWeapons[109],enemyWeapons[110],enemyWeapons[111]], 400, 500, 6, 0)
+    createEnemy(103, "Faded Ghost", 1, 1, 1, 1, "/images/enemies/secret/pipo-enemy010.png", 1, 0, 0, [enemyWeapons[112],enemyWeapons[113],enemyWeapons[114],enemyWeapons[115]], 500, 500, 6, 0)
+    createEnemy(104, "Dark Fodder Knight", 100, 40, 40, 40, "/images/enemies/secret/pipo-enemy018b.png", 10, 0, 0, [enemyWeapons[116],enemyWeapons[117],enemyWeapons[118],enemyWeapons[119]], 500, 600, 7, 0)
+    createEnemy(105, "Persistent Weed", 200, 85, 20, 20, "/images/enemies/secret/pipo-enemy007b.png", 10, 0, 0, [enemyWeapons[120],enemyWeapons[121],enemyWeapons[122],enemyWeapons[123]], 600, 700, 7, 0)
+    createEnemy(106, "Oojara", 220, 85, 85, 200, "/images/enemies/secret/pipo-enemy025b.png", 50, 0, 0, [enemyWeapons[124],enemyWeapons[125],enemyWeapons[126],enemyWeapons[127]], 800, 800, 8, 0)
+    createEnemy(107, "Gleaming Ghost", 1, 1, 1, 1, "/images/enemies/secret/pipo-enemy010b.png", 1, 0, 0, [enemyWeapons[128],enemyWeapons[129],enemyWeapons[130],enemyWeapons[131]], 1000, 1000, 8, 0)
+    createEnemy(108, "Fawkes of Ra", 500, 500, 500, 500, "/images/enemies/secret/pipo-enemy022a.png", 500, 0, 0, [enemyWeapons[132],enemyWeapons[133],enemyWeapons[134],enemyWeapons[135]], 5000, 5000, 9, 0)
+    createEnemy(109, "Jester", 1000, 800, 0, 0, "/images/enemies/secret/pipo-enemy017.png", 0, 0, 0, [enemyWeapons[136],enemyWeapons[137],enemyWeapons[138],enemyWeapons[139]], 3000, 3000, 9, 0)
+    createEnemy(110, "Arcafford", 2500, 1000, 250, 1250, "/images/enemies/secret/pipo-enemy023.png", 250, 0, 0, [enemyWeapons[140],enemyWeapons[141],enemyWeapons[142],enemyWeapons[143]], 10000, 10000, 10, 0)
+    createEnemy(111, "Xenrir", 3000, 750, 500, 1250, "/images/enemies/secret/pipo-enemy023a.png", 250, 0, 0, [enemyWeapons[144],enemyWeapons[145],enemyWeapons[146],enemyWeapons[147]], 20000, 20000, 10, 0)
+    createEnemy(112, "Cirrurberus", 7200, 1200, 1200, 1200, "/images/enemies/secret/pipo-enemy023b.png", 1200, 0, 0, [enemyWeapons[148],enemyWeapons[149],enemyWeapons[150],enemyWeapons[151]], 100000, 100000, 0, 0)
 }
 
 createEnemyList()
 
 function clearEnemyList(){
     enemyList.length = 0
+    secretEnemyList.length = 0
 }
 
 createZone(0, "The Inner Forest", "background-color: green", [enemyList[0], enemyList[1], enemyList[2]])

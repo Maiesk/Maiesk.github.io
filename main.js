@@ -47,7 +47,9 @@ var player = {
     frozen: false,
     currentStance: "Steady",
     enemySaveList: [],
+    secretEnemySaveList: [],
     allItems: [],
+    secretItems: [],
     goldGeneratorLevel: 0,
     goldGeneratorUpgradeCost: 1,
     currentZone: 1,
@@ -150,7 +152,10 @@ function updateHPBar() {
                     elementHP.style = "background: linear-gradient(to right, #94b0da, #ac9444 200px);"
                 }
                 player.maxHitPoints += player.statPointUpgradeMultiplier
-                player.allItems[14].heal = Math.round(player.maxHitPoints / 10)
+                player.secretItems[0].heal = Math.round(player.maxHitPoints / 10)
+                player.secretItems[11].heal = Math.round(player.maxHitPoints / 20)
+                player.secretItems[12].heal = Math.round(player.maxHitPoints / 20)
+                player.secretItems[13].heal = player.maxHitPoints
                 player.currentMaxHP = 100 * (1.05**Math.sqrt(player.maxHitPoints - 10)) / (player.progressDivider * Math.log2(2 + ((player.level - 1)/20)))
                 updateHTML()
             } 
@@ -474,6 +479,15 @@ function buyAP(){
         }
         player.trainingPerClickCost = 20
         player.training = 0
+        if (player.totalAP > 19){
+            buyAutoUpgrade()
+        }
+        if (player.totalAP > 29){
+            buyAutoPurchaseStatPoints()
+        }
+        if (player.totalAP > 39){
+            buyAutoPurchaseAP()
+        }
         updateHTML()
     }
 }
@@ -488,31 +502,25 @@ function buyLevelUp(){
 }
 
 function buyAutoUpgrade(){
-    if (player.availableAP > 9 && player.autoUpgrade == false){  
-        player.availableAP -= 10
+    if (player.autoUpgrade == false){  
         player.autoUpgrade = true
-        document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(player.availableAP)
-        document.getElementById("buyAutoUpgradeButton").innerHTML = "Auto Upgrade Purchased"
+        document.getElementById("buyAutoUpgradeButton").innerHTML = "Auto Upgrade Unlocked"
         document.getElementById("toggleAutoUpgradeButton").hidden = false
     }
 }
 
 function buyAutoPurchaseAP(){
-    if (player.availableAP > 9 && player.autoPurchaseAP == false){
-        player.availableAP -= 10
+    if (player.autoPurchaseAP == false){
         player.autoPurchaseAP = true
-        document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(player.availableAP)
-        document.getElementById("buyAutoPurchaseAPButton").innerHTML = "Auto Purchase AP Purchased"
+        document.getElementById("buyAutoPurchaseAPButton").innerHTML = "Auto Purchase AP Unlocked"
         document.getElementById("toggleAutoPurchaseAPButton").hidden = false
     }
 }
 
 function buyAutoPurchaseStatPoints(){
-    if (player.availableAP > 9 && player.autoPurchaseStatPoints == false){
-        player.availableAP -= 10
+    if (player.autoPurchaseStatPoints == false){
         player.autoPurchaseStatPoints = true
-        document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(player.availableAP)
-        document.getElementById("buyAutoPurchaseStatPointsButton").innerHTML = "Auto Purchase Stat Points Purchased"
+        document.getElementById("buyAutoPurchaseStatPointsButton").innerHTML = "Auto Purchase Stat Points Unlocked"
         document.getElementById("toggleAutoPurchaseStatPointsButton").hidden = false
     }
 }
@@ -620,15 +628,15 @@ function loadGame(){
             document.getElementById("shopTab").hidden = false
             document.getElementById("loadingText").hidden = true
             if (player.autoUpgrade == true){
-                document.getElementById("buyAutoUpgradeButton").innerHTML = "Auto Upgrade Purchased"
+                document.getElementById("buyAutoUpgradeButton").innerHTML = "Auto Upgrade Unlocked"
                 document.getElementById("toggleAutoUpgradeButton").hidden = false
             }
             if (player.autoPurchaseAP == true){
-                document.getElementById("buyAutoPurchaseAPButton").innerHTML = "Auto Purchase AP Purchased"
+                document.getElementById("buyAutoPurchaseAPButton").innerHTML = "AutoPurchase for AP Unlocked"
                 document.getElementById("toggleAutoPurchaseAPButton").hidden = false
             }
             if (player.autoPurchaseStatPoints == true){
-                document.getElementById("buyAutoPurchaseAPButton").innerHTML = "Auto Purchase Stat Points Purchased"
+                document.getElementById("buyAutoPurchaseStatPointsButton").innerHTML = "AutoPurchase for Stat Points Unlocked"
                 document.getElementById("toggleAutoPurchaseStatPointsButton").hidden = false    
             }
             resetUpdateSpeed()
@@ -713,10 +721,13 @@ function updateHTML(){
         document.getElementById("battlePowerPerSecond").innerHTML = numberWithCommas(trainingPerSecondShown) + " Training Points per second!"   
     }
     if (player.autoPurchaseAP == false){
-        document.getElementById("buyAutoPurchaseAPButton").innerHTML = "Buy AutoPurchase for AP: 10 AP"
+        document.getElementById("buyAutoPurchaseAPButton").innerHTML = "AutoPurchase for AP Unlocks at 40 Total AP"
     }
     if (player.autoUpgrade == false){
-        document.getElementById("buyAutoUpgradeButton").innerHTML = "Buy Auto Upgrade: 10 AP"
+        document.getElementById("buyAutoUpgradeButton").innerHTML = "Auto Upgrade Unlocks at 20 Total AP"
+    }
+    if (player.autoPurchaseStatPoints == false){
+        document.getElementById("buyAutoPurchaseStatPointsButton").innerHTML = "AutoPurchase for Stat Points Unlocks at 30 Total AP"
     }
     document.getElementById("currentTrainingPoints").innerHTML = "Training Points<br/><br/>" + numberWithCommas(trainingShown)
     document.getElementById("textAPTotal").innerHTML = "AP Total: " + numberWithCommas(player.totalAP)
@@ -893,10 +904,13 @@ function createEnemy(ID, name, hitPoints, attackPoints, defensePoints, speedPoin
     }
     var enemySaveStats = {
         timesDefeated: timesDefeated,
-        timesLostTo: timesLostTo
+        timesLostTo: timesLostTo, 
+        discovered: false
     }
-    if (ID >= 90){
+    if (ID >= 100){
         secretEnemyList[secretEnemyList.length] = enemy
+        player.secretEnemySaveList[player.secretEnemySaveList.length] = enemySaveStats
+
     }
     else{
         enemyList[enemyList.length] = enemy
@@ -933,25 +947,31 @@ function createItem(name, ID, fire, air, earth, water, melee, light, dark, fireD
         itemCost: itemCost,
         level: level
     }
-    player.allItems[item.ID] = item
-    var cell = document.createElement("div");
-    var figure = document.createElement("figure")
-    var caption = document.createElement("figcaption")
-    var image = document.createElement("img")
-    cell.style = "max-width: 300px; min-width: 300px; height: 250px; background-color: #335C81; border: 1px solid #ac9444; text-align: center"
-    cell.id = "goldShopItem" + item.ID
-    image.src = item.imagePath
-    image.className = "itemImages"
-    image.style = "background-image: linear-gradient(to bottom right, rgb(50, 50, 50), rgb(20, 20, 20)); border: 1px solid white"
-    caption.id = "goldShopItemCaption" + item.ID
-    caption.className = "itemText"
-    caption.style = "font-size: 25px"
-    figure.appendChild(image)
-    figure.appendChild(caption)
-    cell.appendChild(figure)
-    document.getElementById("goldShopGrid").appendChild(cell);
-    document.getElementById("goldShopItem" + item.ID).onclick = function(){buyItem(item.ID)}
-    document.getElementById("goldShopItemCaption" + item.ID).innerHTML = item.name  + "<br/><br/>" + item.itemCost + " Gold"
+    if (item.ID > 99){
+        player.secretItems[item.ID - 100] = item
+    }
+    else{
+        player.allItems[item.ID] = item
+        var cell = document.createElement("div");
+        var figure = document.createElement("figure")
+        var caption = document.createElement("figcaption")
+        var image = document.createElement("img")
+        cell.style = "max-width: 300px; min-width: 300px; height: 250px; background-color: #335C81; border: 1px solid #ac9444; text-align: center"
+        cell.id = "goldShopItem" + item.ID
+        image.src = item.imagePath
+        image.className = "itemImages"
+        image.style = "background-image: linear-gradient(to bottom right, rgb(50, 50, 50), rgb(20, 20, 20)); border: 1px solid white"
+        caption.id = "goldShopItemCaption" + item.ID
+        caption.className = "itemText"
+        caption.style = "font-size: 25px"
+        figure.appendChild(image)
+        figure.appendChild(caption)
+        cell.appendChild(figure)
+        document.getElementById("goldShopGrid").appendChild(cell);
+        document.getElementById("goldShopItem" + item.ID).onclick = function(){buyItem(item.ID)}
+        document.getElementById("goldShopItemCaption" + item.ID).innerHTML = item.name  + "<br/><br/>" + item.itemCost + " Gold"
+    }
+        
     return item;
 }
 
@@ -1607,8 +1627,8 @@ function initiateBattle(fightEnemyID){
     document.getElementById("enemyHealRow1").hidden = true
     document.getElementById("attackOrder").innerHTML = ""
     document.getElementById("fightButton").style = "background-color: #474646; color: #373636; min-width: 600px;"
-    if (fightEnemyID > 89){
-        var enemy = secretEnemyList[fightEnemyID - 90]
+    if (fightEnemyID > 99){
+        var enemy = secretEnemyList[fightEnemyID - 100]
     }
     else {
         var enemy = enemyList[fightEnemyID]
@@ -2055,8 +2075,8 @@ function fight(){
     hideAllBattleRows()
     document.getElementById("damageLeft").innerHTML = "0 DMG"
     document.getElementById("damageRight").innerHTML = "0 DMG"
-    if (fightEnemyID > 89){
-        enemy = secretEnemyList[fightEnemyID - 90]
+    if (fightEnemyID > 99){
+        enemy = secretEnemyList[fightEnemyID - 100]
     }
     else {
         enemy = enemyList[fightEnemyID]
@@ -2116,7 +2136,6 @@ function fight(){
         }
     }
     checkIfBreakableItems(playerItem1, playerItem2, enemy.equipment[enemyWeaponIndexOne], enemy.equipment[enemyWeaponIndexTwo])
-    console.log(enemy.equipment)
     if (player.hitPoints <= 0){
         document.getElementById("fightButton").disabled = true
         document.getElementById("fightButton").style = "background-color: #474646; color: #373636; min-width: 600px;"
@@ -2124,8 +2143,9 @@ function fight(){
         document.getElementById("outcomeText").innerHTML = "You have been defeated!"
         fighting = false
         postFight = true
-        if (fightEnemyID > 89){
-            secretEnemyList[fightEnemyID - 90].timesLostTo += 1
+        if (fightEnemyID > 99){
+            secretEnemyList[fightEnemyID - 100].timesLostTo += 1
+            player.secretEnemySaveList[fightEnemyID - 100].timesLostTo += 1
         }
         else{
             enemyList[fightEnemyID].timesLostTo += 1
@@ -2143,9 +2163,10 @@ function fight(){
         document.getElementById("outcomeText").hidden = false
         document.getElementById("outcomeText").innerHTML = "You are victorious!"
         fighting = false
-        if (fightEnemyID > 89){
-            secretEnemyList[fightEnemyID - 90].timesDefeated += 1
-            ladderIncrement(secretEnemyList[fightEnemyID - 90])
+        if (fightEnemyID > 99){
+            secretEnemyList[fightEnemyID - 100].timesDefeated += 1
+            player.secretEnemySaveList[fightEnemyID - 100].timesDefeated += 1
+            ladderIncrement(secretEnemyList[fightEnemyID - 100])
         }
         else{
             enemyList[fightEnemyID].timesDefeated += 1
@@ -2168,7 +2189,11 @@ function fight(){
             playerImages.paths.push(enemy.imagePath)
         }
         postFight = true
-        if (fightEnemyID < 90){
+        if (fightEnemyID >= 100 && secretEnemyList[fightEnemyID - 100].timesDefeated == 2){
+            player.inventory.push(player.secretItems[fightEnemyID - 99])
+            pushInventoryDisplay(player.inventory.length - 1)
+        }
+        if (fightEnemyID < 100){
             if ((fightEnemyID + 1) % 3 == 0){
                 if (enemyList[fightEnemyID - 1].timesDefeated > 0 && enemyList[fightEnemyID - 2].timesDefeated > 0){
                     if (player.zoneMax == player.currentZone){
@@ -2264,8 +2289,18 @@ function loadLadderFromWinLoss(){
     clearEnemyList()
     createEnemyList()
     for (var j = 0; j < player.enemySaveList.length; j++){
+        if (player.secretEnemySaveList[j] !== undefined){ 
+            secretEnemyList[j].timesDefeated = player.secretEnemySaveList[j].timesDefeated
+            secretEnemyList[j].timesLostTo = player.secretEnemySaveList[j].timesLostTo
+            secretEnemyList[j].discovered = player.secretEnemySaveList[j].discovered
+            secretEnemyList[j].maxHitPoints += (secretEnemyList[j].timesDefeated * secretEnemyList[j].ladderValue)
+            secretEnemyList[j].attackPoints += (secretEnemyList[j].timesDefeated * secretEnemyList[j].ladderValue)
+            secretEnemyList[j].defensePoints += (secretEnemyList[j].timesDefeated * secretEnemyList[j].ladderValue)
+            secretEnemyList[j].speedPoints += (secretEnemyList[j].timesDefeated * secretEnemyList[j].ladderValue)
+        }
         enemyList[j].timesDefeated = player.enemySaveList[j].timesDefeated
         enemyList[j].timesLostTo = player.enemySaveList[j].timesLostTo
+        enemyList[j].discovered = player.enemySaveList[j].discovered
         enemyList[j].maxHitPoints += (enemyList[j].timesDefeated * enemyList[j].ladderValue)
         enemyList[j].attackPoints += (enemyList[j].timesDefeated * enemyList[j].ladderValue)
         enemyList[j].defensePoints += (enemyList[j].timesDefeated * enemyList[j].ladderValue)
@@ -2337,7 +2372,6 @@ function zoneUp(){
     else {
         document.getElementById("enemyScreenHelpText").hidden = true
     }
-    console.log(zoneChecker)
 }
 
 function zoneDown(){
@@ -2392,8 +2426,8 @@ var goldAnimation = null
 var expAnimation = null
 function setupFight(ID){
     fightEnemyID = ID
-    if (ID > 89){
-        enemy = secretEnemyList[ID - 90]
+    if (ID > 99){
+        enemy = secretEnemyList[ID - 100]
     }
     else {
         enemy = enemyList[ID]
@@ -2433,8 +2467,6 @@ function getEnemyAutoBattleScore(enemy){
     for (var i = 0; i < enemy.equipment.length; i++){
         enemyDamageIcons += getTotalIcons(enemy.equipment[i], false)
         enemyDefenseIcons += getTotalIcons(enemy.equipment[i], true)
-        console.log(enemyDamageIcons)
-        console.log(enemyDefenseIcons)
     }
     var enemyTotalStats = enemy.attackPoints + enemy.defensePoints + enemy.maxHitPoints + enemy.speedPoints
     var enemyScore = enemyTotalStats + (enemyDamageIcons * 5) + (enemyDefenseIcons * 5)
@@ -2490,9 +2522,6 @@ function autoBattle(enemy){
             autoBattle(enemy)
         }, 1000)
     }
-    else{
-        console.log("You lose!")
-    }
 }
 
 var optionsGold = {
@@ -2546,9 +2575,16 @@ function godMode(){
         player.statPoints = 10000
         player.maxStatPoints = 10000
         player.zoneMax = 6
-        player.allItems[14].heal = Math.round(player.maxHitPoints / 20)
+        player.secretItems[0].heal = Math.round(player.maxHitPoints / 10)
+        player.secretItems[11].heal = Math.round(player.maxHitPoints / 20)
+        player.secretItems[12].heal = Math.round(player.maxHitPoints /20)
+        player.secretItems[13].heal = player.maxHitPoints
         for (var i = 0; i < player.allItems.length; i++){
             buyItem(i)
+        }
+        for (var j = 0; j < player.secretItems.length; j++){
+            player.inventory.push(player.secretItems[j])
+            pushInventoryDisplay(player.inventory.length - 1)
         }
         for (var i = player.inventory.length - 8; i < player.inventory.length; i++){
             setSelected(i)
@@ -2678,7 +2714,7 @@ function move(direction){
     for (var i = 0; i < mapEnemies.length; i++){
         if (((5 - currentY) * 10 + currentX) == mapEnemies[i].location){
             setupFight(mapEnemies[i].ID)
-            if (mapEnemies[i].ID < 90){
+            if (mapEnemies[i].ID < 100){
                 enemyList[mapEnemies[i].ID].discovered = true
                 updateEnemyDisplay(enemyList[mapEnemies[i].ID])
             }
