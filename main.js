@@ -744,7 +744,7 @@ function updateHTML(){
     document.getElementById("buyLevelUpButton").innerHTML = "EXP Level Up<br/>" + numberWithCommas(player.levelUpCost) + " EXP"
     document.getElementById("goldGeneratorLevelCurrent").innerHTML = "Current Gold Generator Level: " + numberWithCommas(player.goldGeneratorLevel)
     document.getElementById("upgradeGoldGeneratorButton").innerHTML = "+1 Gold Generator Level: " + numberWithCommas(goldGeneratorCostShown) + " AP"
-    document.getElementById("currentEXP").innerHTML = "EXP<br/><br/>" + player.exp + "/" + player.levelUpCost
+    document.getElementById("currentEXP").innerHTML = "EXP<br/><br/>" + Number(player.exp).toFixed(0) + "/" + player.levelUpCost
     document.getElementById("currentLevel").innerHTML = "Level<br/><br/>" + player.level
     document.getElementById("currentHPStat").innerHTML = player.maxHitPoints + " HP"
     document.getElementById("currentAttackStat").innerHTML = player.attackPoints + " Attack"
@@ -979,6 +979,20 @@ function createItem(name, ID, fire, air, earth, water, melee, light, dark, fireD
     }
         
     return item;
+}
+
+function checkIfStaffEarned(){
+    var staffEarned = true
+    for (var i = 0; i < secretEnemyList.length; i++){
+        if (secretEnemyList[i].timesDefeated == 0){
+            staffEarned = false
+            break
+        }
+    }
+    if (staffEarned){
+        player.inventory.push(player.secretItems[0])
+        pushInventoryDisplay(player.inventory.length - 1)
+    }
 }
 
 function createZone(ID, name, color, enemies){
@@ -2229,6 +2243,7 @@ function fight(){
         if (fightEnemyID >= 100 && secretEnemyList[fightEnemyID - 100].timesDefeated == 2){
             player.inventory.push(player.secretItems[fightEnemyID - 99])
             pushInventoryDisplay(player.inventory.length - 1)
+            checkIfStaffEarned()
         }
         if (fightEnemyID < 100){
             if ((fightEnemyID + 1) % 3 == 0){

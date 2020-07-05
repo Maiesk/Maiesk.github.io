@@ -16,7 +16,7 @@ createItem("Shield Who Saw The End", 14, 0, 0, 0, 0, 0, 0, 5, 5, 5, 3, 3, 5, 10,
 createItem("Frozen Prose", 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, true, true, "/images/weapons/Book_8.png", 2500, 5)
 
 //Secret Weapons
-createItem("Staff of the Piper Girl", 100, 7, 7, 7, 7, 0, 7, 0, 0, 0, 0, 0, 10, 0, 10, Math.round(player.maxHitPoints / 10), false, false, "/images/weapons/staff_49.png", 50000, 0)
+createItem("Staff of the Piper Girl", 100, 7, 7, 7, 7, 0, 7, 0, 3, 3, 3, 3, 10, 3, 10, Math.round(player.maxHitPoints / 10), false, false, "/images/weapons/staff_49.png", 50000, 0)
 createItem("Yielded Roots", 101, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 35, true, false, "/images/weapons/Book_7.png", 250, 0)
 createItem("Mouldy Dagger", 102, 0, 0, 3, 3, 3, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, false, false, "/images/weapons/Dagger_10.png", 250, 0)
 createItem("Hammer of Bricks", 103, 0, 0, 8, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, "/images/weapons/Hammer_34.png", 500, 0)
