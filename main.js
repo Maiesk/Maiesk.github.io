@@ -981,6 +981,7 @@ function createItem(name, ID, fire, air, earth, water, melee, light, dark, fireD
     return item;
 }
 
+var staffAlreadyEarned = false
 function checkIfStaffEarned(){
     var staffEarned = true
     for (var i = 0; i < secretEnemyList.length; i++){
@@ -989,9 +990,10 @@ function checkIfStaffEarned(){
             break
         }
     }
-    if (staffEarned){
+    if (staffEarned && !staffAlreadyEarned){
         player.inventory.push(player.secretItems[0])
         pushInventoryDisplay(player.inventory.length - 1)
+        staffAlreadyEarned = true
     }
 }
 
@@ -2243,8 +2245,8 @@ function fight(){
         if (fightEnemyID >= 100 && secretEnemyList[fightEnemyID - 100].timesDefeated == 2){
             player.inventory.push(player.secretItems[fightEnemyID - 99])
             pushInventoryDisplay(player.inventory.length - 1)
-            checkIfStaffEarned()
         }
+        checkIfStaffEarned()
         if (fightEnemyID < 100){
             if ((fightEnemyID + 1) % 3 == 0){
                 if (enemyList[fightEnemyID - 1].timesDefeated > 0 && enemyList[fightEnemyID - 2].timesDefeated > 0){
