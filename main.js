@@ -59,6 +59,10 @@ var player = {
     goldGeneratorMulti: 1,
     goldGeneratorMultiLevel: 3,
     goldGeneratorMultiUpgradeCost: 5,
+    statCapBoost: 1,
+    statCapBoostCost: 10000,
+    expMulti: 1,
+    expMultiCost: 100,
     imagePathList: ["/images/enemies/pipo-player001.png","/images/enemies/pipo-player002.png"]
 }
 
@@ -135,7 +139,7 @@ function update(){
 }
 
 function updateHPBar() {
-    if (player.allocatedHP > 0 && player.level > (player.maxHitPoints / 20)){  
+    if (player.allocatedHP > 0 && player.level > (player.maxHitPoints / (30 * player.statCapBoost))){  
         var elementHP = document.getElementById("myprogressBarHP"); 
         var intervalHP = setInterval(sceneHP, 15); 
         function sceneHP() { 
@@ -180,7 +184,7 @@ function updateHPBar() {
 } 
 
 function updateAttBar() {
-    if (player.allocatedAtt > 0 && player.level > (player.attackPoints / 10)){  
+    if (player.allocatedAtt > 0 && player.level > (player.attackPoints / (10 * player.statCapBoost))){  
         var elementAtt = document.getElementById("myprogressBarAtt"); 
         var intervalAtt = setInterval(sceneAtt, 15); 
         function sceneAtt() { 
@@ -226,7 +230,7 @@ function updateAttBar() {
 } 
 
 function updateDefBar() {
-    if (player.allocatedDef > 0 && player.level > (player.defensePoints / 10)){  
+    if (player.allocatedDef > 0 && player.level > (player.defensePoints / (10 * player.statCapBoost))){  
         var elementDef = document.getElementById("myprogressBarDef"); 
         var intervalDef = setInterval(scene2, 15); 
         function scene2() { 
@@ -267,7 +271,7 @@ function updateDefBar() {
 } 
 
 function updateSpeBar() {
-    if (player.allocatedSpe > 0 && player.level > (player.speedPoints / 10)){  
+    if (player.allocatedSpe > 0 && player.level > (player.speedPoints / (10 * player.statCapBoost))){  
         var elementSpe = document.getElementById("myprogressBarSpe"); 
         var intervalSpe = setInterval(scene2, 15); 
         function scene2() { 
@@ -1026,6 +1030,26 @@ function buyItem(ID){
     }
 }
 
+function buyExpMulti(){
+    if (player.gold >= player.expMultiCost){
+        player.gold -= player.expMultiCost
+        player.expMultiCost *= 10
+        player.expMulti *= 1.1
+        document.getElementById("buyExpMultiButton").innerHTML = "1.1x Exp Multiplier<br/>Cost: " + numberWithCommas(player.expMultiCost) + " Gold"
+        updateHTML()
+    }
+}
+
+function buyStatCapBoost(){
+    if (player.gold >= player.statCapBoostCost){
+        player.gold -= player.statCapBoostCost
+        player.statCapBoostCost *= 10
+        player.statCapBoost *= 1.1
+        document.getElementById("buyStatCapBoostButton").innerHTML = "1.1x Stat Cap per Level<br/>Cost: " + numberWithCommas(player.statCapBoostCost) + " Gold"
+        updateHTML()
+    }
+}
+
 function displayGold(){
     var goldShown = Number(player.gold).toFixed(0)
     document.getElementById("currentGold").innerHTML = "You have " + numberWithCommas(goldShown) + " Gold."
@@ -1562,12 +1586,17 @@ function loadAbilityIcons(actor, i, inBattle, isEnemy, first){
 
 
 document.addEventListener('keyup', (e) => {
-    if (fighting == true || postFight == true){       
+    if (fighting == true || postFight == true){  
         if (e.keyCode === 82){
-            startFight(currentEnemy)
+            if (currentEnemy < 99){
+                startFight(currentEnemy)
+            }
         }
         else if (e.keyCode === 90){
             returnToEnemies()
+        }
+        else if (e.keyCode === 88){
+            returnToMap()
         }
     }
     if (fighting == true){
@@ -1618,6 +1647,12 @@ var currentEnemy = 0
 var postFight = false
 var fighting = false
 function initiateBattle(fightEnemyID){
+    if (fightEnemyID > 99){
+        document.getElementById("outcomeButtonRestart").hidden = true
+    }
+    else{
+        document.getElementById("outcomeButtonRestart").hidden = false
+    }
     fighting = true
     document.getElementById("outcomeText").hidden = true
     document.getElementById("outcomeTextGold").hidden = true
@@ -2161,7 +2196,7 @@ function fight(){
     else if (enemy.hitPoints <= 0){
         document.getElementById("fightButton").disabled = true
         document.getElementById("fightButton").style = "background-color: #474646; color: #373636; min-width: 600px;"
-        player.exp += enemy.maxHitPoints * (1 + enemy.ID)
+        player.exp += (enemy.maxHitPoints * (1 + enemy.ID)) * player.expMulti
         document.getElementById("outcomeText").hidden = false
         document.getElementById("outcomeText").innerHTML = "You are victorious!"
         fighting = false
@@ -2453,6 +2488,10 @@ function setupFight(ID){
             document.getElementById("autoBattleButton").disabled = true
             document.getElementById("autoBattleButton").className = "mainButtonLayoutDisabled"
         }
+        else if (ID > 99){
+            document.getElementById("autoBattleButton").disabled = true
+            document.getElementById("autoBattleButton").className = "mainButtonLayoutDisabled"
+        }
         else{
             document.getElementById("autoBattleButton").disabled = false
             document.getElementById("autoBattleButton").className = "mainButtonLayout"
@@ -2499,7 +2538,7 @@ function autoBattle(enemy){
         var goldEarned = Math.floor(Math.random() * (enemy.dropMax - enemy.dropMin + 1) + enemy.dropMin) * player.goldGeneratorMulti
         player.gold += goldEarned
         displayGold()
-        var expEarned = enemy.maxHitPoints * (1 + enemy.ID)
+        var expEarned = (enemy.maxHitPoints * (1 + enemy.ID)) * player.expMulti
         player.exp += expEarned
         updateHTML()
         enemy.autoBattleVictories += 1
@@ -2567,7 +2606,7 @@ function upgradeGoldGenerator(){
 function upgradeGoldGeneratorMulti(){
     if (player.availableAP >= player.goldGeneratorMultiUpgradeCost && powerTrainCooldown == false){   
         player.availableAP -= player.goldGeneratorMultiUpgradeCost
-        player.goldGeneratorMultiUpgradeCost += 5
+        player.goldGeneratorMultiUpgradeCost += 4
         player.goldGeneratorMultiLevel += 1
         player.goldGeneratorMulti = fibonacci(player.goldGeneratorMultiLevel)
         document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(player.availableAP)

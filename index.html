@@ -38,9 +38,16 @@
             return false;
         }
         function startFight(fightEnemyID){
-            show('battleScreen','fightSetupScreen','navMenu')
-            postFight = false
-            initiateBattle(fightEnemyID)
+            if (fighting == true && fightEnemyID > 99){
+                printSuccess()
+                document.getElementById("outcomeButtonRestart").hidden = true
+            }
+            else{
+                show('battleScreen','fightSetupScreen','navMenu')
+                document.getElementById("outcomeButtonRestart").hidden = false
+                postFight = false
+                initiateBattle(fightEnemyID)
+            }
         }
         function returnToTraining(){
             show('navMenu','battleScreen')
@@ -51,6 +58,7 @@
             show('battleTab','shopTab','trainingTab','fightSetupScreen')
             fighting = false
             postFight = false
+            returnBrokenItems()
             return show('enemiesTab')
         }
         function returnToMap(){
@@ -58,6 +66,7 @@
             show('mapTab','shopTab','trainingTab','fightSetupScreen')
             fighting = false
             postFight = false
+            returnBrokenItems()
             return show('mapTab')
         }
         function switchAvatarDisplay(){
@@ -553,6 +562,8 @@
             </div>
             <div id="goldShop">
                 <p id="currentGold" class="standardText">You have 0 Gold.</p>
+                <button id="buyExpMultiButton" class="mainButtonLayout" onclick="buyExpMulti()">1.1x Exp Multiplier<br/>Cost: 100 Gold</button>
+                <button id="buyStatCapBoostButton" class="mainButtonLayout" onclick="buyStatCapBoost()">1.1x Stat Cap per Level<br/>Cost: 10,000 Gold</button>
                 <center><div id="goldShopGrid" class="grid-container">
                 </div></center>
             </div>
