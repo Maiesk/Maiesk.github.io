@@ -6,7 +6,7 @@
     <link href='https://fonts.googleapis.com/css?family=Fredoka One' rel='stylesheet'>
     <title>Idle Battle Test Version</title>
     <script>
-        function show(shown, hidden0, hidden1, hidden2, hidden3, hidden4) {
+        function show(shown, hidden0, hidden1, hidden2, hidden3, hidden4, hidden5) {
             document.getElementById(shown).style.display='block';
             if (hidden0 != null){
                 document.getElementById(hidden0).style.display='none';
@@ -22,6 +22,9 @@
             }
             if (hidden4 != null){
                 document.getElementById(hidden4).style.display='none';
+            }
+            if (hidden5 != null){
+                document.getElementById(hidden5).style.display='none';
             }
             if (shown == "mapTab"){
                 enableMove()
@@ -338,6 +341,18 @@
             width: 75px;
             height: 75px;
         }
+        .minigameGrid {
+            display: grid;
+            grid-template-columns: auto auto auto auto;
+            grid-template-rows: auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto;
+            width: 300px;
+            grid-gap: 0px;
+        }
+        .minigameGrid > div {
+            background-color: rgb(10, 10, 10);
+            height: 10px;
+            width: 75px;
+        }
         .ldBar path.mainline {
             stroke-width: 5;
             stroke: #ac9444;
@@ -422,11 +437,12 @@
         <button id="loadButton" class="mainButtonLayout" onclick="loadGame()">Load</button>
         <br>
         <br>
-        <button class="navMenuButton" onclick="return show('trainingTab','shopTab','battleTab','fightSetupScreen','mapTab','playerTab')">Training</button>
-        <button class="navMenuButton" onclick="return show('mapTab','shopTab','trainingTab','battleTab','fightSetupScreen','playerTab')">Map</button>
-        <button class="navMenuButton" onclick="return show('battleTab','trainingTab','shopTab','fightSetupScreen','mapTab','playerTab')">Battle</button>
-        <button class="navMenuButton" onclick="return show('shopTab','trainingTab','battleTab','fightSetupScreen','mapTab','playerTab')">Shop</button>
-        <button class="navMenuButton" onclick="return show('playerTab','mapTab','shopTab','trainingTab','battleTab','fightSetupScreen')">Player</button>
+        <button class="navMenuButton" onclick="return show('trainingTab','shopTab','battleTab','fightSetupScreen','mapTab','playerTab','minigameTab')">Training</button>
+        <button class="navMenuButton" onclick="return show('mapTab','shopTab','trainingTab','battleTab','fightSetupScreen','playerTab','minigameTab')">Map</button>
+        <button class="navMenuButton" onclick="return show('battleTab','trainingTab','shopTab','fightSetupScreen','mapTab','playerTab','minigameTab')">Battle</button>
+        <button class="navMenuButton" onclick="return show('shopTab','trainingTab','battleTab','fightSetupScreen','mapTab','playerTab','minigameTab')">Shop</button>
+        <button class="navMenuButton" onclick="return show('playerTab','mapTab','shopTab','trainingTab','battleTab','fightSetupScreen','minigameTab')">Player</button>
+        <button class="navMenuButton" onclick="return show('minigameTab','mapTab','shopTab','trainingTab','battleTab','fightSetupScreen','playerTab')" hidden>Minigame Test</button>
         <br>
         <p id="loadingText" hidden class="standardText" style="font-size: 50px">Loading...</p>
         <br>
@@ -974,6 +990,18 @@
             <button class="mainButtonLayout" onclick="respawnEnemies()" hidden>Respawn Enemies</button>
             <p class="apPageText">W - Up  |  A - Left  |  S - Down  |  D - Right</p>
             <p class="apPageText">Defeat all non-secret enemies to progress!<br/>Secret enemies will appear at random.</p>
+        </div>
+        <div id="minigameTab" class="divBackground">
+            <div id="minigameGrid" class="minigameGrid">
+
+            </div>
+            <div>
+                <textarea id="minigameSpeedBox" class="apPageText" style="background-color: black; margin-bottom: 10px; margin-top: 10px; text-align: center; width: 200px; height: 38px; resize: none;">1000</textarea>
+                <br>
+                <button id="minigameSpeedButton" class="mainButtonLayout" style="margin-bottom: 20px;" onclick="runMinigame()">Run Minigame</button>
+                <br>
+                <p id="currentMinigameScore" class="apPageText">0</p>
+            </div>
         </div>
     </center>
         

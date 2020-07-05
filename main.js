@@ -57,7 +57,8 @@ var player = {
     zones: [],
     boughtFirstAP: false,
     goldGeneratorMulti: 1,
-    goldGeneratorMultiUpgradeCost: 5
+    goldGeneratorMultiUpgradeCost: 5,
+    imagePathList: ["/images/enemies/pipo-player001.png","/images/enemies/pipo-player002.png"]
 }
 
 var enemyList = []
@@ -72,18 +73,14 @@ function setName(){
     document.getElementById("playerNameDisplay").innerHTML = player.name
 }
 
-var playerImages = {
-    paths: ["/images/enemies/pipo-player001.png","/images/enemies/pipo-player002.png"]
-}
-
 function updateAvatarGrid(){
     document.getElementById("avatarGridPageOne").innerHTML = ""
     document.getElementById("avatarGridPageTwo").innerHTML = ""
-    for (var i = 0; i < playerImages.paths.length; i++){
+    for (var i = 0; i < player.imagePathList.length; i++){
         var cell = document.createElement("div")
         var image = document.createElement("img")
         cell.style = "width: 75px; height: 75px"
-        image.src = playerImages.paths[i]
+        image.src = player.imagePathList[i]
         image.id = "avatarImage" + i
         image.style = "width: 75px; height: 75px"
         cell.appendChild(image)
@@ -102,7 +99,7 @@ function setAvatarClickable(index){
 }
 
 function setPlayerImage(index){
-    player.imagePath = playerImages.paths[index]
+    player.imagePath = player.imagePathList[index]
     document.getElementById("playerImage").src = player.imagePath
     placeOnGrid()
 }
@@ -125,7 +122,7 @@ function update(){
     updateAttBar()
     updateDefBar()
     updateSpeBar()
-    goldGeneratorTicks += (player.goldGeneratorLevel) * 5
+    goldGeneratorTicks += (player.goldGeneratorLevel) * 10
     if (goldGeneratorTicks >= 100){
         goldGeneratorTicks = 0
         player.gold += 1 * player.goldGeneratorMulti
@@ -623,6 +620,7 @@ function loadGame(){
         isLoading = true
         setTimeout(function(){
             updateHTML()
+            updateAvatarGrid()
             document.getElementById("trainingTab").hidden = false
             document.getElementById("battleTab").hidden = false
             document.getElementById("shopTab").hidden = false
@@ -686,6 +684,8 @@ function loadGame(){
             var percentShownSpe = Number(player.currentProgressSpe).toFixed(2)
             document.getElementById("currentProgressDisplaySpe").innerHTML = percentShownSpe + "%"
             isLoading = false
+            document.getElementById("playerNameBox").value = player.name
+            document.getElementById("playerNameDisplay").innerHTML = player.name
         }, 1000)
     }
     else if (player.powerTrainCooldown == true){
@@ -909,8 +909,9 @@ function createEnemy(ID, name, hitPoints, attackPoints, defensePoints, speedPoin
     }
     if (ID >= 100){
         secretEnemyList[secretEnemyList.length] = enemy
-        player.secretEnemySaveList[player.secretEnemySaveList.length] = enemySaveStats
-
+        if (player.secretEnemySaveList.length < 13){
+            player.secretEnemySaveList[player.secretEnemySaveList.length] = enemySaveStats
+        }
     }
     else{
         enemyList[enemyList.length] = enemy
@@ -1775,16 +1776,16 @@ var enemyFreeze = false
 function attack(enemy, playerItem1, playerItem2, enemyItemIndex1, enemyItemIndex2){
     var enemyItem1 = enemy.equipment[enemyItemIndex1]
     var enemyItem2 = enemy.equipment[enemyItemIndex2]
-    if (enemyWasFrozen == true){
+    if (enemyFreeze == true){
         enemyItem1 = enemyWeapons[64]
         enemyItem2 = enemyWeapons[64]
-        enemyWasFrozen = false
+        enemyFreeze = false
     }
     if (player.frozen){
         playerItem1 = enemyWeapons[64]
         playerItem2 = enemyWeapons[64]
     }
-    enemyFreeze = false
+    enemyWasFrozen = false
     if (!player.frozen){
         var playerStrength = determineTier(player.attackPoints);
         var enemyDefense = determineTier(enemy.defensePoints);
@@ -2174,7 +2175,7 @@ function fight(){
             ladderIncrement(enemyList[fightEnemyID])
             player.zones[player.currentZone - 1].enemies[fightEnemyID % 3] = enemyList[fightEnemyID]
         }
-        var goldEarned = Math.floor(Math.random() * (enemy.dropMax - enemy.dropMin + 1) + enemy.dropMin)
+        var goldEarned = Math.floor(Math.random() * (enemy.dropMax - enemy.dropMin + 1) + enemy.dropMin) * player.goldGeneratorMulti
         player.gold += goldEarned
         displayGold()
         document.getElementById("outcomeTextGold").hidden = false
@@ -2186,7 +2187,7 @@ function fight(){
         updateEnemyDisplay(enemy)
         zoneButtonChecker()
         if (enemy.timesDefeated == 1){
-            playerImages.paths.push(enemy.imagePath)
+            player.imagePathList.push(enemy.imagePath)
         }
         postFight = true
         if (fightEnemyID >= 100 && secretEnemyList[fightEnemyID - 100].timesDefeated == 2){
@@ -2289,7 +2290,7 @@ function loadLadderFromWinLoss(){
     clearEnemyList()
     createEnemyList()
     for (var j = 0; j < player.enemySaveList.length; j++){
-        if (player.secretEnemySaveList[j] !== undefined){ 
+        if (j < 13){ 
             secretEnemyList[j].timesDefeated = player.secretEnemySaveList[j].timesDefeated
             secretEnemyList[j].timesLostTo = player.secretEnemySaveList[j].timesLostTo
             secretEnemyList[j].discovered = player.secretEnemySaveList[j].discovered
@@ -2431,6 +2432,7 @@ function setupFight(ID){
     }
     else {
         enemy = enemyList[ID]
+        player.enemySaveList[ID].discovered = true
     }
     if (goldAnimation !== null){
         goldAnimation.reset()
@@ -2438,6 +2440,7 @@ function setupFight(ID){
     if (expAnimation !== null){
         expAnimation.reset()
     }
+
         document.getElementById("battleTab").style.display='none'
         document.getElementById("mapTab").style.display='none'
         document.getElementById("fightSetupScreen").style.display='block'    
@@ -2492,7 +2495,7 @@ function autoBattle(enemy){
     if (playerScore > enemyScore && isLoading == false){
         enemy.timesDefeated += 1
         player.enemySaveList[enemy.ID].timesDefeated += 1
-        var goldEarned = Math.floor(Math.random() * (enemy.dropMax - enemy.dropMin + 1) + enemy.dropMin)
+        var goldEarned = Math.floor(Math.random() * (enemy.dropMax - enemy.dropMin + 1) + enemy.dropMin) * goldGeneratorMulti
         player.gold += goldEarned
         displayGold()
         var expEarned = enemy.maxHitPoints * (1 + enemy.ID)
@@ -2543,20 +2546,27 @@ var optionsExp = {
 };
 
 function upgradeGoldGenerator(){
-    if (player.availableAP >= player.goldGeneratorUpgradeCost && powerTrainCooldown == false){   
+    if (player.availableAP >= player.goldGeneratorUpgradeCost && powerTrainCooldown == false && player.goldGeneratorLevel < 5){   
         player.availableAP -= player.goldGeneratorUpgradeCost
         player.goldGeneratorUpgradeCost += 1
         player.goldGeneratorLevel += 1
         document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(player.availableAP)
         document.getElementById("goldGeneratorLevelCurrent").innerHTML = "Current Gold Generator Level: " + numberWithCommas(player.goldGeneratorLevel)
-        document.getElementById("upgradeGoldGeneratorButton").innerHTML = "+1 Gold Generator Level: " + player.goldGeneratorUpgradeCost + " AP"
+        if (player.goldGeneratorLevel < 5){
+            document.getElementById("upgradeGoldGeneratorButton").innerHTML = "+1 Gold Generator Level: " + player.goldGeneratorUpgradeCost + " AP"
+        }
+        else{
+            document.getElementById("upgradeGoldGeneratorButton").innerHTML = "Gold Generator Level Maxed"
+            document.getElementById("upgradeGoldGeneratorButton").className = "mainButtonLayoutDisabled"
+            document.getElementById("upgradeGoldGeneratorButton").disabled = true
+        }
     }
 }
 
 function upgradeGoldGeneratorMulti(){
     if (player.availableAP >= player.goldGeneratorMultiUpgradeCost && powerTrainCooldown == false){   
         player.availableAP -= player.goldGeneratorMultiUpgradeCost
-        player.goldGeneratorMultiUpgradeCost *= 2
+        player.goldGeneratorMultiUpgradeCost += 5
         player.goldGeneratorMulti += 1
         document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(player.availableAP)
         document.getElementById("goldGeneratorMultiCurrent").innerHTML = "Current Gold Multiplier: " + numberWithCommas(player.goldGeneratorMulti)
@@ -2596,6 +2606,10 @@ function godMode(){
     else{
         console.log("Aren't you overpowered enough?")
     }
+}
+
+function enterMinigame(){
+    return show('minigameTab','mapTab','shopTab','trainingTab','battleTab','fightSetupScreen','playerTab')
 }
 
 function populateMapGrid(){
@@ -2751,8 +2765,15 @@ function spawnEnemy(enemy){
             location = (5-startingY) * 10 + startingX
         }
     }
-    else if (mapEnemies[0] !== undefined && mapEnemies[1] !== undefined){
+    else if (mapEnemies[0] !== undefined && mapEnemies[1] !== undefined && mapEnemies[2] == undefined){
         while (mapEnemies[0].location == location || mapEnemies[1].location == location){
+            startingX = Math.floor(Math.random() * 8) + 1
+            startingY = Math.floor(Math.random() * 6)    
+            location = (5-startingY) * 10 + startingX
+        }
+    }
+    else if (mapEnemies[0] !== undefined && mapEnemies[1] !== undefined && mapEnemies[2] !== undefined){
+        while (mapEnemies[0].location == location || mapEnemies[1].location == location || mapEnemies[2].location == location){
             startingX = Math.floor(Math.random() * 8) + 1
             startingY = Math.floor(Math.random() * 6)    
             location = (5-startingY) * 10 + startingX
@@ -2950,4 +2971,253 @@ function animateZoneChange(){
         respawnEnemies()
         spawnRandom()
     }, 425)
+}
+
+function generateMinigameGrid(){
+    for (var i = 0; i < 192; i++){
+        var cell = document.createElement("div")
+        cell.style = "height: 10px; width: 75px"
+        cell.id = "minigameGrid" + i
+        document.getElementById("minigameGrid").appendChild(cell)
+    }
+}
+generateMinigameGrid()
+
+var currentValuesColumnOne = []
+var currentValuesColumnTwo = []
+var currentValuesColumnThree = []
+var currentValuesColumnFour = []
+var currentValuesArray = [currentValuesColumnOne, currentValuesColumnTwo, currentValuesColumnThree, currentValuesColumnFour]
+function animateSquareDrop(rowCounter, minigameColumn){
+    setTimeout(function(){            
+        if (rowCounter > 3){
+            
+            document.getElementById("minigameGrid" + (((rowCounter - 4) * 4) + minigameColumn)).style = "height: 10px; width: 75px; background-color: rgb(10, 10, 10)"
+            currentValuesArray[minigameColumn].shift()
+        }
+        if (rowCounter < 49){
+            document.getElementById("minigameGrid" + ((rowCounter * 4) + minigameColumn)).style = "height: 10px; width: 75px; background-color: rgb(60, 60, 60)"
+            currentValuesArray[minigameColumn].push((rowCounter * 4) + minigameColumn)
+        }
+    }, 50 * rowCounter / minigameSpeed)   
+}
+
+function minigameColumnOne(){
+    var rowCounterOne = 0
+    while(rowCounterOne * 4 < 212){
+        animateSquareDrop(rowCounterOne, 0)
+        rowCounterOne+= 1
+    }
+}
+
+function minigameColumnTwo(){
+    var rowCounterTwo = 0
+    while(rowCounterTwo * 4 < 212){
+        animateSquareDrop(rowCounterTwo, 1)
+        rowCounterTwo+= 1
+    }
+}
+
+function minigameColumnThree(){
+    var rowCounterThree = 0
+    while(rowCounterThree * 4 < 212){
+        animateSquareDrop(rowCounterThree, 2)
+        rowCounterThree+= 1
+    }
+}
+
+function minigameColumnFour(){
+    var rowCounterFour = 0
+    while(rowCounterFour * 4 < 212){
+        animateSquareDrop(rowCounterFour, 3)
+        rowCounterFour+= 1
+    }
+}
+
+function chooseColumn(column){
+    if (column == 0){
+        minigameColumnOne()
+    }
+    if (column == 1){
+        minigameColumnTwo()
+    }
+    if (column == 2){
+        minigameColumnThree()
+    }
+    if (column == 3){
+        minigameColumnFour()
+    }
+}
+
+var minigameLimit = 0
+function recursiveRandomColumn(newBlockSpeed){
+    if (minigameLimit < 100){
+        var column = Math.floor(Math.random() * 4)
+        chooseColumn(column)
+        minigameLimit += 1
+        setTimeout(function(){
+            recursiveRandomColumn(newBlockSpeed)
+        }, newBlockSpeed)
+    }
+}
+
+function resetMinigame(start, newBlockSpeed){
+    endMinigame()
+    setTimeout(function(){
+        resetMinigameLimit()
+        if (start == true && newBlockSpeed !== undefined){
+            recursiveRandomColumn(newBlockSpeed)
+        }
+    }, 500)
+}
+
+var minigameRunning = false
+function runMinigame(){
+    resetCurrentMinigameScore()
+    endMinigame()
+    minigameRunning = true
+    document.getElementById("minigameSpeedButton").disabled = true
+    setTimeout(function(){
+        var newBlockSpeed = document.getElementById("minigameSpeedBox").value
+        if (newBlockSpeed > 249){
+            resetMinigame(true, newBlockSpeed)
+        }
+    }, 500)
+    setTimeout(function(){
+        document.getElementById("minigameSpeedButton").disabled = false
+    }, 1000)
+}
+
+function endMinigame(){
+    minigameLimit = 999
+}
+
+function resetMinigameLimit(){
+    minigameLimit = 0
+}
+
+function checkIfTimedCorrectly(minigameColumn){
+    if (currentValuesArray[minigameColumn].includes(180 + minigameColumn)){
+        currentScore += 1
+        document.getElementById("currentMinigameScore").innerHTML = currentScore
+        return true
+    }
+    else if (currentValuesArray[minigameColumn].includes(180 + minigameColumn - 4)){
+        currentScore += 1
+        document.getElementById("currentMinigameScore").innerHTML = currentScore
+        return true
+    }
+    else if (currentValuesArray[minigameColumn].includes(180 + minigameColumn + 4)){
+        currentScore += 1
+        document.getElementById("currentMinigameScore").innerHTML = currentScore
+        return true
+    }
+    else if (currentValuesArray[minigameColumn].includes(180 + minigameColumn + 8)){
+        currentScore += 1
+        document.getElementById("currentMinigameScore").innerHTML = currentScore
+        return true
+    }
+    else if (currentValuesArray[minigameColumn].includes(180 + minigameColumn + 12)){
+        currentScore += 1
+        document.getElementById("currentMinigameScore").innerHTML = currentScore
+        return true
+    }
+    else if (currentValuesArray[minigameColumn].includes(180 + minigameColumn + 16)){
+        currentScore += 1
+        document.getElementById("currentMinigameScore").innerHTML = currentScore
+        return true
+    }
+    return false
+}
+
+var currentScore = 0
+function resetCurrentMinigameScore(){
+    currentScore = 0
+    document.getElementById("currentMinigameScore").innerHTML = currentScore
+}
+
+var columnColours = ["rgb(0, 200, 0", "rgb(200, 100, 200)", "rgb(50, 100, 200)", "rgb(200, 100, 0)"]
+function setColumnColoursOnPress(column){
+    for (var i = 0; i < 3; i++){
+        document.getElementById("minigameGrid" + ((180 + column) + (i*4))).style.backgroundColor = columnColours[column]
+    }
+    setTimeout(function(){
+        for (var i = 0; i < 3; i++){
+            document.getElementById("minigameGrid" + ((180 + column) + (i*4))).style = "height: 10px; width: 75px; background-color: rgb(200, 200, 200); border-right: 1px solid white; border-left: 1px solid white"
+        }
+    }, 100)
+}
+
+document.addEventListener('keyup', (e) => {
+    if (minigameRunning == true){        
+        if (e.keyCode === 72){
+            setColumnColoursOnPress(0)
+            if (!checkIfTimedCorrectly(0)){
+                currentScore -= 1
+                document.getElementById("currentMinigameScore").innerHTML = currentScore
+            }
+        }
+        else if (e.keyCode === 74){
+            setColumnColoursOnPress(1)
+            if (!checkIfTimedCorrectly(1)){
+                currentScore -= 1
+                document.getElementById("currentMinigameScore").innerHTML = currentScore
+            }        
+        }
+        else if (e.keyCode === 75){
+            setColumnColoursOnPress(2)
+            if (!checkIfTimedCorrectly(2)){
+                currentScore -= 1
+                document.getElementById("currentMinigameScore").innerHTML = currentScore
+            }  
+        }
+        else if (e.keyCode === 76){
+            setColumnColoursOnPress(3)
+            if (!checkIfTimedCorrectly(3)){
+                currentScore -= 1
+                document.getElementById("currentMinigameScore").innerHTML = currentScore
+            }
+        }
+    }
+})
+
+var minigameSpeed = 1
+var minigameCounter = 0
+var minigameModulus = 5
+function runSimMinigame(minigameSpeed, minigameModulus){
+    minigameCounter = 0
+    simulateMinigame(minigameSpeed, minigameModulus)
+}
+
+function simulateMinigame(minigameSpeed, minigameModulus){
+    setTimeout(function(){
+        if (minigameCounter % minigameModulus == 0){
+            document.getElementById("minigameGrid" + minigameCounter * 4).style = "height: 10px; width: 75px; background-color: rgb(30, 30, 30)"
+        }
+        else{
+            document.getElementById("minigameGrid" + minigameCounter * 4).style = "height: 10px; width: 75px; background-color: rgb(10, 10, 10)" 
+        }
+        if ((minigameCounter + 1) % minigameModulus == 0){
+            document.getElementById("minigameGrid" + (minigameCounter * 4 + 1)).style = "height: 10px; width: 75px; background-color: rgb(30, 30, 30)"
+        }
+        else{
+            document.getElementById("minigameGrid" + (minigameCounter * 4 + 1)).style = "height: 10px; width: 75px; background-color: rgb(10, 10, 10)" 
+        }
+        if ((minigameCounter + 2) % minigameModulus == 0){
+            document.getElementById("minigameGrid" + (minigameCounter * 4 + 2)).style = "height: 10px; width: 75px; background-color: rgb(30, 30, 30)"
+        }
+        else{
+            document.getElementById("minigameGrid" + (minigameCounter * 4 + 2)).style = "height: 10px; width: 75px; background-color: rgb(10, 10, 10)" 
+        }
+        if ((minigameCounter + 3) % minigameModulus == 0){
+            document.getElementById("minigameGrid" + (minigameCounter * 4 + 3)).style = "height: 10px; width: 75px; background-color: rgb(30, 30, 30)"
+        }
+        else{
+            document.getElementById("minigameGrid" + (minigameCounter * 4 + 3)).style = "height: 10px; width: 75px; background-color: rgb(10, 10, 10)" 
+        }
+        minigameCounter += 1
+        if (minigameCounter < 48){
+            simulateMinigame(minigameSpeed, minigameModulus)
+        }
+    }, minigameSpeed)
 }
