@@ -2495,7 +2495,7 @@ function autoBattle(enemy){
     if (playerScore > enemyScore && isLoading == false){
         enemy.timesDefeated += 1
         player.enemySaveList[enemy.ID].timesDefeated += 1
-        var goldEarned = Math.floor(Math.random() * (enemy.dropMax - enemy.dropMin + 1) + enemy.dropMin) * goldGeneratorMulti
+        var goldEarned = Math.floor(Math.random() * (enemy.dropMax - enemy.dropMin + 1) + enemy.dropMin) * player.goldGeneratorMulti
         player.gold += goldEarned
         displayGold()
         var expEarned = enemy.maxHitPoints * (1 + enemy.ID)
