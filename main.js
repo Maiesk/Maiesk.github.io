@@ -57,6 +57,7 @@ var player = {
     zones: [],
     boughtFirstAP: false,
     goldGeneratorMulti: 1,
+    goldGeneratorMultiLevel: 3,
     goldGeneratorMultiUpgradeCost: 5,
     imagePathList: ["/images/enemies/pipo-player001.png","/images/enemies/pipo-player002.png"]
 }
@@ -108,7 +109,7 @@ var goldGeneratorTicks = 0
 function update(){
     var numberAnimation = new CountUp("currentTrainingPoints", player.training, player.training + player.trainingPerClick, 0, (player.updateSpeed / 1000), options);
     numberAnimation.start()
-    player.training += player.trainingPerClick * player.idleUpgradeMultiplier
+    player.training += player.trainingPerClick * player.idleUpgradeMultiplier * player.zoneMax
     if (player.training >= player.statPointCost && player.autoPurchaseStatPoints == true){
         buyStatPoint()
     }
@@ -2567,7 +2568,8 @@ function upgradeGoldGeneratorMulti(){
     if (player.availableAP >= player.goldGeneratorMultiUpgradeCost && powerTrainCooldown == false){   
         player.availableAP -= player.goldGeneratorMultiUpgradeCost
         player.goldGeneratorMultiUpgradeCost += 5
-        player.goldGeneratorMulti += 1
+        player.goldGeneratorMultiLevel += 1
+        player.goldGeneratorMulti = fibonacci(player.goldGeneratorMultiLevel)
         document.getElementById("textAPAvailable").innerHTML = "AP Available: " + numberWithCommas(player.availableAP)
         document.getElementById("goldGeneratorMultiCurrent").innerHTML = "Current Gold Multiplier: " + numberWithCommas(player.goldGeneratorMulti)
         document.getElementById("upgradeGoldGeneratorMultiButton").innerHTML = "+1x Gold Generator Multiplier: " + player.goldGeneratorMultiUpgradeCost + " AP"
